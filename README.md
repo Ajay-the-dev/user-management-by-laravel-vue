@@ -1,17 +1,25 @@
 to run this project 
 
-1.composer update 
-2.npm install
-3.php artisan db:seed
+1.composer update <br>
+2.npm install <br>
+3.php artisan db:seed <br>
 
+<br>
+<br>
+<br>
+login credentials <br>
+------------------- <br>
 
-login credentials 
--------------------
+<br>
+username : admin <br>
+password : admin <br>
 
-username : admin
-password : admin
-
+<br>
+<br>
 
 set your database in .env (currently Mysql only supported)
+
+<br>
+<br>
 
 
