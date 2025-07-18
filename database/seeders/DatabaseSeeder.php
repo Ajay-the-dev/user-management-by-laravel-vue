@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             'gender' => 'Male'
         ]);
 
-        $this->call(UserSeeder::class);
+        // $this->call(UserSeeder::class);
 
     }
 }
