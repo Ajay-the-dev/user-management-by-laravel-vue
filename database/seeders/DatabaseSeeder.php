@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin'),
             'address' => '{}',
             'dob' => '1998-05-16',
-            'gender' => 'Male'
+            'gender' => 'Male',
+            'role' => 'ADMIN',
         ]);
 
         // $this->call(UserSeeder::class);

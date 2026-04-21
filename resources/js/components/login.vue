@@ -45,6 +45,16 @@ const validateLogin = () =>{
 
     if(username.value === '' || password.value === '')
     {
+        if(username.value === '')
+        {
+            showToast({title:'Username is required !',icon:'error'})
+            return;
+        }
+        if(password.value === '')
+        {
+            showToast({title:'Password is required !',icon:'error'})
+            return;
+        }
         showToast({title:'Enter valid data !',icon:'error'})
         return;
     }
@@ -85,9 +95,14 @@ const validateLogin = () =>{
 
 .bg
 {
-    background-image: url('../../../public/bg.jpg');
+    /* background-image: url('bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat; */
+    background-image: url('bg2.jpg');
     background-size: contain;
-    background-repeat: no-repeat;
+    /* background-repeat: repeat; */
+    /* backdrop-filter: blur(50px); */
+
 }
 
 </style>
