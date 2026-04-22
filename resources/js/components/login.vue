@@ -65,9 +65,7 @@ const validateLogin = () =>{
         password:password.value
     }
     ).then((response)=>{
-        const data = response.data.data      
-        console.log(data);
-          
+        const data = response.data.data                
         if(data === '')
         {
             showToast({title:'Invalid Credentials',icon:'error'})

@@ -8,12 +8,12 @@ const routes = [
   },
   {
     path: '/home',
-    name: 'home',
+    name: 'main',
     component: () => import('@/components/home.vue'), 
     children:[
       {
         path:'',
-        name:'default',
+        name:'home',
         component: () => import('@/components/quickAccess.vue'), 
       },
       {
@@ -35,6 +35,21 @@ const routes = [
         path:'list',
         name:'list',
         component: () => import('@/components/list.vue'), 
+      },
+      {
+        path:'batch-home',
+        name:'/home/batch-home',
+        component: () => import('@/components/batchList.vue'),
+      },
+      {
+        path:'staff-home',
+        name:'/home/staff-home',
+        component: () => import('@/components/add.vue'),
+      },
+      {
+        path:'student-home',
+        name:'/home/student-home',
+        component: () => import('@/components/add.vue'),
       }
     ]
   }

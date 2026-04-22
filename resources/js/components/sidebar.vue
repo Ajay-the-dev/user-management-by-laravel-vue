@@ -4,30 +4,10 @@
                 <div class="row align-content-center">
                     <div v-for="side in currentMenuItems" class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push(side.route)" :class="route.name === side.route ? 'menu-item-active':''">
                         <i :class="side.icon+' mx-2'" aria-hidden="true"></i>{{ side.name }}
-
                     </div>
-                    <!-- <div class="bg-dark-subtle col-12 px-5 py-3 mt menu-item" @click="router.push('/home')" :class="route.name ==='default' ? 'menu-item-active':''">
-                        <i class="fa fa-home mx-2" aria-hidden="true"></i>Home
-                    </div>
-                    <div class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push('/home/add')" :class="route.name ==='add' ? 'menu-item-active':''">
-                        <i class="fa fa-user-plus mx-2" aria-hidden="true"></i>
-                        Add User
-                    </div>
-                    <div class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push('/home/update')" :class="route.name ==='update' ? 'menu-item-active':''">
-                        <i class="fa fa-pencil-square mx-2" aria-hidden="true"></i>
-                        Update User
-                    </div>
-                    <div class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push('/home/delete')" :class="route.name ==='delete' ? 'menu-item-active':''">
-                        <i class="fa fa-trash mx-2" aria-hidden="true"></i>
-                        Delete User
-                    </div>
-                    <div class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push('/home/list')" :class="route.name ==='list' ? 'menu-item-active':''">
-                        <i class="fa fa-list mx-2" aria-hidden="true"></i>
-                        All Users
-                    </div> -->
                     <div class="bg-dark-subtle col-12 px-5 py-3 menu-item-danger mt" @click="logout">
                         <i class="fa fa-sign-out" aria-hidden="true"></i>
-                        Logout
+                        Logout {{ route.path }}
                     </div>
                 </div>
             </div>
@@ -76,12 +56,30 @@ const sideMenuItems = ref(
         {name:'Delete Student',icon:'fa fa-trash',route:'delete'},
         {name:'All Students',icon:'fa fa-list',route:'list'},
     ],
-        "/home":[
-            {name:'Home',icon:'fa fa-home',route:'home'},
-            {name:'Batch Management',icon:'fa fa-user-plus',route:'add'},
-            {name:'Staff Management',icon:'fa fa-user-plus',route:'add'},
-            {name:'Student Management',icon:'fa fa-pencil-square',route:'update'}
-        ]
+    "/home":[
+        {name:'Home',icon:'fa fa-home',route:'home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+    ],
+    "/home/batch-home":[
+        {name:'Home',icon:'fa fa-home',route:'/home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+    ],
+    "/home/staff-home":[
+        {name:'Home',icon:'fa fa-home',route:'/home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+    ],
+    "/home/student-home":[
+        {name:'Home',icon:'fa fa-home',route:'/home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+    ]
     }
 );
 
