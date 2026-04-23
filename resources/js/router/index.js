@@ -39,7 +39,7 @@ const routes = [
       {
         path:'batch-home',
         name:'/home/batch-home',
-        component: () => import('@/components/batchList.vue'),
+        component: () => import('@/components/batchListView.vue'),
       },
       {
         path:'staff-home',

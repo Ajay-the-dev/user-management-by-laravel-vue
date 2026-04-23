@@ -22,4 +22,7 @@ Route::prefix('batches')->group(function () {
         Route::get('/', [BatchController::class, 'index']);
         Route::put('/{id}', [BatchController::class, 'update']);
         Route::delete('/{id}', [BatchController::class, 'remove']);
+
+        Route::post('/find', [BatchController::class, 'findByName']);
+
 });

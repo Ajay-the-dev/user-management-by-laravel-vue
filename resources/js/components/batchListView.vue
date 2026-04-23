@@ -61,8 +61,76 @@
         </div>
     </div>
 
-    <div class="col-12">
-        <div class="card">
+    <div class="mx-4 col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-gradient p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">Batches</h5>
+                    <div class="d-flex">
+                        <input type="text" class="form-control w-auto mx-3" placeholder="Search batch here ..." v-model="searchQuery"
+                        @change="getBatchesByName">
+                        <button class="btn btn-primary btn-sm" @click="showAddModal">
+                            <i class="fas fa-plus me-2"></i>New Batch
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" width="10%" class="fw-bold text-muted">#</th>
+                                <th scope="col" width="40%" class="fw-bold text-muted">Batch Name</th>
+                                <th scope="col" width="25%" class="fw-bold text-muted">Current Semester</th>
+                                <th scope="col" width="25%" class="fw-bold text-muted text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(batche, index) in batches.data" :key="batche.id" class="align-middle border-bottom">
+                                <td class="fw-bold">{{ batches.per_page * (batches.current_page - 1) + index + 1 }}</td>
+                                <td class="fw-500">{{ batche.name }}</td>
+                                <td>
+                                    <span v-if="batche.is_passout === 1" class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i>PASSED OUT
+                                    </span>
+                                    <span v-else class="badge bg-primary">
+                                        <i class="fas fa-graduation-cap me-1"></i>SEMESTER {{ batche.semester }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-outline-primary" @click="editBatch(batche, true)" title="View"
+                                            data-bs-toggle="modal" data-bs-target="#myModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-primary" @click="editBatch(batche)" title="Edit"
+                                            data-bs-toggle="modal" data-bs-target="#myModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-primary" @click="deletebatche(batche)" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3" v-if="batches.links">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end mb-0">
+                        <li class="page-item" v-for="link in batches.links" :key="link.label" :class="link.active ? 'active' : ''">
+                            <a class="page-link" href="#" @click.prevent="link.url && getAllBatches(link.url)" :disabled="!link.url">
+                                {{ decodeHtmlEntities(link.label) }}
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- <div class="card">
             <div class="card-title p-3 bg-body-secondary">
                 <nav aria-label="Page navigation example class-end" class="text-end flex">
                     <input type="text" name="" id="" placeholder="Search batch here ..." class="form-control d-inline-block w-auto mx-2" @input="handleApi($event.target.value)">
@@ -72,59 +140,9 @@
                 </nav>
             </div>
             <div class="card-container py-3 px-3">
-                <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col px-3 p-3">#</th>
-                        <th scope="col p-3">Name</th>
-                        <!-- <th scope="col p-3">Start</th>
-                        <th scope="col p-3">End</th> -->
-                        <th scope="col p-3">Current Semester</th>
-                        <th scope="col p-3">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="batche,index in batches.data" class="align-middle">
-                        <th scope="row px-3">{{ batches.per_page * (batches.current_page-1)+index+1 }}</th>
-                        <td>{{ batche.name }}</td>
-                        <!-- <td>{{ batche.start_date.split('-').reverse().join('-') }}</td>
-                        <td>{{ batche.end_date.split('-').reverse().join('-') }}</td> -->
-                        <td v-if="batche.is_passout===1" class="text-success">
-                           <span class="badge bg-success">PASSED</span>
-                        </td>
-                        <td v-else>
-                            SEMESTER {{ batche.semester }}
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-outline-secondary mx-1" data-bs-toggle="modal" data-bs-target="#myModal" @click="editBatch(batche)" title="Edit">
-                                <!-- <i class="fa fa-edit p-0"></i> -->
-                                 Edit
-                            </button>
-                            <button  class="btn btn-outline-secondary mx-1"  @click="deletebatche(batche)" title="Delete">
-                                <!-- <i class="fa fa-trash p-0"></i> -->
-                                 Delete
-                            </button>
-                            <button  class="btn btn-outline-secondary mx-1" data-bs-toggle="modal" data-bs-target="#myModal" @click="editBatch(batche,true)" title="View">
-                                <!-- <i class="fa fa-eye p-0"></i> -->
-                                 Show
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="6" class="p-3">
-                            <ul class="pagination float-end">
-                                <li class="page-item" v-for="link in batches.links">
-                                    <a class="page-link" :class="link.active ? link.url === null ? 'active disabled' : 'active':''" href="#" @click="getAllBatches(link.url)">{{ decodeHtmlEntities(link.label) }}</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-                </tfoot>
-                </table>
+                
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 </template>
@@ -134,9 +152,10 @@
     import api from '@/utils/axios'
     import { showToast } from '../utils/toastr'
     import Swal from 'sweetalert2'
-
     import { Modal } from 'bootstrap'
     import required from './required.vue'
+
+    import debounce from 'lodash/debounce';
 
     const emit = defineEmits(['trigger']);
 
@@ -172,7 +191,7 @@
     const isEditMode = ref(false)
     const showBatch = ref(false)
     
-    
+    const searchQuery = ref('')
 
     const isFiltering = computed(()=>{
         return Object.keys(props.filteredData).length > 0 ? true : false
@@ -386,38 +405,23 @@
         }
     }
 
-    const emitPagination = (url) =>{
-        emit("trigger",url)
-    }
-
-    const resetPassword = async(batche) =>{
-        const result = await Swal.fire({
-            title: 'Confirm',
-            text: 'You are going reset password to batchename',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Reset',
-            cancelButtonText: 'Cancel',
-        })
-
-        if(result.isConfirmed)
-        {
-            const response = api.get(`${baseURL}/batches/${batche.id}`).then((response)=>{
-                console.log(response)
+    const getBatchesByName = async ()=>{
+        console.log(baseURL);
+        
+        const request = {}
+        request.name = searchQuery.value
+        const response = await api.post(`${baseURL}/batches/find`,request).then((response) =>{
             if(response.data.status === 1)
             {
-                showToast({title:response.data.message, icon:'success'})
-                getAllBatches(lastInPage.value)
+                batches.value = response.data.data
             }
             else{
-                showToast({title:response.data.message, icon:'error'})    
+                    showToast({title:response.data.message, icon:'error'})    
             }
-            }).catch((error)=>{
-                console.log(error)
-            })
-            
-        }
+        })
     }
+
+    
 
     
 

@@ -106,4 +106,21 @@ class BatchController extends Controller
             return response()->json(['message' => 'Unable to remove batch', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function findByName(Request $request)
+    {
+        try {
+            
+            $name = $request->input('name');
+            if ($name) {
+                $batch = batches::where('name', 'like', "%$name%")->get();
+                return response()->json(['data' => $batch]);
+            } else {
+                return response()->json(['message' => "Batch name is required"], 400);
+            }
+
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'error while finding batch', 'error' => $e->getMessage()], 500);
+        }
+    }
 }
