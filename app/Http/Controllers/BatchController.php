@@ -113,10 +113,10 @@ class BatchController extends Controller
             
             $name = $request->input('name');
             if ($name) {
-                $batch = batches::where('name', 'like', "%$name%")->get();
-                return response()->json(['data' => $batch]);
+                $batch = batches::where('name', 'like', "%$name%")->paginate(10);
+                return response()->json(['data' => $batch, 'status' => 1], 200);
             } else {
-                return response()->json(['message' => "Batch name is required"], 400);
+                return response()->json(['message' => "Batch name is required","status" => 1], 200);
             }
 
         } catch (\Throwable $e) {

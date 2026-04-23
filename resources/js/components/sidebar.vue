@@ -2,7 +2,7 @@
     <div class="row">
             <div class="col-3 bg-body-secondary vh-100 d-flex">
                 <div class="row align-content-center">
-                    <div v-for="side in currentMenuItems" class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push(side.route)" :class="route.name === side.route ? 'menu-item-active':''">
+                    <div v-for="side in currentMenuItems" class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push(side.route)" :class="route.name === side.route || side.active ? 'menu-item-active':''">
                         <i :class="side.icon+' mx-2'" aria-hidden="true"></i>{{ side.name }}
                     </div>
                     <div class="bg-dark-subtle col-12 px-5 py-3 menu-item-danger mt" @click="logout">
@@ -72,6 +72,12 @@ const sideMenuItems = ref(
         {name:'Home',icon:'fa fa-home',route:'/home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+    ],
+     "/home/staff-add":[
+        {name:'Home',icon:'fa fa-home',route:'/home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home',active:true},
         {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
     ],
     "/home/student-home":[

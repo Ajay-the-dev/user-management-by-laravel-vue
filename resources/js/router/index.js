@@ -44,6 +44,11 @@ const routes = [
       {
         path:'staff-home',
         name:'/home/staff-home',
+        component: () => import('@/components/listView.vue'),
+      },
+      {
+        path:'staff-add',
+        name:'/home/staff-add',
         component: () => import('@/components/add.vue'),
       },
       {

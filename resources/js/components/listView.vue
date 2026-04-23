@@ -1,11 +1,13 @@
 <template>
-<div class="row">
+<div class="row my-5 mx-2">
     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="extraLargeModalLabel" aria-hidden="true" ref="myModalRef">
-        <div class="modal-dialog modal-xl"> <!-- Extra-large size -->
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
             
             <div class="modal-header">
-                <h5 class="modal-title" id="extraLargeModalLabel">{{routes.name==='list' ? 'User view' : 'Edit / Update'}}</h5>
+                <h5 class="modal-title" id="extraLargeModalLabel" v-if="modeSelected === 'STAFF'">Staff Details</h5>
+                <h5 class="modal-title" id="extraLargeModalLabel" v-else-if="modeSelected === 'ADMIN'">Staff Details</h5>
+                <h5 class="modal-title" id="extraLargeModalLabel" v-else>Student Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
@@ -13,80 +15,90 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12" v-if="selectedUser!==null">
-                        <div class="row mx-5">
-                            <div class="px-3 col-3">Name <required/></div>
-                            <div class="col-9 px-3">
-                                <input type="text" name="" id="" v-model="name"  class="form-control my-1 w-50" :disabled="routes.name==='list'">
-                            </div>
-
-                            <div class="px-3 col-3">username <required/></div>
-                            <div class="col-9 px-3">
-                                <input type="text" name="" id=""  v-model="username"   class="form-control my-1 w-50" :disabled="routes.name==='list'">
-                            </div>
-
-                            <div class="px-3 col-3">Email <required/></div>
-                            <div class="col-9 px-3">
-                                <input type="text" name="" id=""  v-model="email"  class="form-control my-1 w-50" :disabled="routes.name==='list'">
-                            </div>
-                            
-                            <div class="px-3 col-3">Mobile <required/></div>
-                            <div class="col-9 px-3">
-                                <input type="text" name="" id="" v-model="mobile"  class="form-control my-1 w-50" :disabled="routes.name==='list'">
-                            </div>
-
-                            <div class="px-3 col-3">DOB <required/></div>
-                            <div class="col-9 px-3">
-                                <input type="date" name="" id="" v-model="dob"  class="form-control my-1 w-50" :disabled="routes.name==='list'">
-                            </div>
-                            
-                            <div class="px-3 col-3">Gender <required/></div>
-                            <div class="col-9 px-3">
-                                <select name="" id="" class="form-select my-1 w-50" v-model="gender" :disabled="routes.name==='list'">
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row my-3 p-3 font-sm" >
-                            <div class="col-6 border p-4" v-for="addr,index in selectedAddress">
+                        <div class="profile-view">
+                            <div class="profile-section mb-4">
+                                <h6 class="section-title">Personal Information</h6>
                                 <div class="row">
-                                    <div class="col-6">
-                                        <label for="" class="form-label">Type <required/></label>
-                                        <select name="" id="" class="form-control" v-model="addr.officeType" :disabled="routes.name==='list'">
-                                            <option value="home">Home</option>
-                                            <option value="office">Office</option>
-                                        </select>
+                                    <div class="col-md-6">
+                                        <p><strong>Name:</strong> {{ name }}</p>
+                                        <p><strong>Username:</strong> {{ username }}</p>
+                                        <p><strong>Email:</strong> {{ email }}</p>
                                     </div>
-                                    <div class="col-6">
-                                        <label for="" class="form-label">Street <required/></label>
-                                        <input type="text" class="form-control" v-model="addr.street" :disabled="routes.name==='list'">
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="" class="form-label">Landmark</label>
-                                        <input type="text" class="form-control" v-model="addr.landmark" :disabled="routes.name==='list'">
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="" class="form-label">City <required/></label>
-                                        <input type="text" class="form-control" v-model="addr.city" :disabled="routes.name==='list'">
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="" class="form-label">State <required/></label>
-                                        <input type="text" class="form-control" v-model="addr.state" :disabled="routes.name==='list'">
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="" class="form-label">Country <required/></label>
-                                        <input type="text" class="form-control" v-model="addr.country" :disabled="routes.name==='list'">
-                                    </div>
-                                     <div class="col-6 align-content-end my-3">
-                                        <label for="" class="form-label">&nbsp;</label>
-                                        <button class="btn btn-primary btn-sm" @click="addAddress" :disabled="routes.name==='list' || selectedAddress.length >= 2">
-                                            Add address
-                                        </button>
-                                        <button class="btn btn-primary btn-sm mx-2 " @click="removeAddress(index)" :disabled="routes.name==='list' || selectedAddress.length <= 1">
-                                            Remove
-                                        </button>
+                                    <div class="col-md-6">
+                                        <p><strong>Mobile:</strong> {{ mobile }}</p>
+                                        <p><strong>Date of Birth:</strong> {{ dob }}</p>
+                                        <p><strong>Gender:</strong> {{ gender }}</p>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="profile-section mb-4">
+                                <h6 class="section-title">Profile & Role</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Profile Picture:</strong> {{ profile_picture || 'N/A' }}</p>
+                                        <p><strong>Role:</strong> {{ role }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Designation:</strong> {{ designation || 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-section mb-4" v-if="modeSelected === 'STUDENT'">
+                                <h6 class="section-title">Academic Information</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Course:</strong> {{ course || 'N/A' }}</p>
+                                        <p><strong>Roll Number:</strong> {{ rollNo || 'N/A' }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>University:</strong> {{ university }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-section mb-4">
+                                <h6 class="section-title">Location & Visa</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Location:</strong> {{ location }}</p>
+                                        <p><strong>Visa Type:</strong> {{ visaType }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Visa Status:</strong> {{ visaStatus }}</p>
+                                        <p><strong>Visa Expiry Date:</strong> {{ visaExpiryDate || 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-section mb-4">
+                                <h6 class="section-title">Insurance</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Insurance Status:</strong> {{ insuranceStatus }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Insurance Expiry Date:</strong> {{ insuranceExpiryDate || 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-section">
+                                <h6 class="section-title">Addresses</h6>
+                                <div class="row" v-if="selectedAddress.length > 0">
+                                    <div class="col-6" v-for="addr, index in selectedAddress" :key="index">
+                                        <div class="address-card border p-3 mb-3">
+                                            <h6>{{ addr.officeType === 'home' ? 'Home Address' : 'Office Address' }}</h6>
+                                            <p><strong>Street:</strong> {{ addr.street }}</p>
+                                            <p><strong>Landmark:</strong> {{ addr.landmark || 'N/A' }}</p>
+                                            <p><strong>City:</strong> {{ addr.city }}</p>
+                                            <p><strong>State:</strong> {{ addr.state }}</p>
+                                            <p><strong>Country:</strong> {{ addr.country }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p v-else>No addresses available.</p>
                             </div>
                         </div>
                     </div>
@@ -94,7 +106,6 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" @click="saveData" v-if="routes.name !=='list'">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             
@@ -102,50 +113,83 @@
         </div>
     </div>
 
-    <div class="col-12">
-        <div class="card">
-            <div class="card-title p-3 bg-body-secondary">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination float-end">
-                        <li class="page-item" v-for="link in users.links" v-if="!isFiltering">
-                            <a class="page-link"  v-show="link.url !== null" :class="link.active ? link.url === null ? 'active disabled' : 'active':''" href="#" @click="getAllUsers(link.url)">{{ decodeHtmlEntities(link.label) }}</a>
+    <div class="mx-4 col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-gradient p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">Staffs</h5>
+                    <div class="d-flex">
+                        <input type="text" class="form-control w-auto mx-3" placeholder="Search staff here ..." v-model="searchQuery"
+                        @change="handleSearch">
+                         <button class="btn btn-primary btn-sm" @click="navigateTo('/home/staff-add')">
+                            <i class="fas fa-plus me-2"></i>Add New
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" width="10%" class="fw-bold text-muted">#</th>
+                                <th scope="col" width="30%" class="fw-bold text-muted">Name</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted">Gender</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted">DOB</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted">Phone</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="users?.data?.length === 0">
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                                    <div class="fw-bold text-muted">No staff found.</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr v-for="user,index in users.data" :key="user.id" class="align-middle border-bottom">
+                                <td class="fw-bold">{{ users.per_page * (users.current_page-1)+index+1 }}</td>
+                                <td class="fw-500">{{ user.name }}</td>
+                                <td>{{ user.gender }}</td>
+                                <td>{{ user.dob ? new Date(user.dob).toISOString().split('T')[0].split('-').reverse().join('-') : '' }}</td>
+                                <td>{{ user.mobile }}</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#myModal" @click="editUser(user)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button  type="button" class="btn btn-outline-primary" v-if="user.role === 'ADMIN'"  @click="deleteUser(user)" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary" v-if="user.role === 'ADMIN'" title="Reset Password"   @click="resetPassword(user)">
+                                            <i class="fa fa-key"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3" v-if="users?.links">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end mb-0">
+                        <li class="page-item" v-for="link in users.links" :key="link.label+'_filtered'" :class="link.active ? 'active' : ''"
+                        v-if="searchQuery.trim()=== ''">
+                            <a class="page-link" href="#" @click.prevent="link.url && getAllUsers(link.url)" :disabled="!link.url">
+                                {{ decodeHtmlEntities(link.label) }}
+                            </a>
                         </li>
-                        <li class="page-item" v-for="link in users.links" v-else>
-                            <a class="page-link"  v-show="link.url !== null" :class="link.active ? link.url === null ? 'active disabled' : 'active':''" href="#" @click="emitPagination(link.url)">{{ decodeHtmlEntities(link.label) }}</a>
+                        <li class="page-item" v-for="link in users.links" :key="link.label+'_search'" :class="link.active ? 'active' : ''"
+                        v-else>
+                            <a class="page-link" href="#" @click.prevent="link.url && getUsersByName(link.url)" :disabled="!link.url">
+                                {{ decodeHtmlEntities(link.label) }}
+                            </a>
                         </li>
                     </ul>
                 </nav>
-            </div>
-            <div class="card-container py-3 px-3">
-                <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col px-3 p-3">#</th>
-                        <th scope="col p-3">First Name</th>
-                        <th scope="col p-3">Gender</th>
-                        <th scope="col p-3">DOB</th>
-                        <th scope="col p-3">Phone</th>
-                        <th scope="col p-3">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user,index in users.data">
-                        <th scope="row px-3">{{ users.per_page * (users.current_page-1)+index+1 }}</th>
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.gender }}</td>
-                        <td>{{ user.dob }}</td>
-                        <td>{{ user.mobile }}</td>
-                        <td>
-                            <button v-if="routes.name ==='update'" type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#myModal" @click="editUser(user)">Edit</button>
-                            <button v-if="routes.name ==='delete'" type="button" class="btn btn-outline-info"  @click="deleteUser(user)">Delete</button>
-                            <button v-if="routes.name ==='list'" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#myModal" @click="editUser(user)">View</button>
-                            <button v-if="routes.name ==='list'" type="button" class="btn btn-outline-dark mx-2" title="Click to reset password"  @click="resetPassword(user)">
-                                <i class="fa fa-key" aria-hidden="true"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -158,22 +202,16 @@
     import { showToast } from '../utils/toastr'
     import Swal from 'sweetalert2'
 
+    import { useRoute,useRouter } from 'vue-router';
+    const routes = useRoute();
+    const router = useRouter();
+
     import { Modal } from 'bootstrap'
     import required from './required.vue'
+    import debounce from 'lodash/debounce';
 
     const emit = defineEmits(['trigger']);
 
-
-    const props = defineProps({        
-        filteredData: {
-            type: Object,
-            default: {}
-        },
-        routes:{
-            type:Object,
-            default:{}
-        }
-        })
 
     const users = ref([])
 
@@ -195,33 +233,35 @@
     const dob = ref('')
     const mobile = ref('')
     const gender = ref('')
+    const profile_picture = ref('')
+    const role = ref('STUDENT')
+    const course = ref('')
+    const rollNo = ref('')
+    const university = ref('OSH - IMF')
+    const location = ref('active')
+    const visaType = ref('EDUCATION')
+    const visaStatus = ref('active')
+    const visaExpiryDate = ref('')
+    const insuranceStatus = ref('active')
+    const insuranceExpiryDate = ref('')
+    const designation = ref('')
     
-    
-
-    const isFiltering = computed(()=>{
-        return Object.keys(props.filteredData).length > 0 ? true : false
-    })
+    const isEditMode = ref(false)
+    const showBatch = ref(false)
+    const searchQuery = ref('')
 
 
 
     onMounted(()=>{
 
-        console.log('mounted in list')
-
-
-        if(Object.keys(props.filteredData).length > 0)
-        {
-            users.value = props.filteredData
-        }
-        else
-        {
-            getAllUsers()
-        }
+        getAllUsers()
 
         modalInstance = new Modal(myModalRef.value);
         myModalRef.value.addEventListener('hidden.bs.modal', () => {
             getAllUsers(lastInPage.value)
             selectedUser.value = null
+            showBatch.value = false
+            isEditMode.value = false
             selectedAddress.value = []
         })
 
@@ -240,6 +280,14 @@
         })
     }
 
+    const showAddModal = () => {
+        isEditMode.value = false
+        selectedUser.value = { name: '', username: '', email: '', mobile: '', dob: '', gender: '', address: [], profile_picture: '', role: 'STUDENT', course: '', rollNo: '', university: 'OSH - IMF', location: 'active', visaType: 'EDUCATION', visaStatus: 'active', visaExpiryDate: '', insuranceStatus: 'active', insuranceExpiryDate: '', designation: '' }
+        selectedAddress.value = [{ city: '', state: '', street: '', country: '', landmark: '', officeType: '' }]
+        showBatch.value = false
+        modalInstance.show()
+    }
+
     const  decodeHtmlEntities = (html) =>  {
     const textarea = document.createElement('textarea');
     textarea.innerHTML = html;
@@ -249,6 +297,8 @@
     const editUser = (user) =>{
         selectedUser.value = null
         selectedUser.value = user
+        isEditMode.value = true
+        showBatch.value = routes.name === 'list'
     }
 
     const addAddress = () => {
@@ -284,23 +334,51 @@
         
         if(newVal)
         {
-            selectedAddress.value = JSON.parse(newVal.address)
+            selectedAddress.value = newVal.address ? JSON.parse(newVal.address) : selectedAddress.value
             name.value = newVal.name
             username.value = newVal.username
             email.value = newVal.email
             dob.value = newVal.dob
             mobile.value = newVal.mobile
             gender.value = newVal.gender
+            profile_picture.value = newVal.profile_picture || ''
+            role.value = newVal.role || 'STUDENT'
+            course.value = newVal.course || ''
+            rollNo.value = newVal.rollNo || ''
+            university.value = newVal.university || 'OSH - IMF'
+            location.value = newVal.location || 'active'
+            visaType.value = newVal.visaType || 'EDUCATION'
+            visaStatus.value = newVal.visaStatus || 'active'
+            visaExpiryDate.value = newVal.visaExpiryDate || ''
+            insuranceStatus.value = newVal.insuranceStatus || 'active'
+            insuranceExpiryDate.value = newVal.insuranceExpiryDate || ''
+            designation.value = newVal.designation || ''
         }
         else{
-            selectedAddress.value = ''
+            selectedAddress.value = []
             name.value = ''
             username.value = ''
             email.value = ''
             dob.value = ''
             mobile.value = ''
             gender.value = ''
+            profile_picture.value = ''
+            role.value = 'STUDENT'
+            course.value = ''
+            rollNo.value = ''
+            university.value = 'OSH - IMF'
+            location.value = 'active'
+            visaType.value = 'EDUCATION'
+            visaStatus.value = 'active'
+            visaExpiryDate.value = ''
+            insuranceStatus.value = 'active'
+            insuranceExpiryDate.value = ''
+            designation.value = ''
         }
+    })
+
+    watch(searchQuery,(newVal)=>{
+        handleSearch();
     })
 
     const saveData = () =>{
@@ -312,6 +390,18 @@
         payload.mobile = mobile.value
         payload.dob = dob.value
         payload.gender = gender.value
+        payload.profile_picture = profile_picture.value
+        payload.role = role.value
+        payload.course = course.value
+        payload.rollNo = rollNo.value
+        payload.university = university.value
+        payload.location = location.value
+        payload.visaType = visaType.value
+        payload.visaStatus = visaStatus.value
+        payload.visaExpiryDate = visaExpiryDate.value
+        payload.insuranceStatus = insuranceStatus.value
+        payload.insuranceExpiryDate = insuranceExpiryDate.value
+        payload.designation = designation.value
 
         var mappings = {}
         mappings.name = 'Name'
@@ -426,30 +516,63 @@
         if(!error)
         {
             showToast({title:'Verified successfully',icon:'success'})
-            payload.id = selectedUser.value.id
+            
+            if(isEditMode.value && selectedUser.value?.id)
+            {
+                payload.id = selectedUser.value.id
 
-            const response = api.put(`${baseURL}/users/${payload.id}`,{
-                data : payload,
-                address : selectedAddress.value
-            }).then((response)=>{
+                const response = api.put(`${baseURL}/users/${payload.id}`,{
+                    data : payload,
+                    address : selectedAddress.value
+                }).then((response)=>{
 
-                if(response.data.status === 1)
-                {
-                    showToast({title:response.data.message, icon:'success'})
-                    setTimeout(() => {
-                        modalInstance.hide()
-                        selectedUser.value = null
-                    }, 1500);
-                }
-                else{
-                    showToast({title:response.data.message, icon:'error'})
-                }
-                
-            }).catch((error)=>{
-                console.log(error);
-                showToast({title:error, icon:'error'})
-            })
-
+                    if(response.data.status === 1)
+                    {
+                        showToast({title:response.data.message, icon:'success'})
+                        setTimeout(() => {
+                            modalInstance.hide()
+                            selectedUser.value = null
+                            showBatch.value = false
+                            isEditMode.value = false
+                            selectedAddress.value = []
+                        }, 1500);
+                    }
+                    else{
+                        showToast({title:response.data.message, icon:'error'})
+                    }
+                    
+                }).catch((error)=>{
+                    console.log(error);
+                    showToast({title:error.response?.data?.message || error, icon:'error'})
+                })
+            }
+            else
+            {
+                const response = api.post(`${baseURL}/users/create`,{
+                    data : payload,
+                    address : selectedAddress.value
+                }).then((response)=>{
+                    console.log(response)
+                    if(response.data.status === 1)
+                    {
+                        showToast({title:response.data.message, icon:'success'})
+                        setTimeout(() => {
+                            modalInstance.hide()
+                            selectedUser.value = null
+                            showBatch.value = false
+                            isEditMode.value = false
+                            selectedAddress.value = []
+                        }, 1500);
+                    }
+                    else{
+                        showToast({title:response.data.message, icon:'error'})
+                    }
+                    
+                }).catch((error)=>{
+                    console.log(error);
+                    showToast({title:error.response?.data?.message || error, icon:'error'})
+                })
+            }
         }
     }
 
@@ -533,7 +656,54 @@
         }
     }
 
-    
+    const getUsersByName = async (page=null)=>{        
+        const request = {}
+        request.name = searchQuery.value
+        
+        if(request.name.trim() === '')
+        {
+            getAllUsers()
+            return
+        }
+        else{
+            request.name = request.name.trim()
+            const url = page ? page : `${baseURL}/users/find` 
+            const response = await api.post(url,request).then((response) =>{
+                console.log(response);
+                            
+                if(response.data.status === 1)
+                {
+                    users.value = response.data.data
+                }
+                else{
+                    showToast({title:response.data.message, icon:'error'})    
+                }
+            })
+        }
+    }
+
+    const handleSearch = debounce(() => {
+        getUsersByName();
+    }, 500);
+
+    const  modeSelected = computed(()=>{
+        
+        if(routes.name === '/home/staff-home')
+        {
+            return 'STAFF'
+        }
+        else if(routes.name === '/home/student-home')
+        {
+            return 'STUDENT'
+        }
+        else{
+            return 'ADMIN'
+        }
+    })
+
+    const navigateTo = (url) => {
+        router.push(url)
+    }
 
 </script>
 
@@ -548,5 +718,32 @@
 
 .border{
     border: 1px solid #cccccc86;
+}
+
+.profile-view {
+    padding: 20px;
+}
+
+.section-title {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.profile-section p {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.address-card {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.address-card h6 {
+    margin-bottom: 10px;
+    color: #495057;
 }
 </style>

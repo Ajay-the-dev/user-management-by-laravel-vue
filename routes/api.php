@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BatchController;
+use App\Http\Controllers\ImageController;
 
 
 
@@ -24,5 +25,12 @@ Route::prefix('batches')->group(function () {
         Route::delete('/{id}', [BatchController::class, 'remove']);
 
         Route::post('/find', [BatchController::class, 'findByName']);
+
+});
+
+//images
+Route::prefix('images')->group(function () {
+        Route::post('/upload-image', [ImageController::class, 'upload']);
+        Route::post('/remove', [ImageController::class, 'deletePicture']);
 
 });

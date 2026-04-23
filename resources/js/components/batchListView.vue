@@ -1,5 +1,5 @@
 <template>
-<div class="row">
+<div class="row my-5 mx-2">
     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="extraLargeModalLabel" aria-hidden="true" ref="myModalRef">
         <div class="modal-dialog modal-xl"> <!-- Extra-large size -->
             <div class="modal-content">
@@ -68,7 +68,7 @@
                     <h5 class="mb-0 fw-bold text-dark">Batches</h5>
                     <div class="d-flex">
                         <input type="text" class="form-control w-auto mx-3" placeholder="Search batch here ..." v-model="searchQuery"
-                        @change="getBatchesByName">
+                        @change="handleSearch">
                         <button class="btn btn-primary btn-sm" @click="showAddModal">
                             <i class="fas fa-plus me-2"></i>New Batch
                         </button>
@@ -86,8 +86,16 @@
                                 <th scope="col" width="25%" class="fw-bold text-muted text-center">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="(batche, index) in batches.data" :key="batche.id" class="align-middle border-bottom">
+                        <tbody v-if="batches?.data?.length === 0">
+                            <tr>
+                                <td colspan="4" class="text-center py-4">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                                    <div class="fw-bold text-muted">No batches found.</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr v-for="(batche, index) in batches?.data" :key="batche.id" class="align-middle border-bottom">
                                 <td class="fw-bold">{{ batches.per_page * (batches.current_page - 1) + index + 1 }}</td>
                                 <td class="fw-500">{{ batche.name }}</td>
                                 <td>
@@ -118,11 +126,18 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer bg-light p-3" v-if="batches.links">
+            <div class="card-footer bg-light p-3" v-if="batches?.links">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end mb-0">
-                        <li class="page-item" v-for="link in batches.links" :key="link.label" :class="link.active ? 'active' : ''">
+                        <li class="page-item" v-for="link in batches.links" :key="link.label+'_batch'" :class="link.active ? 'active' : ''"
+                        v-if="searchQuery.trim()=== ''">
                             <a class="page-link" href="#" @click.prevent="link.url && getAllBatches(link.url)" :disabled="!link.url">
+                                {{ decodeHtmlEntities(link.label) }}
+                            </a>
+                        </li>
+                        <li class="page-item" v-for="link in batches.links" :key="link.label+'_filterBatch'" :class="link.active ? 'active' : ''"
+                        v-else>
+                            <a class="page-link" href="#" @click.prevent="link.url && getBatchesByName(link.url)" :disabled="!link.url">
                                 {{ decodeHtmlEntities(link.label) }}
                             </a>
                         </li>
@@ -278,6 +293,10 @@
         }
     })
 
+    watch(searchQuery,(newVal)=>{
+        handleSearch();
+    })
+
     const saveData = () =>{
 
         var payload = {}
@@ -405,21 +424,36 @@
         }
     }
 
-    const getBatchesByName = async ()=>{
-        console.log(baseURL);
-        
+    const getBatchesByName = async (page=null)=>{        
         const request = {}
         request.name = searchQuery.value
-        const response = await api.post(`${baseURL}/batches/find`,request).then((response) =>{
-            if(response.data.status === 1)
-            {
-                batches.value = response.data.data
-            }
-            else{
+        console.log('Search query:', request.name.trim()=== '');
+        
+        if(request.name.trim() === '')
+        {
+            getAllBatches()
+            return
+        }
+        else{
+            request.name = request.name.trim()
+            const url = page ? page : `${baseURL}/batches/find` 
+            const response = await api.post(url,request).then((response) =>{
+                console.log(response);
+                            
+                if(response.data.status === 1)
+                {
+                    batches.value = response.data.data
+                }
+                else{
                     showToast({title:response.data.message, icon:'error'})    
-            }
-        })
+                }
+            })
+        }
     }
+
+    const handleSearch = debounce(() => {
+        getBatchesByName();
+    }, 500);
 
     
 

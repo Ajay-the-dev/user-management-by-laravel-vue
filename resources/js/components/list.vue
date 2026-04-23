@@ -2,7 +2,7 @@
 <div class="mx-5 my-4">
     <h4 class="text-capitalize">{{ route.name }} user</h4>
     <br>
-    <Userfilter  @handleFilter="filteredData" ref="filterRef"/>
+    <Userfilter  @handleFilter="filteredData" ref="filterRef" v-if="false"/>
     <list-view :filteredData="filteredValues" v-if="showListView" @trigger="handleApi" :routes="route"/>
 </div>
 </template>

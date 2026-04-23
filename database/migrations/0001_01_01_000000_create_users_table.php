@@ -24,6 +24,17 @@ return new class extends Migration
             $table->string('password');
             $table->string('profile_picture')->nullable();
             $table->string('role')->default('STUDENT');
+            $table->string('course')->nullable();
+            $table->string('rollNo')->nullable();
+            $table->string('university')->nullable()->default('OSH - IMF');
+            $table->string('location')->default('active')->nullable();
+            $table->string('visaType')->default('EDUCATION');
+            $table->string('visaStatus')->default('active');
+            $table->date('visaExpiryDate')->nullable();
+            $table->string('insuranceStatus')->nullable()->default('active');
+            $table->date('insuranceExpiryDate')->nullable();
+            $table->string('designation')->nullable();
+            $table->string('department')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -25,7 +25,20 @@ class User extends Authenticatable
         'dob',
         'gender',
         'address',
-        'name'
+        'name',
+        'profile_picture',
+        'role',
+        'course',
+        'rollNo',
+        'university',
+        'location',
+        'visaType',
+        'visaStatus',
+        'visaExpiryDate',
+        'insuranceStatus',
+        'insuranceExpiryDate',
+        'designation',
+        'department',
     ];
 
     /**
@@ -48,6 +61,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'dob' => 'date',
+            'visaExpiryDate' => 'date',
+            'insuranceExpiryDate' => 'date',
         ];
     }
 }

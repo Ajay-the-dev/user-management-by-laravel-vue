@@ -19,20 +19,21 @@ class BatchSeeder extends Seeder
     {
         $faker = Faker::create();
         
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 5; $i++) {
+
 
             batches::create([
-                'name' => 'Batch ' . ($i + 1),
+                'name' => 'IMF ' . ($i + 1).' th Year',
                 'description' => $faker->sentence,
                 'start_date' => $faker->date('Y-m-d'),
                 'end_date' => $faker->date('Y-m-d'),
-                'status' => $faker->randomElement(['active', 'inactive']),
-                'is_passout' => $faker->boolean,
-                'created_by' => $faker->name,
-                'updated_by' => $faker->name,
+                'status' => 'active',
+                'is_passout' => false,
+                'created_by' => 1,
+                'updated_by' => 1,
                 'deleted_by' => null,
                 'image' => null,
-                'semester' => $faker->numberBetween(1, 10),
+                'semester' => ($i + 1) > 3 ? 6 : 2,
             ]);
         }
     }

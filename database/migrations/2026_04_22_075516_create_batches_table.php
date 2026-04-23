@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('deleted_by')->nullable();
             $table->string('image')->nullable();
             $table->integer('semester');
+            $table->integer('finalSemester')->nullable();
             $table->softDeletes();
         });
     }
