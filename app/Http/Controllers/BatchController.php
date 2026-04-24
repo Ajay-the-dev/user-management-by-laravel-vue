@@ -123,4 +123,14 @@ class BatchController extends Controller
             return response()->json(['message' => 'error while finding batch', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function getAll(Request $request)
+    {
+        try{
+            $batches = batches::orderBy('id', 'desc')->get();
+            return response()->json(['data' => $batches]);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'error while geting batch', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

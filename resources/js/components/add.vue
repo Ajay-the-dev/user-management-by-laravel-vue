@@ -26,11 +26,13 @@
           <div class="row g-3 mt-2">
             <div class="col-md-6">
               <label class="form-label">Name</label>
-              <input class="form-control" v-model="name">
+              <required/>
+              <input :class="['form-control',{ 'is-invalid border-danger-subtle': !isValidName(name) && name?.length > 0}]" v-model="name">
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Gender</label>
+              <required/>
               <select class="form-select" v-model="gender">
                 <option value="">Choose</option>
                 <option value="male">Male</option>
@@ -45,22 +47,40 @@
 
             <div class="col-md-6">
               <label class="form-label">Username</label>
-              <input class="form-control" v-model="username">
+              <required/>
+              <small class="text-danger mx-2" v-if="usernameExists&&username?.length ">( Already exists )</small>
+              <input type="text" :class="['form-control', { 'is-invalid border-danger-subtle': usernameExists ,'is-valid':!usernameExists && username?.length>0}]" v-model="username" @change="checkUsername">
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Password</label>
-              <input type="password" class="form-control" v-model="password">
+              <required/>
+              
+              <div class="input-group">
+                 <input :type="showPassword ? 'text' : 'password'" :class="['form-control']" v-model="password">
+                 <button class="btn btn-outline-primary" type="button" @click="showPassword = !showPassword">
+                    <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                 </button>
+              </div>
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Mobile</label>
-              <input class="form-control" v-model="mobile">
+              <input :class="['form-control', { 'is-invalid border-danger-subtle': !isValidPhoneNumber(mobile) && mobile?.length > 0 }]" v-model="mobile">
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Email</label>
-              <input class="form-control" v-model="email">
+              <input :class="['form-control', { 'is-invalid border-danger-subtle': !isValidEmail(email) && email?.length > 0 }]" v-model="email">
+            </div>
+             <div class="col-md-6">
+              <label class="form-label">HOSTEL</label>
+              <select name="location" class="form-control" id="location" v-model="location">
+                <option value="">Choose Location</option>
+                <option value="HA">Hostel A</option>
+                <option value="HB">Hostel B</option>
+                <option value="HC">Hostel C</option>
+              </select>
             </div>
 
             <div class="col-md-6" v-if="isStaff">
@@ -69,11 +89,11 @@
             </div>
 
             <!-- IMAGE -->
-            <div class="col-md-12" v-if="uploadedImage.length === 0 ">
+            <div class="col-md-12" v-if="uploadedImage?.length === 0 ">
                 <label class="form-label">Profile Picture</label>
                 <input type="file" class="form-control" @change="handleFileUpload">
             </div>
-            <div class="col-md-12" v-if="uploadedImage.length > 0">
+            <div class="col-md-12" v-if="uploadedImage?.length > 0">
                 <label class="form-label">Profile Picture Preview</label>
                 <div class="profile-preview-container card p-2 d-flex align-items-center w-50">
                     <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1" style="width: 10rem;">
@@ -95,32 +115,21 @@
 
           <div class="row g-3 mt-2">
             <div class="col-md-4">
-              <input class="form-control" placeholder="Street" v-model="street">
+                <label class="form-label">Street<required/></label>
+              <input type="text" :class="['form-control', { 'is-invalid border-danger-subtle': !isAddress(street) && street?.length > 0 }]" placeholder="Enter street here..." v-model="street">
             </div>
             <div class="col-md-4">
-              <input class="form-control" placeholder="City" v-model="city">
+              <label class="form-label">City<required/></label>
+              <input :class="['form-control', { 'is-invalid border-danger-subtle': !isAddress(city) && city?.length > 0 }]" placeholder="Enter city here..." v-model="city">
             </div>
             <div class="col-md-4">
-              <input class="form-control" placeholder="Country" v-model="country">
-            </div>
-
-            <div class="col-12">
-              <button class="btn btn-outline-primary btn-sm" @click="setAddress">
-                Set Address
-              </button>
-            </div>
-          </div>
-
-          <!-- ADDRESS DISPLAY -->
-          <div class="row mt-3" v-if="addresses.street">
-            <div class="col-md-4">
-              <div class="address-card">
-                <p>{{ addresses.street }}</p>
-                <small>{{ addresses.city }}, {{ addresses.country }}</small>
-                <button class="btn btn-sm text-danger" @click="clearAddress">
-                  Remove
-                </button>
-              </div>
+              <label class="form-label">Country<required/></label>
+              <select name="country" id="country" class="form-select" v-model="country">
+                <option value="">Choose Country</option>
+                <option v-for="country in countries" :key="country.code" :value="country.code">
+                  {{ country.name }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
@@ -133,16 +142,44 @@
 
           <div class="row g-3 mt-2">
             <div class="col-md-6">
-              <input class="form-control" placeholder="Course" v-model="course">
-            </div>
-            <div class="col-md-6">
+              <label class="form-label">Roll No<required/></label>
               <input class="form-control" placeholder="Roll No" v-model="rollNo">
             </div>
             <div class="col-md-6">
-              <input class="form-control" placeholder="University" v-model="university">
+              <label class="form-label">University<required/></label>
+              <select name="selecteduniversity" id="selectedUniversity" class="form-select" v-model="university">
+                <option value="">Choose University</option>
+                <option v-for="univ in medicalUniversities" :key="univ.code" :value="univ.code">
+                  {{ univ.name }}
+                </option>
+              </select>
             </div>
             <div class="col-md-6">
-              <input class="form-control" placeholder="Department" v-model="department">
+                <label class="form-label">Course<required/></label>
+               <select name="course" id="course" class="form-select" v-model="course">
+                <option value="">Choose Course</option>
+                <option v-for="medicalCourse in universityCourses[university]" :key="medicalCourse.code" :value="medicalCourse.code">
+                  {{ medicalCourse.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Department<required/></label>
+              <select name="department" id="department" class="form-select" v-model="department">
+                <option value="">Choose Department</option>
+                <option v-for="dept in medicalDepartments" :key="dept.code" :value="dept.code">
+                  {{ dept.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Batch<required/></label>
+              <select name="selectedBatch" id="selectedBatch" class="form-select" v-model="selectedBatch">
+                <option value="">Choose Batch</option>
+                <option v-for="batch in batches" :key="batch.id" :value="batch.id">
+                  {{ batch.name }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
@@ -200,7 +237,12 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Issuing Country</label>
-              <input class="form-control" v-model="passportIssuingCountry" placeholder="Enter issuing country">
+              <select name="passportIssuingCountry" id="passportIssuingCountry" class="form-select" v-model="passportIssuingCountry">
+                <option value="">Choose Country</option>
+                <option v-for="country in countries" :key="country.code" :value="country.code">
+                  {{ country.name }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
@@ -215,10 +257,12 @@
           <div class="row g-3 mt-2">
             <div class="col-md-6">
               <label class="form-label">Parent/Guardian Name</label>
-              <input class="form-control" v-model="parentName" placeholder="Enter parent/guardian name">
+              <required/>
+              <input type="text" :class="['form-control',{ 'is-invalid border-danger-subtle': !isValidName(parentName) && parentName?.length > 0}]" v-model="parentName" placeholder="Enter parent/guardian name">
             </div>
             <div class="col-md-6">
               <label class="form-label">Relation</label>
+              <required/>
               <select class="form-select" v-model="parentRelation">
                 <option value="">Choose</option>
                 <option value="Father">Father</option>
@@ -229,15 +273,39 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Parent Email</label>
-              <input type="email" class="form-control" v-model="parentEmail" placeholder="Enter parent email">
+              <input type="email" :class="['form-control', { 'is-invalid border-danger-subtle': !isValidEmail(parentEmail) && parentEmail?.length > 0 }]" v-model="parentEmail" placeholder="Enter parent email">
             </div>
             <div class="col-md-6">
               <label class="form-label">Parent Mobile</label>
-              <input class="form-control" v-model="parentMobile" placeholder="Enter parent mobile number">
+              <required/>
+              <input type="text" :class="['form-control', { 'is-invalid border-danger-subtle': !isValidPhoneNumber(parentMobile) && parentMobile?.length > 0 }]" v-model="parentMobile" placeholder="Enter parent mobile number">
+            </div>
+          </div>
+        </div>
+        <!-- INSURANCE DETAILS -->
+        <div class="form-section">
+          <div class="section-header">
+            <h6><i class="fa fa-shield-alt"></i> Insurance Details</h6>
+            <span class="section-sub">Health and travel insurance information</span>
+          </div>
+
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Insurance Status</label>
+              <select class="form-select" v-model="insuranceStatus">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="expired">Expired</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Insurance Expiry Date</label>
+              <input type="date" class="form-control" v-model="insuranceExpiryDate">
             </div>
           </div>
         </div>
       </div>
+
 
 
       <!-- VISA DETAILS -->
@@ -252,11 +320,25 @@
 </template>
 
 <script setup>
-import { ref,onMounted,computed } from 'vue'
+import { ref,onMounted,computed, watch } from 'vue'
 import { useRoute,useRouter } from 'vue-router';
 import { showToast } from '../utils/toastr'
 import api from '@/utils/axios'
 import required from './required.vue';
+import { useValidators } from "../utils/validator";
+import debounce from 'lodash/debounce';
+
+const {isValidPhoneNumber, isValidEmail, isValidName, isAddress, isValidUsername,isValidPassword} = useValidators();
+
+
+
+import { getMedicalUniversities, getMedicalCourses, getUniversityCourses,getMedicalDepartments,getCountries } from "../utils/dataHelper";
+
+const medicalUniversities = getMedicalUniversities()
+const universityCourses = getUniversityCourses()
+const medicalDepartments = getMedicalDepartments()
+const countries = getCountries()
+
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 const imageURL = import.meta.env.VITE_IMAGE_BASE_URL;
 
@@ -277,97 +359,89 @@ const dob = ref('')
 const email = ref('')
 const username = ref('')
 const mobile = ref('')
+const showPassword = ref(false)
 const password = ref('')
 const profile_picture = ref('')
-const role = ref('STUDENT')
+const role = ref('')
 const course = ref('')
 const rollNo = ref('')
-const university = ref('OSH - IMF')
-const location = ref('active')
-const visaType = ref('EDUCATION')
+const university = ref('')
+const location = ref('')
+
+const visaType = ref('')
 const visaStatus = ref('active')
 const visaExpiryDate = ref('')
+
 const insuranceStatus = ref('active')
 const insuranceExpiryDate = ref('')
+
+const passportNumber = ref('')
+const passportIssueDate = ref('')
+const passportExpiryDate = ref('')
+const passportIssuingCountry = ref('')
+
+
+const parentName = ref('')
+const parentRelation = ref('')
+const parentEmail = ref('')
+const parentMobile = ref('')
+
 const designation = ref('')
 const previewSrc = ref('')
+const department = ref('')
 
 
 const uploadedImage = ref('')
 const imageName = ref('')
 
+const usernameExists = ref(false)
+
+const batches = ref([])
+const selectedBatch = ref('')
+
 
 const resetAll = () =>{
 
-addresses.value =  {}
-street.value =  ''
-city.value =  ''
-country.value =  ''
-showAddress.value = false
-
-
-name.value =  ''
-    gender.value =  ''
-    dob.value =  ''
-    email.value =  ''
-    username.value =  ''
-    mobile.value =  ''
-    password.value =  ''
-    profile_picture.value = ''
-    role.value = 'STUDENT'
-    course.value = ''
-    rollNo.value = ''
-    university.value = 'OSH - IMF'
-    department.value = ''
-    location.value = 'active'
-    visaType.value = 'EDUCATION'
-    visaStatus.value = 'active'
-    visaExpiryDate.value = ''
-    insuranceStatus.value = 'active'
-    insuranceExpiryDate.value = ''
-    designation.value = ''
+  addresses.value =  {}
+  street.value =  ''
+  city.value =  ''
+  country.value =  ''
+  showAddress.value = false
+  name.value =  ''
+  gender.value =  ''
+  dob.value =  ''
+  email.value =  ''
+  username.value =  ''
+  mobile.value =  ''
+  password.value =  ''
+  profile_picture.value = ''
+  role.value = ''
+  course.value = ''
+  rollNo.value = ''
+  university.value = ''
+  department.value = ''
+  location.value = ''
+  visaType.value = 'EDUCATION'
+  visaStatus.value = 'active'
+  visaExpiryDate.value = ''
+  insuranceStatus.value = 'active'
+  insuranceExpiryDate.value = ''
+  designation.value = ''
+  passportExpiryDate.value = ''
+  passportIssueDate.value = ''
+  passportNumber.value = ''
+  passportIssuingCountry.value = ''
+  parentEmail.value = ''
+  parentName.value = ''
+  parentRelation.value = ''
+  parentMobile.value = ''
+  uploadedImage.value = ''
+  imageName.value = ''
+  usernameExists.value = false
 } 
 
 
-const setAddress = () => {
 
-    if(street.value.trim() === '')
-    {
-        showToast({title:'Please enter a street',icon:'error'})
-        return
-    }
-
-     if(city.value.trim() === '')
-    {
-        showToast({title:'Please enter a city',icon:'error'})
-        return
-    }
-
-    if(country.value.trim() === '')
-    {
-        showToast({title:'Please enter a country',icon:'error'})
-        return
-    }
-
-    addresses.value = {
-        street: street.value,
-        city: city.value,
-        country: country.value
-    }
-
-}
-
-
-const clearAddressFields = () =>{
-
-    street.value = ''
-    city.value = ''
-    country.value = ''
-}
-        
-const clearAddress = () =>{
-    addresses.value = {}
-}
 
 const addUser = () =>{
     
@@ -379,18 +453,42 @@ const addUser = () =>{
     userData.username = username.value
     userData.mobile = mobile.value
     userData.password = password.value
-    userData.profile_picture = profile_picture.value
-    userData.role = role.value
+    userData.profile_picture = uploadedImage.value
     userData.course = course.value
     userData.rollNo = rollNo.value
     userData.university = university.value
+
     userData.location = location.value
+    
+
     userData.visaType = visaType.value
     userData.visaStatus = visaStatus.value
     userData.visaExpiryDate = visaExpiryDate.value
+
     userData.insuranceStatus = insuranceStatus.value
     userData.insuranceExpiryDate = insuranceExpiryDate.value
-    userData.designation = designation.value
+    
+    userData.passportNumber = passportNumber.value
+    userData.passportIssueDate = passportIssueDate.value
+    userData.passportExpiryDate = passportExpiryDate.value
+    userData.passportIssuingCountry = passportIssuingCountry.value
+
+    userData.batchId = selectedBatch.value
+    
+    
+    if(isStaff.value)
+    {
+      userData.role = "STAFF"
+      userData.designation = designation.value
+    }
+    else{
+      userData.department = department.value
+      userData.role = "STUDENT"
+    }
+
+    console.log(userData);
+  
+    
 
     var mappings = {}
     mappings.name = 'Name'
@@ -402,7 +500,7 @@ const addUser = () =>{
     mappings.password = 'Password'
     mappings.role = 'Role'
 
-    var requiredFields = ['name', 'gender', 'dob', 'email', 'username', 'mobile', 'password', 'role']
+    var requiredFields = ['name', 'gender', 'username', 'password']
     var error = false
 
     for (const key of requiredFields) {
@@ -469,11 +567,79 @@ const addUser = () =>{
         }
     }
 
-    if(!addresses.value.street || !addresses.value.city || !addresses.value.country)
+    if(error)
     {
-        showToast({title:'Address not found ',icon:'error'})
-        error = true
+        return
     }
+
+    if(usernameExists.value)
+    {
+      showToast({title:'Username already exists',icon:'error'})
+        return
+    }
+
+    
+    if(!street.value || !city.value || !country.value)
+    {
+      showToast({title:'Incompleted address ',icon:'error'})
+        return
+    }
+
+    if(isStaff.value)
+    {
+      //staff
+      if(designation.value.trim() === '')
+      {
+        showToast({title:'Please enter designation for staff',icon:'error'})
+          return
+      }
+    }
+    else{
+      //student
+      if(rollNo.value.trim() === '')
+      {
+        showToast({title:'Please enter roll number for student',icon:'error'})
+          return
+      }
+
+      if(university.value.trim() === '')
+      {
+        showToast({title:'Please select university for student',icon:'error'})
+          return
+      }
+
+       if(department.value.trim() === '')
+      {
+        showToast({title:'Please select department for student',icon:'error'})
+          return
+      }
+
+       if(course.value.trim() === '')
+      {
+        showToast({title:'Please select course for student',icon:'error'})
+          return
+      }
+
+
+      if(parentName.value.trim() === ''  || parentMobile.value.trim() === '' || parentRelation.value.trim() === '')
+      {
+        showToast({title:'Please enter parent/guardian details completely for student',icon:'error'})
+          return
+      }
+
+       if(!isValidPhoneNumber(parentMobile.value))
+      {
+        showToast({title:'Invalid parent mobile number',icon:'error'})
+          return
+      }
+
+      if(selectedBatch.value==='')
+      {
+         showToast({title:'Choose a batch for the student',icon:'error'})
+          return
+      }
+    }
+
 
 
     if(!error)
@@ -481,7 +647,18 @@ const addUser = () =>{
         const response = api.post(`${baseURL}/users/create`,
             {
                 data : userData,
-                address: [addresses.value]
+                address: [{
+                    street: street.value,
+                    city: city.value,
+                    country: country.value,
+                    isStaff: isStaff.value?1:0
+                }],
+                parentDetails:[{
+                  name: parentName.value,
+                  relation: parentRelation.value,
+                  email: parentEmail.value,
+                  mobile: parentMobile.value
+                }]
             }
         ).then((response)=>{
             const data = response.data
@@ -536,15 +713,19 @@ const isValidDOB = (dob) => {
 
 onMounted(()=>{
     resetAll()
+    setTimeout(() => {
+      getAllBatches()
+    }, 500);
+    getUserDetails();
 })
 
  const  modeSelected = computed(()=>{
         
-        if(route.name === '/home/staff-add')
+        if(route.name === '/home/staff-add' ||  route.name === '/home/staff-edit')
         {
             return 'STAFF'
         }
-        else if(route.name === '/home/student-add')
+        else if(route.name === '/home/student-add' || route.name === '/home/student-edit')
         {
             return 'STUDENT'
         }
@@ -596,6 +777,105 @@ const removeImage = async() =>{
     }, 500);
     
 }
+
+watch(isStaff, (newVal) => {
+    if(newVal)
+    {
+        role.value = 'STAFF'
+        visaType.value = 'WORK'
+    }
+    else{
+        role.value = 'STUDENT'
+        visaType.value = 'EDUCATION'
+    }
+})
+
+const checkUsername = debounce(async() =>{
+    usernameExists.value = false
+    if(username.value.trim()?.length < 3) return
+    const req = {}
+    req.username = username.value
+    const response = await api.post('/users/checking',req).catch((err)=>{
+        return err;
+    })
+    if(response.data.exists)
+    {
+        usernameExists.value = true
+    }
+    else{
+        usernameExists.value = false
+    }
+    
+},500)
+
+  const getAllBatches = () =>{
+        const url =  `${baseURL}/batches/all` 
+        const response = api.get(url).then((response)=>{
+            batches.value = response.data.data
+        }).catch((error)=>{
+            console.log(error);
+            showToast({title:error,icon:'error'})
+        })
+
+    }
+
+
+    const getUserDetails = () =>{
+    if(route.name === '/home/student-edit' || route.name === '/home/student-edit')
+    {
+      const id = route.params.id
+      const url =  `${baseURL}/users/getById`
+      const req = {}
+      req.id = id 
+      const response = api.post(url,req).then((response)=>{
+        let userData = response.data
+        console.log(userData);
+          name.value = userData.name,
+          gender.value = userData.gender,
+          dob.value = userData.dob.split('T')[0],
+          email.value = userData.email,
+          username.value = userData.username,
+          mobile.value = userData.mobile,
+          password.value = userData.password,
+          profile_picture.value = userData.profile_picture,
+          course.value = userData.course,
+          rollNo.value = userData.rollNo,
+          university.value = userData.university,
+          location.value = userData.location,
+          street.value = userData.address[0].street
+          city.value = userData.address[0].city
+          country.value = userData.address[0].country
+
+          parentName.value = userData.parentDetails[0].name
+          parentRelation.value = userData.parentDetails[0].relation
+          parentEmail.value = userData.parentDetails[0].email
+          parentMobile.value = userData.parentDetails[0].mobile
+
+          visaType.value = userData.visaType,
+          visaStatus.value = userData.visaStatus,
+          visaExpiryDate.value = userData.visaExpiryDate,
+          insuranceStatus.value = userData.insuranceStatus,
+          insuranceExpiryDate.value = userData.insuranceExpiryDate,
+          passportNumber.value = userData.passportNumber,
+          passportIssueDate.value = userData.passportIssueDate,
+          passportExpiryDate.value = userData.passportExpiryDate,
+          passportIssuingCountry.value = userData.passportIssuingCountry,
+          department.value = userData.department,
+          designation.value = userData.designation,
+          parentName.value = userData.parentName,
+          parentRelation.value = userData.parentRelation,
+          parentEmail.value = userData.parentEmail,
+          parentMobile.value = userData.parentMobile,
+          uploadedImage.value = userData.profile_picture,
+          selectedBatch.value = userData.batchId
+      }).catch((error)=>{
+          console.log(error);
+          showToast({title:error,icon:'error'})
+      })
+      
+    }
+      
+    }
 
 </script>
 

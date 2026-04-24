@@ -17,6 +17,10 @@
                     <div class="col-12" v-if="selectedUser!==null">
                         <div class="profile-view">
                             <div class="profile-section mb-4">
+                                <div class="text-center mb-4">
+                                    <img v-if="profile_picture" :src="profile_picture" alt="Profile Picture" class="round-thumb-pw">
+                                    <img v-else src="http://localhost:8000/storage/images/profile.svg" alt="Profile Picture" class="round-thumb-pw">
+                                </div>
                                 <h6 class="section-title">Personal Information</h6>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -32,7 +36,7 @@
                                 </div>
                             </div>
 
-                            <div class="profile-section mb-4">
+                            <div class="profile-section mb-4" v-if="isStaff">
                                 <h6 class="section-title">Profile & Role</h6>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -54,6 +58,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <p><strong>University:</strong> {{ university }}</p>
+                                        <p><strong>Batch:</strong> {{ batchName || '-' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -85,20 +90,18 @@
                             </div>
 
                             <div class="profile-section">
-                                <h6 class="section-title">Addresses</h6>
-                                <div class="row" v-if="selectedAddress.length > 0">
-                                    <div class="col-6" v-for="addr, index in selectedAddress" :key="index">
-                                        <div class="address-card border p-3 mb-3">
-                                            <h6>{{ addr.officeType === 'home' ? 'Home Address' : 'Office Address' }}</h6>
-                                            <p><strong>Street:</strong> {{ addr.street }}</p>
-                                            <p><strong>Landmark:</strong> {{ addr.landmark || 'N/A' }}</p>
-                                            <p><strong>City:</strong> {{ addr.city }}</p>
-                                            <p><strong>State:</strong> {{ addr.state }}</p>
-                                            <p><strong>Country:</strong> {{ addr.country }}</p>
-                                        </div>
+                                <h6 class="section-title">Address</h6>
+                                <div class="row">
+                                     <div class="col-md-4">
+                                         <p><strong>Street:</strong> {{ street || '-' }}</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p><strong>City:</strong> {{ city || '-' }}</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p><strong>Country:</strong> {{ country || '-' }}</p>
                                     </div>
                                 </div>
-                                <p v-else>No addresses available.</p>
                             </div>
                         </div>
                     </div>
@@ -135,7 +138,7 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" width="10%" class="fw-bold text-muted">#</th>
+                                <th scope="col" width="5%" class="fw-bold text-muted text-center">#</th>
                                 <th scope="col" width="30%" class="fw-bold text-muted">Name</th>
                                 <th scope="col" width="15%" class="fw-bold text-muted" v-if="isStaff">Designation</th>
                                 <th scope="col" width="15%" class="fw-bold text-muted" v-else>Batch</th>
@@ -155,8 +158,11 @@
                         </tbody>
                         <tbody v-else>
                             <tr v-for="user,index in users.data" :key="user.id" class="align-middle border-bottom">
-                                <td class="fw-bold">{{ users.per_page * (users.current_page-1)+index+1 }}</td>
-                                <td class="fw-500">{{ user.name }}</td>
+                                <td class="fw-bold text-center">{{ users.per_page * (users.current_page-1)+index+1 }}</td>
+                                <td class="fw-500">
+                                  <img :src="user.profile_picture" alt="Profile Picture" class="round-thumb" v-if="user.profile_picture">
+                                  <img src="http://localhost:8000/storage/images/profile.svg" alt="Profile Picture" class="round-thumb" v-else> {{ user.name }}
+                                </td>
                                 <td v-if="isStaff">{{ user.designation }}</td>
                                 <td v-else>{{ user.batches?.name ?? 'NIL' }}</td>
                                 <td v-if="!isStaff">{{ user.department }}</td>
@@ -170,6 +176,9 @@
                                         </button>
                                         <button  type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN'"  @click="deleteUser(user)" title="Delete">
                                             <i class="fas fa-trash"></i>
+                                        </button>
+                                         <button type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN' && !isStaff" title="Edit"   @click="navigateTo('/home/student-edit/'+user.id)">
+                                            <i class="fa fa-edit"></i>
                                         </button>
                                         <button type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN'" title="Reset Password"   @click="resetPassword(user)">
                                             <i class="fa fa-key"></i>
@@ -253,10 +262,15 @@
     const insuranceStatus = ref('active')
     const insuranceExpiryDate = ref('')
     const designation = ref('')
+    const batchName = ref('')
+    const street = ref('')
+    const city = ref('')
+    const country = ref('')
     
     const isEditMode = ref(false)
     const showBatch = ref(false)
     const searchQuery = ref('')
+
 
 
 
@@ -348,7 +362,9 @@
         
         if(newVal)
         {
-            selectedAddress.value = newVal.address ? JSON.parse(newVal.address) : selectedAddress.value
+            console.log(newVal);
+            
+            // selectedAddress.value = newVal.address ? JSON.parse(newVal.address) : selectedAddress.value
             name.value = newVal.name
             username.value = newVal.username
             email.value = newVal.email
@@ -367,6 +383,11 @@
             insuranceStatus.value = newVal.insuranceStatus || 'active'
             insuranceExpiryDate.value = newVal.insuranceExpiryDate || ''
             designation.value = newVal.designation || ''
+            batchName.value = newVal.batches.name
+            street.value = newVal.address[0].street || ''
+            city.value = newVal.address[0].city || ''
+            country.value = newVal.address[0].country || ''
+
         }
         else{
             selectedAddress.value = []
@@ -377,17 +398,21 @@
             mobile.value = ''
             gender.value = ''
             profile_picture.value = ''
-            role.value = 'STUDENT'
+            role.value = ''
             course.value = ''
             rollNo.value = ''
-            university.value = 'OSH - IMF'
-            location.value = 'active'
-            visaType.value = 'EDUCATION'
-            visaStatus.value = 'active'
+            university.value = ''
+            location.value = ''
+            visaType.value = ''
+            visaStatus.value = ''
             visaExpiryDate.value = ''
-            insuranceStatus.value = 'active'
+            insuranceStatus.value = ''
             insuranceExpiryDate.value = ''
             designation.value = ''
+            batchName.value = ''
+            street.value = ''
+            city.value = ''
+            country.value = ''
         }
     })
 
@@ -395,200 +420,7 @@
         handleSearch();
     })
 
-    const saveData = () =>{
-
-        var payload = {}
-        payload.name = name.value
-        payload.username = username.value
-        payload.email = email.value
-        payload.mobile = mobile.value
-        payload.dob = dob.value
-        payload.gender = gender.value
-        payload.profile_picture = profile_picture.value
-        payload.role = role.value
-        payload.course = course.value
-        payload.rollNo = rollNo.value
-        payload.university = university.value
-        payload.location = location.value
-        payload.visaType = visaType.value
-        payload.visaStatus = visaStatus.value
-        payload.visaExpiryDate = visaExpiryDate.value
-        payload.insuranceStatus = insuranceStatus.value
-        payload.insuranceExpiryDate = insuranceExpiryDate.value
-        payload.designation = designation.value
-
-        var mappings = {}
-        mappings.name = 'Name'
-        mappings.gender = 'Gender'
-        mappings.dob = 'Date of Birth'
-        mappings.email = 'Email'
-        mappings.username = 'Username'
-        mappings.mobile = 'Mobile Number'
-
-        var error = false
-
-        for (const key in payload) {
-            if (Object.prototype.hasOwnProperty.call(payload, key)) {
-                
-                const element = payload[key];
-                if(element?.trim() === '')
-                {
-                    var entry = mappings[key]
-                    showToast({title:entry+' is empty',icon:'error'})
-                    error = true
-                    break
-                }
-                else{
-                    if(key == 'name')
-                    {
-                        const isValidName = nameRegex.test(element)
-                        if (!isValidName) {
-                            showToast({title:'Invalid first name',icon:'error'})
-                            error = true
-                            break
-                        }
-                    }
-
-                    if(key == 'dob')
-                    {
-                        const valid = isValidDOB(element)
-                        if(!valid)
-                        {
-                            showToast({title:'Invalid date of birth',icon:'error'})
-                            error = true
-                            break
-                        }
-                    }
-
-                    if(key == 'email')
-                    {
-                        const isValid = emailRegex.test(element)
-                        if (!isValid) {
-                            showToast({title:'Invalid email',icon:'error'})
-                            error = true
-                            break
-                        }
-                    }
-
-                    if(key == 'username')
-                    {
-                        const isValid = usernameRegex.test(element)
-                        if (!isValid) {
-                            showToast({title:'Invalid username ',icon:'error'})
-                            error = true
-                            break
-                        }
-                    }
-
-                    if(key == 'mobile')
-                    {
-                        const isValid = mobileRegex.test(element)
-                        if (!isValid) {
-                            showToast({title:'Invalid mobile number ',icon:'error'})
-                            error = true
-                            break
-                        }
-                    }
-                }
-            }
-        }
-
-        if(selectedAddress.value.length == 0)
-        {
-            showToast({title:'Address cannot be empty ',icon:'error'})
-            error = true   
-        }
-        else{
-
-            var mappings = {}
-            mappings.city = 'City'
-            mappings.country = 'Country'
-            mappings.landmark = 'Landmark'
-            mappings.officeType = 'Office type'
-            mappings.state = 'State'
-            mappings.street = 'Street'
-
-
-            for (let index = 0; index < selectedAddress.value.length; index++) {
-                const element = selectedAddress.value[index];                
-                for (const key in element) {
-                if (Object.prototype.hasOwnProperty.call(element, key)) {
-                    if(key != 'landmark')
-                    {
-                        if(element[key].trim() === '')
-                        {
-                            showToast({title:'ADDRESS 2:  '+(index+1)+' '+mappings[key]+' cannot be empty',icon:'error'})
-                            error = true
-                        }
-                    }
-                }}
-                
-            }
-            
-        }
-
-        if(!error)
-        {
-            showToast({title:'Verified successfully',icon:'success'})
-            
-            if(isEditMode.value && selectedUser.value?.id)
-            {
-                payload.id = selectedUser.value.id
-
-                const response = api.put(`${baseURL}/users/${payload.id}`,{
-                    data : payload,
-                    address : selectedAddress.value
-                }).then((response)=>{
-
-                    if(response.data.status === 1)
-                    {
-                        showToast({title:response.data.message, icon:'success'})
-                        setTimeout(() => {
-                            modalInstance.hide()
-                            selectedUser.value = null
-                            showBatch.value = false
-                            isEditMode.value = false
-                            selectedAddress.value = []
-                        }, 1500);
-                    }
-                    else{
-                        showToast({title:response.data.message, icon:'error'})
-                    }
-                    
-                }).catch((error)=>{
-                    console.log(error);
-                    showToast({title:error.response?.data?.message || error, icon:'error'})
-                })
-            }
-            else
-            {
-                const response = api.post(`${baseURL}/users/create`,{
-                    data : payload,
-                    address : selectedAddress.value
-                }).then((response)=>{
-                    console.log(response)
-                    if(response.data.status === 1)
-                    {
-                        showToast({title:response.data.message, icon:'success'})
-                        setTimeout(() => {
-                            modalInstance.hide()
-                            selectedUser.value = null
-                            showBatch.value = false
-                            isEditMode.value = false
-                            selectedAddress.value = []
-                        }, 1500);
-                    }
-                    else{
-                        showToast({title:response.data.message, icon:'error'})
-                    }
-                    
-                }).catch((error)=>{
-                    console.log(error);
-                    showToast({title:error.response?.data?.message || error, icon:'error'})
-                })
-            }
-        }
-    }
+   
 
 
     const nameRegex = /^[A-Za-z\s]{2,50}$/
@@ -728,7 +560,6 @@
         getAllUsers();
     })
 
-
 </script>
 
 <style scoped>
@@ -769,5 +600,23 @@
 .address-card h6 {
     margin-bottom: 10px;
     color: #495057;
+}
+
+.round-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.round-thumb-pw {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    display: inline-block;
 }
 </style>

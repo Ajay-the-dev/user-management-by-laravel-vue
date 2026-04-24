@@ -16,6 +16,9 @@ Route::prefix('users')->group(function () {
         Route::get('/{id}', [UserController::class, 'resetPassword']);
         Route::post('byParams', [UserController::class, 'filterByParams']);
         Route::post('/find', [UserController::class, 'findByName']);
+        Route::post('/checking',[UserController::class, 'isChecking']);
+        Route::post('/getById',[UserController::class, 'getUserById']);
+
 
 });
 
@@ -23,6 +26,7 @@ Route::prefix('users')->group(function () {
 Route::prefix('batches')->group(function () {
         Route::post('/create', [BatchController::class, 'store']);
         Route::get('/', [BatchController::class, 'index']);
+        Route::get('/all', [BatchController::class, 'getAll']);
         Route::put('/{id}', [BatchController::class, 'update']);
         Route::delete('/{id}', [BatchController::class, 'remove']);
 

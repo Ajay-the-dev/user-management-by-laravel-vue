@@ -48,21 +48,38 @@ class UserController extends Controller
     {
         try {
 
+
                 $validate = Validator::make($request->all(), [
-                    'data.name'      => 'required|string|max:255',
-                    'data.lname'     => 'required|string|max:255',
-                    'data.gender'    => 'required|in:male,female,other',
-                    'data.dob'       => 'required|date|before_or_equal:today',
-                    'data.email'     => 'email',
-                    'data.username'  => 'required|string|min:3|max:30',
-                    'data.mobile'    => 'digits:10-15',
-                    'data.password'  => 'required|string|min:8',
-                    'address'                      => 'required|array|min:1',
-                    'address.*.officeType'        => 'required|string',
-                    'address.*.street'            => 'required|string',
-                    'address.*.city'              => 'required|string',
-                    'address.*.state'             => 'required|string',
-                    'address.*.country'           => 'required|string',
+                    'data.name'                 => 'required|string|max:255',
+                    'data.username'             => 'required|string|min:3|max:30|unique:users,username',
+                    'data.email'                => 'required|email|unique:users,email',
+                    'data.mobile'               => 'nullable|string',
+                    'data.dob'                  => 'required|date',
+                    'data.gender'               => 'required|in:male,female,other',
+                    'data.password'             => 'required|string|min:8',
+                    'data.batchId'              => 'nullable|exists:batches,id',
+                    'data.course'               => 'nullable|string',
+                    'data.rollNo'               => 'nullable|string',
+                    'data.designation'          => 'nullable|string',
+                    'data.location'             => 'nullable|string',
+                    'data.department'           => 'nullable|string',
+                    'data.passportNumber'       => 'nullable|string',
+                    'data.passportExpiryDate'   => 'nullable|date',
+                    'data.passportIssuingCountry' => 'nullable|string',
+                    'data.passportIssueDate'    => 'nullable|date',
+                    'address'                   => 'nullable|array|min:1',
+                    'address.*.street'          => 'required|string',
+                    'address.*.city'            => 'required|string',
+                    'address.*.country'         => 'required|string',
+                    'parentDetails'             => 'nullable|array|min:1',
+                    'parentDetails.*.name'      => 'required|string',
+                    'parentDetails.*.relation'  => 'required|string',
+                    'parentDetails.*.mobile'     => 'required',
+                    'data.insuranceStatus'           => 'nullable|string',
+                    'data.insuranceExpiryDate'       => 'nullable|date',
+                    'data.university'                =>  'nullable|string',
+                    'data.visaType'                  => 'nullable|string',
+                    'data.visaStatus'                => 'nullable|string',
                 ]);
 
                 if ($validate->fails()) {
@@ -73,8 +90,8 @@ class UserController extends Controller
                     return response()->json($res);
                 }
 
-                // return response()->json($request->data['name']);
-                
+                $role = $request->input('isStaff') === '1' ? 'STAFF' : 'STUDENT';
+
                 $entry = User::create([
                     "name" => $request->input('data.name'),
                     "username" => $request->input('data.username'),
@@ -83,8 +100,28 @@ class UserController extends Controller
                     "mobile" => $request->input('data.mobile'),
                     "dob" => $request->input('data.dob'),
                     "gender" => $request->input('data.gender'),
-                    "address" => json_encode($request->input('address'))
+                    "address" => $request->input('address'),
+                    "batchId" => $request->input('data.batchId'),
+                    "role" => $role,
+                    "course" => $request->input('data.course'),
+                    "rollNo" => $request->input('data.rollNo'),
+                    "university" => $request->input('data.university'),
+                    "visaType" => $request->input('data.visaType'),
+                    "visaStatus" => $request->input('data.visaStatus'),
+                    "designation" => $request->input('data.designation'),
+                    "department" => $request->input('data.department'),
+                    "parentDetails" => $request->input('parentDetails'),
+                    "passportNumber" => $request->input('data.passportNumber'),
+                    "passportExpiryDate" => $request->input('data.passportExpiryDate'),
+                    "passportIssuingCountry" => $request->input('data.passportIssuingCountry'),
+                    "passportIssueDate" => $request->input('data.passportIssueDate'),
+                    "insuranceStatus" => $request->input('data.insuranceStatus'),
+                    "insuranceExpiryDate" => $request->input('data.insuranceExpiryDate'),
+                    "profile_picture"   =>  $request->input('data.profile_picture') ? $request->input('data.profile_picture') : null,
+                    "batchId" => $request->input('data.batchId'),
+                    "location" => $request->input('data.location')
                 ]);
+
 
                 
                 $res = new stdClass();
@@ -328,6 +365,40 @@ class UserController extends Controller
 
         } catch (\Throwable $e) {
             return response()->json(['message' => 'error while finding batch', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function isChecking(Request $request)
+    {
+        try {
+            $username = $request->input('username');
+            $field = $request->input('field') ? $request->input('field') : 'username';
+            if ($username) {
+                $exists = User::where($field, $username)->exists();
+                return response()->json(['exists' => $exists, 'status' => 1], 200);
+            } else {
+                return response()->json(['message' => "username is required", 'status' => 0], 200);
+            }
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'error while checking username', 'error' => $e->getMessage(), 'status' => 0], 500);
+        }
+    }
+
+
+    public function getUserById(Request $request)
+    {
+        try {
+
+        $id = $request->id;
+        $user = User::findOrFail($id);
+        $res = new stdClass();
+        $res->status = 1;
+        $res->message = 'fetched successfully';
+        $res->data = $user;
+        return response()->json($user);
+            
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'error while checking username', 'error' => $th->getMessage(), 'status' => 0], 500);
         }
     }
 }

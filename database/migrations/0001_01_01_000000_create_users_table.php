@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('email')->unique();
             $table->string('mobile')->unique();
-            $table->date('dob');
+            $table->date('dob')->nullable();
             $table->string('gender');
-            $table->json('address');
+            $table->json('address')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('profile_picture')->nullable();
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('course')->nullable();
             $table->string('rollNo')->nullable();
             $table->string('university')->nullable()->default('OSH - IMF');
-            $table->string('location')->default('active')->nullable();
+            $table->string('location')->default('HA')->nullable();
             $table->string('visaType')->default('EDUCATION');
             $table->string('visaStatus')->default('active');
             $table->date('visaExpiryDate')->nullable();
@@ -36,6 +36,11 @@ return new class extends Migration
             $table->date('insuranceExpiryDate')->nullable();
             $table->string('designation')->nullable();
             $table->string('department')->nullable();
+            $table->json('parentDetails')->nullable();
+            $table->string('passportNumber')->nullable();
+            $table->date('passportExpiryDate')->nullable();
+            $table->string('passportIssuingCountry')->nullable();
+            $table->date('passportIssueDate')->nullable();
             $table->foreign('batchId')->references('id')->on('batches')->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();

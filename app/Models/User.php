@@ -39,7 +39,12 @@ class User extends Authenticatable
         'insuranceExpiryDate',
         'designation',
         'department',
-        'batchId'
+        'batchId',
+        'parentDetails',
+        'passportNumber',
+        'passportExpiryDate',
+        'passportIssuingCountry',
+        'passportIssueDate',
     ];
 
     /**
@@ -65,6 +70,8 @@ class User extends Authenticatable
             'dob' => 'date',
             'visaExpiryDate' => 'date',
             'insuranceExpiryDate' => 'date',
+            'address' => 'array',
+            'parentDetails' => 'array',
         ];
     }
 

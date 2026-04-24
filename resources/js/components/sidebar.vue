@@ -6,8 +6,8 @@
       
       <!-- Logo / Header -->
       <div class="sidebar-header px-4 py-4">
-        <h5 class="fw-bold m-0">ERP System</h5>
-        <small class="text-muted">Admin Panel</small>
+        <h5 class="fw-bold m-0">FeeMo</h5>
+        <small class="text-white">Welcome !</small>
       </div>
 
       <!-- Menu -->
@@ -116,12 +116,18 @@ const sideMenuItems = ref(
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
         {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home',active:true}
+    ],
+    "/home/student-edit":[
+        {name:'Home',icon:'fa fa-home',route:'/home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home',active:true}
     ]
     }
 );
 
 const currentMenuItems = computed(() => {
-    const currentPath = route.path;
+    const currentPath = route.name;    
     const menuItemsForPath = Object.keys(sideMenuItems.value).find(item => item === currentPath);
     return menuItemsForPath ? sideMenuItems.value[menuItemsForPath] : [];
 });
