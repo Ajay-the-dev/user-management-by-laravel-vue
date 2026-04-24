@@ -81,47 +81,61 @@ const sideMenuItems = ref(
         {name:'Delete Student',icon:'fa fa-trash',route:'delete'},
         {name:'All Students',icon:'fa fa-list',route:'list'},
     ],
-    "/home":[
+    "home":[
         {name:'Home',icon:'fa fa-home',route:'home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
-        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home'}
     ],
     "/home/batch-home":[
         {name:'Home',icon:'fa fa-home',route:'/home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
-        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home'}
     ],
     "/home/staff-home":[
         {name:'Home',icon:'fa fa-home',route:'/home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
-        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home'}
     ],
      "/home/staff-add":[
         {name:'Home',icon:'fa fa-home',route:'/home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home',active:true},
-        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home'}
     ],
     "/home/student-home":[
         {name:'Home',icon:'fa fa-home',route:'/home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
-        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home'}
     ],
     "/home/student-add":[
         {name:'Home',icon:'fa fa-home',route:'/home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
-        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home',active:true}
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home',active:true},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home'}
     ],
     "/home/student-edit":[
         {name:'Home',icon:'fa fa-home',route:'/home'},
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
-        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home',active:true}
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home',active:true},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home'}
+    ],
+    "/home/fee-home":[
+        {name:'Home',icon:'fa fa-home',route:'/home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'},
+        {name:'Fee Management',icon:'fa fa-money-bill-trend-up',route:'/home/fee-home',active:true}
     ]
     }
 );

@@ -3,6 +3,8 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\FeeController;
+
 
 
 
@@ -40,3 +42,9 @@ Route::prefix('images')->group(function () {
         Route::post('/remove', [ImageController::class, 'deletePicture']);
 
 });
+
+//fee
+Route::prefix('fees')->group(function () {
+        Route::get('/', [FeeController::class, 'index']);
+});
+

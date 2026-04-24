@@ -5,7 +5,7 @@
       <div class="container-fluid form-container">
 
         <!-- HEADER -->
-        <div class="mb-4">
+        <div class="mb-4" v-if="!isEditing">
           <h4 class="fw-semibold">
             {{ isStaff ? 'Add Staff' : 'Add Student' }}
           </h4>
@@ -13,6 +13,16 @@
             {{ isStaff 
               ? 'Onboard new faculty and administrative personnel' 
               : 'Onboard new students' }}
+          </p>
+        </div>
+        <div class="mb-4" v-else>
+          <h4 class="fw-semibold">
+            {{ isStaff ? 'Edit Staff' : 'Edit Student' }}
+          </h4>
+          <p class="text-muted small">
+            {{ isStaff 
+              ? 'Edit onboarded faculties and administrative personnel' 
+              : 'Edit onboard students' }}
           </p>
         </div>
 
@@ -45,14 +55,14 @@
               <input type="date" class="form-control" v-model="dob">
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6" v-if="!isEditing">
               <label class="form-label">Username</label>
               <required/>
               <small class="text-danger mx-2" v-if="usernameExists&&username?.length ">( Already exists )</small>
               <input type="text" :class="['form-control', { 'is-invalid border-danger-subtle': usernameExists ,'is-valid':!usernameExists && username?.length>0}]" v-model="username" @change="checkUsername">
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6" v-if="!isEditing">
               <label class="form-label">Password</label>
               <required/>
               
@@ -74,7 +84,7 @@
               <input :class="['form-control', { 'is-invalid border-danger-subtle': !isValidEmail(email) && email?.length > 0 }]" v-model="email">
             </div>
              <div class="col-md-6">
-              <label class="form-label">HOSTEL</label>
+              <label class="form-label">Location</label>
               <select name="location" class="form-control" id="location" v-model="location">
                 <option value="">Choose Location</option>
                 <option value="HA">Hostel A</option>
@@ -91,11 +101,12 @@
             <!-- IMAGE -->
             <div class="col-md-12" v-if="uploadedImage?.length === 0 ">
                 <label class="form-label">Profile Picture</label>
+                <small class="mx-2 text-muted">(100KB - 2MB)</small>
                 <input type="file" class="form-control" @change="handleFileUpload">
             </div>
             <div class="col-md-12" v-if="uploadedImage?.length > 0">
                 <label class="form-label">Profile Picture Preview</label>
-                <div class="profile-preview-container card p-2 d-flex align-items-center w-50">
+                <div class="profile-preview-container card p-2 d-flex align-items-center w-50" >
                     <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1" style="width: 10rem;">
                     <button class="btn btn-sm btn-outline-danger remove-image-btn" @click="removeImage">
                         <i class="fa fa-times"></i> Remove
@@ -107,7 +118,7 @@
         </div>
 
         <!-- ADDRESS -->
-        <div class="form-section">
+        <div class="form-section" v-if="!isStaff">
           <div class="section-header">
             <h6><i class="fa fa-map-marker-alt"></i> Address</h6>
             <span class="section-sub">User address information</span>
@@ -184,7 +195,7 @@
           </div>
         </div>
 
-        <div class="form-section">
+        <div class="form-section" v-if="!isStaff">
           <div class="section-header">
             <h6><i class="fa fa-passport"></i> Visa Details</h6>
             <span class="section-sub">Immigration and visa information</span>
@@ -216,7 +227,7 @@
         </div>
   
         <!-- PASSPORT DETAILS -->
-        <div class="form-section">
+        <div class="form-section" v-if="!isStaff">
           <div class="section-header">
             <h6><i class="fa fa-id-card"></i> Passport Details</h6>
             <span class="section-sub">Passport information</span>
@@ -283,7 +294,7 @@
           </div>
         </div>
         <!-- INSURANCE DETAILS -->
-        <div class="form-section">
+        <div class="form-section" v-if="!isStaff">
           <div class="section-header">
             <h6><i class="fa fa-shield-alt"></i> Insurance Details</h6>
             <span class="section-sub">Health and travel insurance information</span>
@@ -311,8 +322,17 @@
       <!-- VISA DETAILS -->
 
       <div class="action-bar bg-body-secondary d-flex justify-content-end p-4">
-        <button class="btn btn-primary" @click="addUser">
-          Save User
+        <button class="btn btn-primary" @click="addOrUpdateUser" v-if="!isEditing">
+          <i class="fa fa-save mx-2"></i>Save 
+        </button>
+        <button class="btn btn-primary" @click="addOrUpdateUser" v-else>
+          <i class="fa fa-save mx-2"></i>Update 
+        </button>
+        <button class="btn btn-primary" @click="goBack">
+          Back 
+        </button>
+        <button class="btn btn-primary" @click="cancelStudent" v-if="!isEditing">
+          Reset 
         </button>
       </div>
     </div>
@@ -327,6 +347,9 @@ import api from '@/utils/axios'
 import required from './required.vue';
 import { useValidators } from "../utils/validator";
 import debounce from 'lodash/debounce';
+import Swal from 'sweetalert2'
+
+
 
 const {isValidPhoneNumber, isValidEmail, isValidName, isAddress, isValidUsername,isValidPassword} = useValidators();
 
@@ -443,7 +466,7 @@ const resetAll = () =>{
 
 
 
-const addUser = () =>{
+const addOrUpdateUser = () =>{
     
     var userData = {}
     userData.name = name.value
@@ -500,7 +523,19 @@ const addUser = () =>{
     mappings.password = 'Password'
     mappings.role = 'Role'
 
-    var requiredFields = ['name', 'gender', 'username', 'password']
+    if(isStaff)
+    {
+      if(isEditing.value)
+      {
+        var requiredFields = ['name', 'gender']
+      }
+      else{
+        var requiredFields = ['name', 'gender', 'username', 'password']
+      }
+    }
+    else{
+      var requiredFields = ['name', 'gender', 'username', 'password']
+    }
     var error = false
 
     for (const key of requiredFields) {
@@ -579,12 +614,7 @@ const addUser = () =>{
     }
 
     
-    if(!street.value || !city.value || !country.value)
-    {
-      showToast({title:'Incompleted address ',icon:'error'})
-        return
-    }
-
+    
     if(isStaff.value)
     {
       //staff
@@ -595,6 +625,12 @@ const addUser = () =>{
       }
     }
     else{
+
+      if(!street.value || !city.value || !country.value)
+      {
+        showToast({title:'Incompleted address ',icon:'error'})
+          return
+      }
       //student
       if(rollNo.value.trim() === '')
       {
@@ -644,41 +680,64 @@ const addUser = () =>{
 
     if(!error)
     {
-        const response = api.post(`${baseURL}/users/create`,
-            {
-                data : userData,
-                address: [{
-                    street: street.value,
-                    city: city.value,
-                    country: country.value,
-                    isStaff: isStaff.value?1:0
-                }],
-                parentDetails:[{
-                  name: parentName.value,
-                  relation: parentRelation.value,
-                  email: parentEmail.value,
-                  mobile: parentMobile.value
-                }]
-            }
-        ).then((response)=>{
-            const data = response.data
-
-            console.log(response);
-            
-
-            if(data.status === 1)
-            {
-                showToast({title:data.message,icon:'success'})
-                resetAll()
-            }
-            else{
-                showToast({title:data.message,icon:'error'})
-            }
-
-            
-        }).catch((error)=>{
-            console.log(error);
+      if(isEditing.value)
+      {
+        const response = api.put(`${baseURL}/users/${route.params.id}`,{
+          data : userData,
+            address: [{
+                street: street.value,
+                city: city.value,
+                country: country.value,
+              }],
+              parentDetails:[{
+                name: parentName.value,
+                relation: parentRelation.value,
+                email: parentEmail.value,
+                mobile: parentMobile.value
+              }],
+              isStaff: isStaff.value?1:0
+        }).then((response)=>{
+          const data = response.data
+          if(data.status === 1)
+          {
+              showToast({title:data.message,icon:'success'})
+              resetAll()
+          }
+          else{
+              showToast({title:data.message,icon:'error'})
+          }
         })
+      }
+      else{
+        const response = api.post(`${baseURL}/users/create`,
+        {
+            data : userData,
+            address: [{
+                street: street.value,
+                city: city.value,
+                country: country.value,
+            }],
+            parentDetails:[{
+              name: parentName.value,
+              relation: parentRelation.value,
+              email: parentEmail.value,
+              mobile: parentMobile.value
+            }],
+            isStaff: isStaff.value?1:0
+        }).then((response)=>{
+          const data = response.data
+          if(data.status === 1)
+          {
+              showToast({title:data.message,icon:'success'})
+              resetAll()
+          }
+          else{
+              showToast({title:data.message,icon:'error'})
+          }
+        }).catch((error)=>{
+              console.log(error);
+        })
+      }
     }
 
 
@@ -742,7 +801,7 @@ const handleFileUpload = async(event) => {
     const file = event.target.files[0];
     if (!file) return;
     const isValidType = file.type === 'image/jpeg' || file.type === 'image/jpg';
-    const minSize = 100 * 1024; // 100KB in bytes
+    const minSize = 100 * 1024; // 10KB in bytes
     const maxSize = 2048 * 1024; // 2MB in bytes
     const isValidSize = file.size >= minSize && file.size <= maxSize;
     if (!isValidType || !isValidSize) {
@@ -829,45 +888,41 @@ const checkUsername = debounce(async() =>{
       req.id = id 
       const response = api.post(url,req).then((response)=>{
         let userData = response.data
-        console.log(userData);
-          name.value = userData.name,
-          gender.value = userData.gender,
-          dob.value = userData.dob.split('T')[0],
-          email.value = userData.email,
-          username.value = userData.username,
-          mobile.value = userData.mobile,
-          password.value = userData.password,
-          profile_picture.value = userData.profile_picture,
-          course.value = userData.course,
-          rollNo.value = userData.rollNo,
-          university.value = userData.university,
-          location.value = userData.location,
-          street.value = userData.address[0].street
-          city.value = userData.address[0].city
-          country.value = userData.address[0].country
+        name.value = userData.name,
+        gender.value = userData.gender,
+        dob.value = userData.dob.split('T')[0],
+        email.value = userData.email,
+        username.value = userData.username,
+        mobile.value = userData.mobile,
+        password.value = userData.password,
+        profile_picture.value = userData.profile_picture,
+        course.value = userData.course,
+        rollNo.value = userData.rollNo,
+        university.value = userData.university,
+        location.value = userData.location,
+        street.value = userData.address[0].street
+        city.value = userData.address[0].city
+        country.value = userData.address[0].country
 
-          parentName.value = userData.parentDetails[0].name
-          parentRelation.value = userData.parentDetails[0].relation
-          parentEmail.value = userData.parentDetails[0].email
-          parentMobile.value = userData.parentDetails[0].mobile
+        parentName.value = userData.parentDetails[0].name
+        parentRelation.value = userData.parentDetails[0].relation
+        parentEmail.value = userData.parentDetails[0].email
+        parentMobile.value = userData.parentDetails[0].mobile
 
-          visaType.value = userData.visaType,
-          visaStatus.value = userData.visaStatus,
-          visaExpiryDate.value = userData.visaExpiryDate,
-          insuranceStatus.value = userData.insuranceStatus,
-          insuranceExpiryDate.value = userData.insuranceExpiryDate,
-          passportNumber.value = userData.passportNumber,
-          passportIssueDate.value = userData.passportIssueDate,
-          passportExpiryDate.value = userData.passportExpiryDate,
-          passportIssuingCountry.value = userData.passportIssuingCountry,
-          department.value = userData.department,
-          designation.value = userData.designation,
-          parentName.value = userData.parentName,
-          parentRelation.value = userData.parentRelation,
-          parentEmail.value = userData.parentEmail,
-          parentMobile.value = userData.parentMobile,
-          uploadedImage.value = userData.profile_picture,
-          selectedBatch.value = userData.batchId
+        visaType.value = userData.visaType,
+        visaStatus.value = userData.visaStatus,
+        visaExpiryDate.value = userData.visaExpiryDate,
+        insuranceStatus.value = userData.insuranceStatus,
+        insuranceExpiryDate.value = userData.insuranceExpiryDate,
+        passportNumber.value = userData.passportNumber,
+        passportIssueDate.value = userData.passportIssueDate,
+        passportExpiryDate.value = userData.passportExpiryDate,
+        passportIssuingCountry.value = userData.passportIssuingCountry,
+        department.value = userData.department,
+        designation.value = userData.designation,
+        
+        uploadedImage.value = userData.profile_picture,
+        selectedBatch.value = userData.batchId
       }).catch((error)=>{
           console.log(error);
           showToast({title:error,icon:'error'})
@@ -877,6 +932,41 @@ const checkUsername = debounce(async() =>{
       
     }
 
+    const isEditing = computed(()=>{
+      return route.name === '/home/student-edit' || route.name === '/home/student-edit'
+    })
+
+    const cancelStudent = async() =>{
+      const result = await Swal.fire({
+            title: 'Confirm',
+            text: 'Changes will not be saved',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Proceed',
+            cancelButtonText: 'Cancel',
+        })
+
+        if(result.isConfirmed)
+        {
+          router.go(0)
+        }
+    }
+
+    const goBack = async() =>{
+      const result = await Swal.fire({
+            title: 'Confirm',
+            text: 'Changes will not be saved',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Go back',
+            cancelButtonText: 'Cancel',
+        })
+
+        if(result.isConfirmed)
+        {
+          router.go(-1)
+        }
+    }
 </script>
 
 <style scoped>
@@ -893,7 +983,7 @@ const checkUsername = debounce(async() =>{
 
 .form-container {
   max-width: 1100px;
-  margin-left: 5rem;
+  margin-left: 2rem;
   padding: 20px;
 }
 

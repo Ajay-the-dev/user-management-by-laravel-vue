@@ -65,6 +65,11 @@ const routes = [
         path:'student-add',
         name:'/home/student-add',
         component: () => import('@/components/add.vue'),
+      },
+      {
+        path:'fee-home',
+        name:'/home/fee-home',
+        component: () => import('@/components/fee/feeHome.vue'),
       }
     ]
   }

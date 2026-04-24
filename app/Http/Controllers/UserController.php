@@ -48,6 +48,7 @@ class UserController extends Controller
     {
         try {
 
+                // return response()->json($request->all());
 
                 $validate = Validator::make($request->all(), [
                     'data.name'                 => 'required|string|max:255',
@@ -56,7 +57,7 @@ class UserController extends Controller
                     'data.mobile'               => 'nullable|string',
                     'data.dob'                  => 'required|date',
                     'data.gender'               => 'required|in:male,female,other',
-                    'data.password'             => 'required|string|min:8',
+                    'data.password'             => 'nullable',
                     'data.batchId'              => 'nullable|exists:batches,id',
                     'data.course'               => 'nullable|string',
                     'data.rollNo'               => 'nullable|string',
@@ -67,14 +68,14 @@ class UserController extends Controller
                     'data.passportExpiryDate'   => 'nullable|date',
                     'data.passportIssuingCountry' => 'nullable|string',
                     'data.passportIssueDate'    => 'nullable|date',
-                    'address'                   => 'nullable|array|min:1',
-                    'address.*.street'          => 'required|string',
-                    'address.*.city'            => 'required|string',
-                    'address.*.country'         => 'required|string',
+                    'address'                   => 'nullable',
+                    'address.*.street'          => 'nullable|string',
+                    'address.*.city'            => 'nullable|string',
+                    'address.*.country'         => 'nullable|string',
                     'parentDetails'             => 'nullable|array|min:1',
-                    'parentDetails.*.name'      => 'required|string',
-                    'parentDetails.*.relation'  => 'required|string',
-                    'parentDetails.*.mobile'     => 'required',
+                    'parentDetails.*.name'      => 'nullable|string',
+                    'parentDetails.*.relation'  => 'nullable|string',
+                    'parentDetails.*.mobile'     => 'nullable',
                     'data.insuranceStatus'           => 'nullable|string',
                     'data.insuranceExpiryDate'       => 'nullable|date',
                     'data.university'                =>  'nullable|string',
@@ -90,7 +91,7 @@ class UserController extends Controller
                     return response()->json($res);
                 }
 
-                $role = $request->input('isStaff') === '1' ? 'STAFF' : 'STUDENT';
+                $role = $request->input('isStaff') === 1 ? 'STAFF' : 'STUDENT';
 
                 $entry = User::create([
                     "name" => $request->input('data.name'),
@@ -176,18 +177,36 @@ class UserController extends Controller
             if($user)
             {
                 $validate = Validator::make($request->all(), [
-                        'data.name'      => 'required|string|max:255',
-                        'data.gender'    => 'required|in:male,female,other',
-                        'data.dob'       => 'required|date|before_or_equal:today',
-                        'data.email'     => 'email',
-                        'data.username'  => 'required|string|min:3|max:30',
-                        'data.mobile'    => 'digits:10-15',
-                        'address'                      => 'required|array|min:1',
-                        'address.*.officeType'        => 'required|string',
-                        'address.*.street'            => 'required|string',
-                        'address.*.city'              => 'required|string',
-                        'address.*.state'             => 'required|string',
-                        'address.*.country'           => 'required|string',
+                    'data.name'                 => 'required|string|max:255',
+                    'data.username'             => 'required|string|min:3|max:30',
+                    'data.email'                => 'required|email',
+                    'data.mobile'               => 'nullable|string',
+                    'data.dob'                  => 'required|date',
+                    'data.gender'               => 'required|in:male,female,other',
+                    'data.password'             => 'nullable',
+                    'data.batchId'              => 'nullable|exists:batches,id',
+                    'data.course'               => 'nullable|string',
+                    'data.rollNo'               => 'nullable|string',
+                    'data.designation'          => 'nullable|string',
+                    'data.location'             => 'nullable|string',
+                    'data.department'           => 'nullable|string',
+                    'data.passportNumber'       => 'nullable|string',
+                    'data.passportExpiryDate'   => 'nullable|date',
+                    'data.passportIssuingCountry' => 'nullable|string',
+                    'data.passportIssueDate'    => 'nullable|date',
+                    'address'                   => 'nullable',
+                    'address.*.street'          => 'nullable|string',
+                    'address.*.city'            => 'nullable|string',
+                    'address.*.country'         => 'nullable|string',
+                    'parentDetails'             => 'nullable|array|min:1',
+                    'parentDetails.*.name'      => 'nullable|string',
+                    'parentDetails.*.relation'  => 'nullable|string',
+                    'parentDetails.*.mobile'     => 'nullable',
+                    'data.insuranceStatus'           => 'nullable|string',
+                    'data.insuranceExpiryDate'       => 'nullable|date',
+                    'data.university'                =>  'nullable|string',
+                    'data.visaType'                  => 'nullable|string',
+                    'data.visaStatus'                => 'nullable|string',
                     ]);
     
                 if ($validate->fails()) {
@@ -198,7 +217,7 @@ class UserController extends Controller
                         return response()->json($res);
                 }
 
-
+                $user->role = $request->input('isStaff') === 1 ? 'STAFF' : 'STUDENT';
                 $user->name = $request->input('data.name');
                 $user->username = $request->input('data.username');
                 $user->email = $request->input('data.email');
@@ -206,6 +225,28 @@ class UserController extends Controller
                 $user->mobile = $request->input('data.mobile');
                 $user->gender = $request->input('data.gender');
                 $user->address = $request->input('address');
+                $user->batchId = $request->input('data.batchId');
+                $user->course = $request->input('data.course');
+                $user->rollNo = $request->input('data.rollNo');
+                $user->university = $request->input('data.university');
+                $user->visaType = $request->input('data.visaType');
+                $user->visaStatus = $request->input('data.visaStatus');
+                $user->designation = $request->input('data.designation');
+                $user->department = $request->input('data.department');
+                $user->location = $request->input('data.location');
+                $user->parentDetails = $request->input('parentDetails');
+                $user->passportNumber = $request->input('data.passportNumber');
+                $user->passportExpiryDate = $request->input('data.passportExpiryDate');
+                $user->passportIssuingCountry = $request->input('data.passportIssuingCountry');
+                $user->passportIssueDate = $request->input('data.passportIssueDate');
+                $user->insuranceStatus = $request->input('data.insuranceStatus');
+                $user->insuranceExpiryDate = $request->input('data.insuranceExpiryDate');
+                if ($request->input('data.password')) {
+                    $user->password = bcrypt($request->input('data.password'));
+                }
+                if ($request->input('data.profile_picture')) {
+                    $user->profile_picture = $request->input('data.profile_picture');
+                }
 
                 $user->save();
 

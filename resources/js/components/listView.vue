@@ -40,7 +40,6 @@
                                 <h6 class="section-title">Profile & Role</h6>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <p><strong>Profile Picture:</strong> {{ profile_picture || 'N/A' }}</p>
                                         <p><strong>Role:</strong> {{ role }}</p>
                                     </div>
                                     <div class="col-md-6">
@@ -49,7 +48,7 @@
                                 </div>
                             </div>
 
-                            <div class="profile-section mb-4" v-if="modeSelected === 'STUDENT'">
+                            <div class="profile-section mb-4" v-if="!isStaff">
                                 <h6 class="section-title">Academic Information</h6>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -63,7 +62,7 @@
                                 </div>
                             </div>
 
-                            <div class="profile-section mb-4">
+                            <div class="profile-section mb-4" v-if="!isStaff">
                                 <h6 class="section-title">Location & Visa</h6>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -77,7 +76,7 @@
                                 </div>
                             </div>
 
-                            <div class="profile-section mb-4">
+                            <div class="profile-section mb-4" v-if="!isStaff">
                                 <h6 class="section-title">Insurance</h6>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -89,7 +88,7 @@
                                 </div>
                             </div>
 
-                            <div class="profile-section">
+                            <div class="profile-section" v-if="!isStaff">
                                 <h6 class="section-title">Address</h6>
                                 <div class="row">
                                      <div class="col-md-4">
@@ -372,10 +371,10 @@
             mobile.value = newVal.mobile
             gender.value = newVal.gender
             profile_picture.value = newVal.profile_picture || ''
-            role.value = newVal.role || 'STUDENT'
+            role.value = newVal.role 
             course.value = newVal.course || ''
             rollNo.value = newVal.rollNo || ''
-            university.value = newVal.university || 'OSH - IMF'
+            university.value = newVal.university || ''
             location.value = newVal.location || 'active'
             visaType.value = newVal.visaType || 'EDUCATION'
             visaStatus.value = newVal.visaStatus || 'active'
@@ -383,7 +382,7 @@
             insuranceStatus.value = newVal.insuranceStatus || 'active'
             insuranceExpiryDate.value = newVal.insuranceExpiryDate || ''
             designation.value = newVal.designation || ''
-            batchName.value = newVal.batches.name
+            batchName.value = newVal?.batches?.name || ''
             street.value = newVal.address[0].street || ''
             city.value = newVal.address[0].city || ''
             country.value = newVal.address[0].country || ''
