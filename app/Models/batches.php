@@ -24,4 +24,9 @@ class batches extends Model
         'image',
         'semester'
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'batchId');
+    }
 }

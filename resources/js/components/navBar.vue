@@ -1,21 +1,45 @@
 <template>
-<div>
-    <div class="row">
-        <div class="col-12">
-            <nav class="navbar navbar-light bg-light">
-                <span class="navbar-brand mb-0 h1 p-3 h-100">Welcome back, {{ userStore.name.charAt(0).toUpperCase() + userStore.name.slice(1) }}</span>
-                <div class="dropdown">
-                    <button class="btn mx-5 dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ userStore.name }}
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="#" @click="logout">Logout</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
+  <div class="topbar d-flex align-items-center justify-content-between px-4">
+    
+    <!-- Left: Welcome -->
+    <div>
+      <h6 class="mb-0 fw-semibold">
+        Welcome back,
+        <span class="username">
+          {{ formattedName }}
+        </span>
+      </h6>
+      <small class="text-muted">Here’s what’s happening today</small>
     </div>
-</div>
+
+    <!-- Right: Profile -->
+    <div class="dropdown">
+      <div 
+        class="profile d-flex align-items-center"
+        data-bs-toggle="dropdown"
+      >
+        <div class="avatar">
+          {{ userStore.name.charAt(0).toUpperCase() }}
+        </div>
+        <span class="ms-2 d-none d-md-block">{{ userStore.name }}</span>
+        <i class="fa fa-chevron-down ms-2 small"></i>
+      </div>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li class="dropdown-header text-muted">
+          Signed in as<br>
+          <strong>{{ userStore.name }}</strong>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="#" @click="logout">
+            <i class="fa fa-sign-out me-2"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
 </template>
 
 <script setup>

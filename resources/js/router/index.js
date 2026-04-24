@@ -54,6 +54,11 @@ const routes = [
       {
         path:'student-home',
         name:'/home/student-home',
+        component: () => import('@/components/listView.vue'),
+      },
+      {
+        path:'student-add',
+        name:'/home/student-add',
         component: () => import('@/components/add.vue'),
       }
     ]

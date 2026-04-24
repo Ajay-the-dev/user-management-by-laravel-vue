@@ -1,20 +1,45 @@
 <template>
-    <div class="row">
-            <div class="col-3 bg-body-secondary vh-100 d-flex">
-                <div class="row align-content-center">
-                    <div v-for="side in currentMenuItems" class="bg-dark-subtle col-12 px-5 py-3 menu-item" @click="router.push(side.route)" :class="route.name === side.route || side.active ? 'menu-item-active':''">
-                        <i :class="side.icon+' mx-2'" aria-hidden="true"></i>{{ side.name }}
-                    </div>
-                    <div class="bg-dark-subtle col-12 px-5 py-3 menu-item-danger mt" @click="logout">
-                        <i class="fa fa-sign-out" aria-hidden="true"></i>
-                        Logout {{ route.path }}
-                    </div>
-                </div>
-            </div>
-            <div class="col-8">
-                <router-view/>
-            </div>
+  <div class="row g-0">
+    
+    <!-- Sidebar -->
+    <div class="col-3 sidebar d-flex flex-column">
+      
+      <!-- Logo / Header -->
+      <div class="sidebar-header px-4 py-4">
+        <h5 class="fw-bold m-0">ERP System</h5>
+        <small class="text-muted">Admin Panel</small>
+      </div>
+
+      <!-- Menu -->
+      <div class="flex-grow-1 px-3">
+        <div 
+          v-for="side in currentMenuItems" 
+          :key="side.name"
+          class="menu-item d-flex align-items-center"
+          @click="router.push(side.route)"
+          :class="route.name === side.route || side.active ? 'active' : ''"
+        >
+          <i :class="side.icon + ' me-3'"></i>
+          <span>{{ side.name }}</span>
         </div>
+      </div>
+
+      <!-- Logout -->
+      <div class="px-3 pb-4">
+        <div class="menu-item danger d-flex align-items-center" @click="logout">
+          <i class="fa fa-sign-out me-3"></i>
+          Logout
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-9 main-content p-4">
+      <router-view />
+    </div>
+
+  </div>
 </template>
 
 <script setup>
@@ -85,6 +110,12 @@ const sideMenuItems = ref(
         {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
         {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
         {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home'}
+    ],
+    "/home/student-add":[
+        {name:'Home',icon:'fa fa-home',route:'/home'},
+        {name:'Batch Management',icon:'fa fa-users',route:'/home/batch-home'},
+        {name:'Staff Management',icon:'fa fa-building',route:'/home/staff-home'},
+        {name:'Student Management',icon:'fa fa-graduation-cap',route:'/home/student-home',active:true}
     ]
     }
 );
@@ -97,38 +128,52 @@ const currentMenuItems = computed(() => {
 </script>
 
 <style scoped>
-.mt
-{
-    margin-top: 25%;
+.sidebar {
+  height: 100vh;
+  background: #0f172a; /* dark navy */
+  color: #cbd5f5;
 }
 
-.menu-item{
-        box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1); /* X Y blur color */
+.sidebar-header {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.menu-item-active{
-    /* border: 1px solid black; */
-    cursor: pointer;
-    box-shadow: 0 0px 25px rgba(0, 0, 0, 0.1);
-    background-color: #5353f3 !important; 
-    color: white;
-
-}
-.menu-item:hover{
-    /* border: 1px solid black; */
-    cursor: pointer;
-    box-shadow: 0 0px 25px rgba(0, 0, 0, 0.1);
-    background-color: #5d5dfc !important; 
-    color: white;
-
+.menu-item {
+  padding: 12px 16px;
+  margin: 6px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: 500;
 }
 
-.menu-item-danger:hover{
-    /* border: 1px solid black; */
-    cursor: pointer;
-    box-shadow: 0 0px 25px rgba(0, 0, 0, 0.1);
-    background-color: #ec4a60 !important; 
-    color: white;
+.menu-item i {
+  width: 20px;
+  text-align: center;
+}
 
+/* Hover */
+.menu-item:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #fff;
+}
+
+/* Active */
+.menu-item.active {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+}
+
+/* Logout */
+.menu-item.danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* Main content */
+.main-content {
+  background: #f8fafc;
+  min-height: 100vh;
 }
 </style>

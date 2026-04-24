@@ -39,6 +39,7 @@ class User extends Authenticatable
         'insuranceExpiryDate',
         'designation',
         'department',
+        'batchId'
     ];
 
     /**
@@ -65,5 +66,10 @@ class User extends Authenticatable
             'visaExpiryDate' => 'date',
             'insuranceExpiryDate' => 'date',
         ];
+    }
+
+    public function batches()
+    {
+        return $this->belongsTo(batches::class, 'batchId');
     }
 }

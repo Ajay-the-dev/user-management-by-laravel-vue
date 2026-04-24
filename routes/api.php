@@ -15,6 +15,8 @@ Route::prefix('users')->group(function () {
         Route::delete('/{id}', [UserController::class, 'remove']);
         Route::get('/{id}', [UserController::class, 'resetPassword']);
         Route::post('byParams', [UserController::class, 'filterByParams']);
+        Route::post('/find', [UserController::class, 'findByName']);
+
 });
 
 //batches

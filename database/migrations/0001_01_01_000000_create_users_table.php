@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('profile_picture')->nullable();
+            $table->unsignedBigInteger('batchId')->nullable();
             $table->string('role')->default('STUDENT');
             $table->string('course')->nullable();
             $table->string('rollNo')->nullable();
@@ -35,6 +36,7 @@ return new class extends Migration
             $table->date('insuranceExpiryDate')->nullable();
             $table->string('designation')->nullable();
             $table->string('department')->nullable();
+            $table->foreign('batchId')->references('id')->on('batches')->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });

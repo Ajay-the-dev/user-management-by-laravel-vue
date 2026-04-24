@@ -113,15 +113,18 @@
         </div>
     </div>
 
-    <div class="mx-4 col-12">
+    <div class="col-12 w-75">
         <div class="card shadow-sm">
             <div class="card-header bg-gradient p-4">
                     <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold text-dark">Staffs</h5>
+                    <h5 class="mb-0 fw-bold text-dark">{{isStaff ? 'Staffs' : 'Students'}}</h5>
                     <div class="d-flex">
-                        <input type="text" class="form-control w-auto mx-3" placeholder="Search staff here ..." v-model="searchQuery"
+                        <input type="text" class="form-control w-auto mx-3" placeholder="Search " v-model="searchQuery"
                         @change="handleSearch">
-                         <button class="btn btn-primary btn-sm" @click="navigateTo('/home/staff-add')">
+                         <button class="btn btn-primary btn-sm" v-if="isStaff" @click="navigateTo('/home/staff-add')">
+                            <i class="fas fa-plus me-2"></i>Add New
+                        </button>
+                        <button class="btn btn-primary btn-sm" v-else @click="navigateTo('/home/student-add')">
                             <i class="fas fa-plus me-2"></i>Add New
                         </button>
                     </div>
@@ -134,9 +137,11 @@
                             <tr>
                                 <th scope="col" width="10%" class="fw-bold text-muted">#</th>
                                 <th scope="col" width="30%" class="fw-bold text-muted">Name</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted">Gender</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted">DOB</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted">Phone</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted" v-if="isStaff">Designation</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted" v-else>Batch</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted" v-if="!isStaff">Dept.</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted" v-if="isStaff">Phone</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted" v-else>Roll No</th>
                                 <th scope="col" width="15%" class="fw-bold text-muted text-center">Actions</th>
                             </tr>
                         </thead>
@@ -144,7 +149,7 @@
                             <tr>
                                 <td colspan="6" class="text-center py-4">
                                     <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
-                                    <div class="fw-bold text-muted">No staff found.</div>
+                                    <div class="fw-bold text-muted">No {{ isStaff ? 'staff' : 'student' }} found.</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -152,18 +157,21 @@
                             <tr v-for="user,index in users.data" :key="user.id" class="align-middle border-bottom">
                                 <td class="fw-bold">{{ users.per_page * (users.current_page-1)+index+1 }}</td>
                                 <td class="fw-500">{{ user.name }}</td>
-                                <td>{{ user.gender }}</td>
-                                <td>{{ user.dob ? new Date(user.dob).toISOString().split('T')[0].split('-').reverse().join('-') : '' }}</td>
-                                <td>{{ user.mobile }}</td>
+                                <td v-if="isStaff">{{ user.designation }}</td>
+                                <td v-else>{{ user.batches?.name ?? 'NIL' }}</td>
+                                <td v-if="!isStaff">{{ user.department }}</td>
+                                <!-- <td>{{ user.dob ? new Date(user.dob).toISOString().split('T')[0].split('-').reverse().join('-') : '' }}</td> -->
+                                <td  v-if="isStaff">{{ user.mobile }}</td>
+                                <td  v-else>{{ user.rollNo }}</td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#myModal" @click="editUser(user)" title="View">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button  type="button" class="btn btn-outline-primary" v-if="user.role === 'ADMIN'"  @click="deleteUser(user)" title="Delete">
+                                        <button  type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN'"  @click="deleteUser(user)" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                        <button type="button" class="btn btn-outline-primary" v-if="user.role === 'ADMIN'" title="Reset Password"   @click="resetPassword(user)">
+                                        <button type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN'" title="Reset Password"   @click="resetPassword(user)">
                                             <i class="fa fa-key"></i>
                                         </button>
                                     </div>
@@ -270,8 +278,14 @@
 
 
     const getAllUsers = (page = null) =>{
-        const url = page ? page : `${baseURL}/users` 
+        console.log(isStaff.value);
+        
+        let staffFlag = isStaff.value ? 1:0
+        const url = page ? page+`&isStaff=${staffFlag}` : `${baseURL}/users?isStaff=${staffFlag}` 
         lastInPage.value = url
+
+        console.log(url);
+        
         const response = api.get(url).then((response)=>{
             users.value = response.data.data
         }).catch((error)=>{
@@ -659,6 +673,7 @@
     const getUsersByName = async (page=null)=>{        
         const request = {}
         request.name = searchQuery.value
+        request.isStaff = isStaff.value ? 1 : 0
         
         if(request.name.trim() === '')
         {
@@ -704,6 +719,15 @@
     const navigateTo = (url) => {
         router.push(url)
     }
+
+    const isStaff = computed(()=>{
+        return modeSelected.value === 'STAFF' || modeSelected.value === 'ADMIN'
+    })
+
+    watch(isStaff,()=>{
+        getAllUsers();
+    })
+
 
 </script>
 

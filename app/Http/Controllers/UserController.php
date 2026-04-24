@@ -105,9 +105,17 @@ class UserController extends Controller
     public function index (Request $request)
     {
         try {
-
-                $users = User::orderBy('created_at', 'desc')->paginate(10);
-
+                $isStaff = $request->query('isStaff');
+                $query = User::query();
+                
+                if ($isStaff == "1") {
+                    $query->whereIn('role', ['STAFF', 'ADMIN']);
+                } else if ($isStaff == "0") {
+                    $query = User::with('batches');
+                    $query->where('role', 'STUDENT');
+                }
+                
+                $users = $query->orderBy('created_at', 'desc')->paginate(10);
                 $res = new stdClass();
                 $res->status = 1;
                 $res->message = 'Data fetched successfully';
@@ -293,6 +301,33 @@ class UserController extends Controller
             $res->message = 'Something went wrong while resetting password';
             $res->data = $th->getMessage();
             return response()->json($res);
+        }
+    }
+
+    public function findByName(Request $request)
+    {
+        try {
+            
+            $name = $request->input('name');
+            $isStaff = $request->input('isStaff');
+            $query = User::query();
+                
+            if ($isStaff == "1") {
+                $query->whereIn('role', ['STAFF', 'ADMIN']);
+            } else if ($isStaff == "0") {
+                $query = User::with('batches');
+                $query->where('role', 'STUDENT');
+            }
+
+            if ($name) {
+                $users = $query->where('name', 'like', "%$name%")->paginate(10);
+                return response()->json(['data' => $users, 'status' => 1], 200);
+            } else {
+                return response()->json(['message' => "name is required","status" => 1], 200);
+            }
+
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'error while finding batch', 'error' => $e->getMessage()], 500);
         }
     }
 }

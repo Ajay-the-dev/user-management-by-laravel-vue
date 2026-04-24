@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <div class="mx-4 col-12">
+    <div class="col-12 w-75">
         <div class="card shadow-sm">
             <div class="card-header bg-gradient p-4">
                 <div class="d-flex justify-content-between align-items-center">

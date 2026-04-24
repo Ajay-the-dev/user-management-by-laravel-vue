@@ -19,20 +19,20 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'username' => 'admin',
-            'name' => 'Ajay',
-            'email' => 'test@test.com',
-            'mobile' => '9999999999',
-            'password' => bcrypt('admin'),
-            'address' => '{}',
-            'dob' => '1998-05-16',
-            'gender' => 'Male',
-            'role' => 'ADMIN',
-        ]);
+        // User::factory()->create([
+        //     'username' => 'admin',
+        //     'name' => 'Ajay',
+        //     'email' => 'test@test.com',
+        //     'mobile' => '9999999999',
+        //     'password' => bcrypt('admin'),
+        //     'address' => '{}',
+        //     'dob' => '1998-05-16',
+        //     'gender' => 'Male',
+        //     'role' => 'ADMIN',
+        // ]);
 
-        // $this->call(UserSeeder::class);
-        $this->call(BatchSeeder::class);
+        $this->call(UserSeeder::class);
+        // $this->call(BatchSeeder::class);
 
     }
 }

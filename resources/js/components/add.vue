@@ -1,231 +1,254 @@
 <template>
-<div class="mx-5 my-4">
-    <h4 v-if="isStaff">Add staff</h4>
-    <h4 v-else>Add student</h4>
-    <p v-if="isStaff" class="text-secondary mb-4 mt-0">Onboard new faculty and administrative personnel</p>
-    <p v-else class="text-secondary mb-4 mt-0">Onboard new students</p>
-    <div class="row g-4">
-        <div class="col-12">
-            <div class="card shadow-sm section-card mb-4">
-                <div class="card-header bg-white border-bottom p-4 bg-primary-subtle">
-                    <h5 class="mb-0">Personal Details</h5>
-                </div>
-                <div class="card-body p-5">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Name <required/></label>
-                            <input type="text" class="form-control" required v-model="name">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Gender <required/></label>
-                            <select class="form-select" v-model="gender">
-                                <option value="">choose</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">DOB <required/></label>
-                            <input type="date" class="form-control" required v-model="dob">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Username <required/></label>
-                            <input type="text" class="form-control" required v-model="username">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Password <required/></label>
-                            <input type="password" class="form-control" required v-model="password">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Mobile </label>
-                            <input type="phone" class="form-control" required v-model="mobile">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" required v-model="email">
-                        </div>
-                        <div class="col-md-6" v-if="isStaff">
-                            <label class="form-label">Designation</label>
-                            <input type="text" class="form-control" v-model="designation">
-                        </div>
-                        <div class="col-md-6" v-if="uploadedImage.length === 0 ">
-                            <label class="form-label">Profile Picture</label>
-                            <input type="file" class="form-control" @change="handleFileUpload">
-                        </div>
-                        <div class="col-md-6" v-if="uploadedImage.length > 0">
-                            <label class="form-label">Profile Picture Preview</label>
-                            <div class="profile-preview-container card p-2 d-flex align-items-center w-50">
-                                <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1" style="width: 10rem;">
-                                <button class="btn btn-sm btn-outline-danger remove-image-btn" @click="removeImage">
-                                    <i class="fa fa-times"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card shadow-sm section-card mb-4">
-                <div class="card-header bg-white border-bottom p-4 bg-primary-subtle">
-                    <h5 class="mb-0">Address Details</h5>
-                </div>
-                <div class="card-body p-5">
-                  <div class="row my-4">
-                    <div class="col-3">
-                        <label for="" class="form-label">Address type <required/></label>
-                        <select name="" id="" class="form-select" v-model="officeType">
-                            <option value="">choose</option>
-                            <option value="home">Home</option>
-                            <option value="office">Office</option>
-                        </select>
-                    </div>
-                    <div class="col-3">
-                        <label for="" class="form-label">Street <required/></label>
-                        <input type="text" class="form-control" v-model="street">
-                    </div>
-                    <div class="col-3">
-                        <label for="" class="form-label">Landmark </label>
-                        <input type="text" class="form-control" v-model="landmark">
-                    </div>
-                    <div class="col-3">
-                        <label for="" class="form-label">City <required/></label>
-                        <input type="text" class="form-control" v-model="city">
-                    </div>
-                </div>
-                <div class="row my-4">
-                    <div class="col-3">
-                        <label for="" class="form-label">State <required/></label>
-                        <input type="text" class="form-control" v-model="state">
-                    </div>
-                    <div class="col-3">
-                        <label for="" class="form-label">Country <required/></label>
-                        <input type="text" class="form-control" v-model="country">
-                    </div>
-                    <div class="align-content-end col-3">
-                        <button class="btn btn-primary" @click="insertLocalAddress" :disabled="addresses.length == 2">
-                            <i class="fa fa-bookmark mx-1" aria-hidden="true"></i>
-                            save
-                        </button>
-                    </div>
-                </div>
-                </div>
-            </div>
-            <div class="card shadow-sm section-card mb-4" v-if="!isStaff">
-                <div class="card-header bg-white border-bottom p-4 bg-primary-subtle">
-                    <h5 class="mb-0">Academic Details</h5>
-                </div>
-                <div class="card-body p-5">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Course</label>
-                            <input type="text" class="form-control" v-model="course">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Roll No</label>
-                            <input type="text" class="form-control" v-model="rollNo">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">University</label>
-                            <input type="text" class="form-control" v-model="university">
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
+  <div class="main-wrapper">
+    <div class="content-scroll">
+
+      <div class="container-fluid form-container">
+
+        <!-- HEADER -->
+        <div class="mb-4">
+          <h4 class="fw-semibold">
+            {{ isStaff ? 'Add Staff' : 'Add Student' }}
+          </h4>
+          <p class="text-muted small">
+            {{ isStaff 
+              ? 'Onboard new faculty and administrative personnel' 
+              : 'Onboard new students' }}
+          </p>
         </div>
-        <div class="col-12">
-            <div class="card shadow-sm section-card mb-4">
-                <div class="card-header bg-white border-bottom p-4 bg-primary-subtle">
-                    <h5 class="mb-0">Visa Details</h5>
-                </div>
-                <div class="card-body p-5">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Location</label>
-                            <input type="text" class="form-control" v-model="location">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Visa Type</label>
-                            <select class="form-select" v-model="visaType">
-                                <option value="EDUCATION">Education</option>
-                                <option value="WORK">Work</option>
-                                <option value="TOURIST">Tourist</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Visa Status</label>
-                            <select class="form-select" v-model="visaStatus">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="expired">Expired</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Visa Expiry Date</label>
-                            <input type="date" class="form-control" v-model="visaExpiryDate">
-                        </div>
-                    </div>
+
+        <!-- PERSONAL -->
+        <div class="form-section">
+          <div class="section-header">
+            <h6><i class="fa fa-user"></i> Personal Details</h6>
+            <span class="section-sub">Basic information</span>
+          </div>
+
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Name</label>
+              <input class="form-control" v-model="name">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Gender</label>
+              <select class="form-select" v-model="gender">
+                <option value="">Choose</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">DOB</label>
+              <input type="date" class="form-control" v-model="dob">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Username</label>
+              <input class="form-control" v-model="username">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" v-model="password">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mobile</label>
+              <input class="form-control" v-model="mobile">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input class="form-control" v-model="email">
+            </div>
+
+            <div class="col-md-6" v-if="isStaff">
+              <label class="form-label">Designation</label>
+              <input class="form-control" v-model="designation">
+            </div>
+
+            <!-- IMAGE -->
+            <div class="col-md-12" v-if="uploadedImage.length === 0 ">
+                <label class="form-label">Profile Picture</label>
+                <input type="file" class="form-control" @change="handleFileUpload">
+            </div>
+            <div class="col-md-12" v-if="uploadedImage.length > 0">
+                <label class="form-label">Profile Picture Preview</label>
+                <div class="profile-preview-container card p-2 d-flex align-items-center w-50">
+                    <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1" style="width: 10rem;">
+                    <button class="btn btn-sm btn-outline-danger remove-image-btn" @click="removeImage">
+                        <i class="fa fa-times"></i> Remove
+                    </button>
                 </div>
             </div>
-            <div class="card shadow-sm section-card mb-4">
-                <div class="card-header bg-white border-bottom p-4 bg-primary-subtle">
-                    <h5 class="mb-0">Insurance Details</h5>
-                </div>
-                <div class="card-body p-5">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Insurance Status</label>
-                            <select class="form-select" v-model="insuranceStatus">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="expired">Expired</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Insurance Expiry Date</label>
-                            <input type="date" class="form-control" v-model="insuranceExpiryDate">
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+          </div>
         </div>
+
+        <!-- ADDRESS -->
+        <div class="form-section">
+          <div class="section-header">
+            <h6><i class="fa fa-map-marker-alt"></i> Address</h6>
+            <span class="section-sub">User address information</span>
+          </div>
+
+          <div class="row g-3 mt-2">
+            <div class="col-md-4">
+              <input class="form-control" placeholder="Street" v-model="street">
+            </div>
+            <div class="col-md-4">
+              <input class="form-control" placeholder="City" v-model="city">
+            </div>
+            <div class="col-md-4">
+              <input class="form-control" placeholder="Country" v-model="country">
+            </div>
+
+            <div class="col-12">
+              <button class="btn btn-outline-primary btn-sm" @click="setAddress">
+                Set Address
+              </button>
+            </div>
+          </div>
+
+          <!-- ADDRESS DISPLAY -->
+          <div class="row mt-3" v-if="addresses.street">
+            <div class="col-md-4">
+              <div class="address-card">
+                <p>{{ addresses.street }}</p>
+                <small>{{ addresses.city }}, {{ addresses.country }}</small>
+                <button class="btn btn-sm text-danger" @click="clearAddress">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACADEMIC -->
+        <div class="form-section" v-if="!isStaff">
+          <div class="section-header">
+            <h6><i class="fa fa-graduation-cap"></i> Academic Details</h6>
+          </div>
+
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <input class="form-control" placeholder="Course" v-model="course">
+            </div>
+            <div class="col-md-6">
+              <input class="form-control" placeholder="Roll No" v-model="rollNo">
+            </div>
+            <div class="col-md-6">
+              <input class="form-control" placeholder="University" v-model="university">
+            </div>
+            <div class="col-md-6">
+              <input class="form-control" placeholder="Department" v-model="department">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-header">
+            <h6><i class="fa fa-passport"></i> Visa Details</h6>
+            <span class="section-sub">Immigration and visa information</span>
+          </div>
+  
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Visa Type</label>
+              <select class="form-select" v-model="visaType">
+                <option value="">Choose</option>
+                <option value="EDUCATION">Education</option>
+                <option value="WORK">Work</option>
+                <option value="TOURIST">Tourist</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Visa Status</label>
+              <select class="form-select" v-model="visaStatus">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="expired">Expired</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Visa Expiry Date</label>
+              <input type="date" class="form-control" v-model="visaExpiryDate">
+            </div>
+          </div>
+        </div>
+  
+        <!-- PASSPORT DETAILS -->
+        <div class="form-section">
+          <div class="section-header">
+            <h6><i class="fa fa-id-card"></i> Passport Details</h6>
+            <span class="section-sub">Passport information</span>
+          </div>
+  
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Passport Number</label>
+              <input class="form-control" v-model="passportNumber" placeholder="Enter passport number">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Passport Issue Date</label>
+              <input type="date" class="form-control" v-model="passportIssueDate">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Passport Expiry Date</label>
+              <input type="date" class="form-control" v-model="passportExpiryDate">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Issuing Country</label>
+              <input class="form-control" v-model="passportIssuingCountry" placeholder="Enter issuing country">
+            </div>
+          </div>
+        </div>
+  
+        <!-- PARENT DETAILS -->
+        <div class="form-section" v-if="!isStaff">
+          <div class="section-header">
+            <h6><i class="fa fa-users"></i> Parent/Guardian Details</h6>
+            <span class="section-sub">Primary contact information</span>
+          </div>
+  
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <label class="form-label">Parent/Guardian Name</label>
+              <input class="form-control" v-model="parentName" placeholder="Enter parent/guardian name">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Relation</label>
+              <select class="form-select" v-model="parentRelation">
+                <option value="">Choose</option>
+                <option value="Father">Father</option>
+                <option value="Mother">Mother</option>
+                <option value="Guardian">Guardian</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Parent Email</label>
+              <input type="email" class="form-control" v-model="parentEmail" placeholder="Enter parent email">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Parent Mobile</label>
+              <input class="form-control" v-model="parentMobile" placeholder="Enter parent mobile number">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- VISA DETAILS -->
+
+      <div class="action-bar bg-body-secondary d-flex justify-content-end p-4">
+        <button class="btn btn-primary" @click="addUser">
+          Save User
+        </button>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-4" v-for="address,index in addresses">
-                    <div class="card p-3">
-                        <div class="card-container">
-                            <span>Type : {{ address.officeType }}</span>
-                            <br>
-                            <span>Street : {{ address.street }}</span>
-                            <br>
-                            <span>Landmark : {{ address.landmark }}</span>
-                            <br>
-                            <span>City : {{ address.city }}</span>
-                            <br>
-                            <span>State : {{ address.state }}</span>
-                            <br>
-                            <span>Country : {{ address.country }}</span>  
-                            <br>
-                            <button class="btn my-2 btn-sm btn-secondary" @click="removeAddressFromList(index)">Remove</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row my-4">
-        <div class="col-12">
-            <button class="btn btn-sm btn-primary" @click="addAddress">
-                <i class="fa fa-plus p-2" aria-hidden="true"></i>Add address
-            </button>
-            <button class="btn btn-sm btn-primary mx-2" @click="addUser">
-               <i class="fa fa-user-plus p-2" aria-hidden="true"></i> Save user
-            </button>
-        </div>
-    </div>
-    
-</div>
+  </div>
 </template>
 
 <script setup>
@@ -241,12 +264,9 @@ const route = useRoute()
 const router = useRouter()
 
 
-const addresses = ref([])
-const officeType = ref('')
+const addresses = ref({})
 const street = ref('')
-const landmark = ref('')
 const city = ref('')
-const state = ref('')
 const country = ref('')
 const showAddress = ref(true)
 
@@ -272,18 +292,16 @@ const insuranceExpiryDate = ref('')
 const designation = ref('')
 const previewSrc = ref('')
 
+
 const uploadedImage = ref('')
 const imageName = ref('')
 
 
 const resetAll = () =>{
 
-addresses.value =  []
-officeType.value =  ''
+addresses.value =  {}
 street.value =  ''
-landmark.value =  ''
 city.value =  ''
-state.value =  ''
 country.value =  ''
 showAddress.value = false
 
@@ -300,6 +318,7 @@ name.value =  ''
     course.value = ''
     rollNo.value = ''
     university.value = 'OSH - IMF'
+    department.value = ''
     location.value = 'active'
     visaType.value = 'EDUCATION'
     visaStatus.value = 'active'
@@ -310,13 +329,7 @@ name.value =  ''
 } 
 
 
-const insertLocalAddress = () => {
-
-    if(officeType.value.trim() === '')
-    {
-        showToast({title:'Choose office type',icon:'error'})
-        return
-    }
+const setAddress = () => {
 
     if(street.value.trim() === '')
     {
@@ -324,21 +337,9 @@ const insertLocalAddress = () => {
         return
     }
 
-    // if(landmark.value.trim() === '')
-    // {
-    //     showToast({title:'Please enter a landmark',icon:'error'})
-    //     return
-    // }
-
      if(city.value.trim() === '')
     {
         showToast({title:'Please enter a city',icon:'error'})
-        return
-    }
-
-     if(state.value.trim() === '')
-    {
-        showToast({title:'Please enter a state',icon:'error'})
         return
     }
 
@@ -348,41 +349,24 @@ const insertLocalAddress = () => {
         return
     }
 
-    addresses.value.push(
-        {
-            officeType:officeType.value,
-            street:street.value,
-            landmark:landmark.value,
-            city:city.value,
-            state:state.value,
-            country:country.value
-        }
-    )
-    setTimeout(() => {
-        clearLocalAddress()
-        showAddress.value = false
-    }, 1000);
+    addresses.value = {
+        street: street.value,
+        city: city.value,
+        country: country.value
+    }
 
 }
 
 
-const clearLocalAddress = () =>{
+const clearAddressFields = () =>{
 
-    officeType.value = ''
     street.value = ''
-    landmark.value = ''
     city.value = ''
-    state.value = ''
     country.value = ''
 }
         
-const addAddress = () =>{
-    if(addresses.value.length >= 2)
-    {
-        showToast({title:'Maximum addresses are limited to 2',icon:'error'})
-        return
-    }
-    showAddress.value = !showAddress.value
+const clearAddress = () =>{
+    addresses.value = {}
 }
 
 const addUser = () =>{
@@ -485,7 +469,7 @@ const addUser = () =>{
         }
     }
 
-    if(addresses.value.length === 0)
+    if(!addresses.value.street || !addresses.value.city || !addresses.value.country)
     {
         showToast({title:'Address not found ',icon:'error'})
         error = true
@@ -497,7 +481,7 @@ const addUser = () =>{
         const response = api.post(`${baseURL}/users/create`,
             {
                 data : userData,
-                address: addresses.value
+                address: [addresses.value]
             }
         ).then((response)=>{
             const data = response.data
@@ -549,9 +533,6 @@ const isValidDOB = (dob) => {
 }
 
 
-const removeAddressFromList = (index) =>{
-    addresses.value.splice(index,1)
-}
 
 onMounted(()=>{
     resetAll()
@@ -619,47 +600,86 @@ const removeImage = async() =>{
 </script>
 
 <style scoped>
-.font-sm{
-    font-size: small;
+.main-wrapper {
+  height: 100vh;
+  overflow: hidden;
+  background: #f8fafc;
 }
 
-.section-card {
-    border: 1px solid #e4e7eb;
-    border-radius: 12px;
+.content-scroll {
+  height: 100%;
+  overflow-y: auto;
 }
 
-.section-card .card-header {
-    background-color: #ffffff;
+.form-container {
+  max-width: 1100px;
+  margin-left: 5rem;
+  padding: 20px;
 }
 
-.section-card .card-title,
-.section-card h5 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #2c3e50;
+/* Sections */
+.form-section {
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 20px;
 }
 
-.profile-preview-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border: 2px dashed #007bff;
-    border-radius: 10px;
-    background-color: #f8f9fa;
-    margin-top: 10px;
+.section-header h6 {
+  font-weight: 600;
 }
 
-.profile-preview-image {
-    /* width: 120px;
-    height: 120px; */
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid #007bff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.section-sub {
+  font-size: 12px;
+  color: #94a3b8;
 }
 
-.remove-image-btn {
-    margin-top: 10px;
+/* Inputs */
+.form-control,
+.form-select {
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+}
+
+/* Upload */
+.upload-box {
+  border: 2px dashed #c7d2fe;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.preview-box img {
+  width: 100px;
+  border-radius: 50%;
+}
+
+/* Address */
+.address-card {
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* Sticky Action Bar */
+.action-bar {
+  position: sticky;
+  bottom: 2rem;
+  background: white;
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #e5e7eb;
 }
 </style>
