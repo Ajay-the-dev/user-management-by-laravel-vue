@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Fee;
 use App\Models\FeeStudent;
+use Illuminate\Support\Facades\DB;
 
 use stdClass;
 
@@ -80,12 +81,22 @@ class FeeController extends Controller
                     return response()->json($res);
                 }
                 else{
-                   $entry =  FeeStudent::create([
-                        "feeId" => $feeId,
-                        "userId" => $userId,
-                        "paid_amount"=>$amount,
-                        "created_by" =>1
-                    ]);
+
+                    $paidFee = (float) FeeStudent::where('userId', $userId)->where('feeId', $feeId)->sum('paid_amount') ?? 0;
+                    if(($paidFee + $amount) > $allocatedFee)
+                    {
+                        $res = new stdClass();
+                        $res->status = 0;
+                        $res->message = 'Overpay blocked by system or Already paid';
+                        // $res->data = [""];
+                        return response()->json($res);
+                    }
+                    $entry =  FeeStudent::create([
+                            "feeId" => $feeId,
+                            "userId" => $userId,
+                            "paid_amount"=>$amount,
+                            "created_by" =>1
+                        ]);
 
                     $res = new stdClass();
                     $res->status = 1;
@@ -116,17 +127,36 @@ class FeeController extends Controller
                     'f.id',
                     'f.type',
                     'f.amount as total_allocated',
+                    'f.due',
                     DB::raw('SUM(fs.paid_amount) as total_paid'),
                     DB::raw('(f.amount - SUM(fs.paid_amount)) as balance')
                 )
                 ->where('fs.userId', $id)
-                ->groupBy('f.id', 'f.type', 'f.amount')
+                ->groupBy('f.id', 'f.type', 'f.amount','f.due')
                 ->get();
 
             return response()->json([
                 'status' => 1,
                 'data' => $summary
             ]);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Error fetching fee summary',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getFeeSummaryByFeeId(Request $request)
+    {
+        try {
+
+            $userId = $request->input('userId');
+            $feeId = $request->input('feeId');
+            $amount = FeeStudent::where('userId', $userId)->where('feeId', $feeId)->sum('paid_amount') ?? 0;
+            return response()->json(["data"=>$amount]);
 
         } catch (\Throwable $th) {
             return response()->json([

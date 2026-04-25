@@ -25,7 +25,7 @@
               <select v-model="entry.type" class="form-select" required>
                 <option value="" disabled>Select Fee Type</option>
                 <option v-for="fee in feeData" :key="fee.id" :value="fee">
-                  {{ fee.type }} (Due:  ${{ fee.amount - (fee.paid_amount || 0) }})
+                  {{ fee.type }} 
                 </option>
               </select>
             </div>
@@ -51,21 +51,52 @@
           <thead class="table-light">
             <tr>
               <th>Fee Type</th>
-              <th>Due Date</th>
               <th>Total Amount</th>
+              <th>Paid</th>
+              <th>Balance</th>
+              <th>Due Date</th>
               <th>Status</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody v-if="feeData.length > 0">
             <tr v-for="fee in feeData" :key="fee.id">
               <td>{{ fee.type }}</td>
+              <td>{{ fee.amount.toLocaleString() }}</td>
+              <td>{{ paidAmounts[fee.id]?.paid.toLocaleString() }}</td>
+              <td>{{ paidAmounts[fee.id]?.balance.toLocaleString() }}</td>
               <td>{{ fee.due ? fee.due : '-' }}</td>
-              <td> $ {{ fee.amount.toLocaleString() }}</td>
               <td>
-                <span :class="getStatusClass(fee)">
-                    NIL
-                  <!-- {{ fee.payment_status.toUpperCase() }} -->
+                <span v-if="parseFloat(paidAmounts[fee.id]?.balance) === 0" class="badge bg-success">
+                  PAID
                 </span>
+
+                <span 
+                  v-else-if="parseFloat(paidAmounts[fee.id]?.balance) > 0 && !fee.due" 
+                  class="badge bg-secondary"
+                >
+                  PENDING
+                </span>
+
+                <span 
+                  v-else-if="parseFloat(paidAmounts[fee.id]?.balance) > 0 && new Date(fee.due) >= new Date()" 
+                  class="badge bg-warning text-dark"
+                >
+                  PENDING
+                </span>
+
+                <span 
+                  v-else 
+                  class="badge bg-danger"
+                >
+                  OVERDUE
+                </span>
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr>
+              <td class="p-4 fs-6 text-center fw-light" colspan="6">
+                  No dues assigned for you / batch !!
               </td>
             </tr>
           </tbody>
@@ -76,7 +107,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted,watch } from 'vue'
 import { useRoute,useRouter } from 'vue-router'
 import api from '@/utils/axios'
 
@@ -90,7 +121,10 @@ const currentStudentId = computed(()=>{
 })
 
 const student = ref({})
-const feeData = ref({})
+const feeData = ref([])
+const feeSummary = ref([])
+
+const paidAmounts = ref([]);
 
 const props = defineProps({
   studentId:   { type: String, default: 'STU-7742' },
@@ -112,21 +146,17 @@ const entry = ref({
 
 // Computed
 const totalDue = computed(() => {
-  return assignedFees.value
-    .filter(f => f.payment_status !== 'paid')
-    .reduce((sum, f) => sum + f.amount, 0)
+  let sum = 0
+  paidAmounts.value.forEach(fee => {
+    sum = sum + parseFloat(fee.balance)
+  });
+  return sum
 })
 
 const pendingFees = computed(() => {
   return assignedFees.value.filter(f => f.payment_status !== 'paid')
 })
 
-// Methods
-const getStatusClass = (fee) => {
-  if (fee.payment_status === 'paid') return 'badge bg-success'
-  const isOverdue = new Date(fee.due) < new Date()
-  return isOverdue ? 'badge bg-danger' : 'badge bg-warning text-dark'
-}
 
 const submitPayment = async() => {
   if (!entry.value.amount || !entry.value.type) return
@@ -202,6 +232,9 @@ const payFee = async(entry) =>{
         showToast({title:response.data.message,icon:'success'})
         entry.value.type = ''
         entry.value.amount = null
+        setTimeout(() => {
+          router.go(0)
+        }, 2000);
     }
     else{
         showToast({title:response.data.message,icon:'error'})
@@ -209,14 +242,43 @@ const payFee = async(entry) =>{
     
 }
 
-const getPaymentDetails = async() =>{
-    const response = await api.get('/fees/paymentSummary',{id:currentStudentId.value})
-    console.log(response);
+// const getPaymentDetails = async() =>{
+//     const response = await api.get('/fees/paymentSummary/'+currentStudentId.value)
+//     if(response.data.status === 1)
+//     {
+//       feeSummary.value = response.data.data   
+//     }
+//     else{
+//       showToast({title:response.data.message,icon:'error'})
+//     }
+// }
+
+const getPaidFeeDetails = async(feeId)=>{
+    const req= {}
+    req.userId = currentStudentId.value
+    req.feeId = feeId
+    const response = await api.post('/fees/paidFee/',req)
+    console.log(response.data.data);
     
+    return response.data.data
 }
+
+const loadPaidDetails = async (fees) => {
+    for (const fee of fees) {
+        const amount = await getPaidFeeDetails(fee.id);
+        let obj = {}
+        obj.paid = amount
+        obj.balance = parseFloat(fee.amount) - parseFloat(obj.paid)
+        paidAmounts.value[fee.id] = obj;
+    }
+};
 
 onMounted(()=>{
     getStudentDetails();
-    getPaymentDetails();
+    // getPaymentDetails();
+})
+
+watch(feeData,(feeData)=>{
+  loadPaidDetails(feeData)
 })
 </script>

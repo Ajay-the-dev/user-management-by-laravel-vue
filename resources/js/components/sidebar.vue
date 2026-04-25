@@ -132,7 +132,19 @@ const staffMenuItems = [
   { 
     name: 'Fee Management', 
     icon: 'fa fa-money-bill-trend-up', 
-    route: '/home/fee' 
+    route: '/home/fee' ,
+    children:[
+      {
+        name: 'Fee Home',
+        icon: 'fa fa-home',
+        route:  '/home/fee'
+      },
+      {
+        name: 'Pay Fee',
+        icon: 'fa fa-money-bill-alt',
+        route:  '/home/fee/pay'
+      }
+    ]
   }
 ]
 
@@ -259,7 +271,7 @@ const setMenuRules = ()=>{
 }
 
 .submenu-item {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   padding: 8px 16px;
   color: #94a3b8;
 }

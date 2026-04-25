@@ -35,9 +35,8 @@ Route::prefix('batches')->group(function () {
         
 //images
 Route::prefix('images')->group(function () {
-Route::post('/upload-image', [ImageController::class, 'upload']);
-Route::post('/remove', [ImageController::class, 'deletePicture']);
-
+        Route::post('/upload-image', [ImageController::class, 'upload']);
+        Route::post('/remove', [ImageController::class, 'deletePicture']);
 });
 
 //fee
@@ -46,5 +45,6 @@ Route::prefix('fees')->group(function () {
         Route::get('/bybatch/{id}',[FeeController::class, 'getFeesByBatch']);
         Route::post('/feePayment',[FeeController::class, 'insertPayment']);
         Route::get('/paymentSummary/{id}',[FeeController::class, 'getStudentFeeSummary']);
+        Route::post('/paidFee',[FeeController::class, 'getFeeSummaryByFeeId']);
 });
 
