@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Fee;
+Use App\Models\FeeStudent;
 
 class feeSeeder extends Seeder
 {
@@ -30,6 +31,7 @@ class feeSeeder extends Seeder
                 'status' => 'active',
                 'created_by' => 1
             ]);
+
         }
     }
 }

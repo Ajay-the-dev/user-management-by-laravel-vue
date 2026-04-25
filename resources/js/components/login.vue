@@ -74,7 +74,13 @@ const validateLogin = () =>{
             logged.value = true
             showToast({title:'Loggin in',icon:'info'})
             userStore.setLoggedIn(data)
-            router.push('/home')
+            if(userStore.allData.role === 'STUDENT')
+            {
+                router.push('/home/student/home')
+            }
+            else{
+                router.push('/home')
+            }
         }
     }).catch((error)=>{
         console.log(error);

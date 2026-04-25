@@ -1,83 +1,160 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+// Layouts
+const MainLayout = () => import('@/components/home.vue')
+
+// Pages
+const Login = () => import('@/components/login.vue')
+const QuickAccess = () => import('@/components/quickAccess.vue')
+
+// Batch
+const BatchList = () => import('@/components/batchListView.vue')
+
+// Staff
+const StaffList = () => import('@/components/listView.vue')
+const StaffAdd = () => import('@/components/add.vue')
+
+// Student
+const StudentList = () => import('@/components/listView.vue')
+const StudentAdd = () => import('@/components/add.vue')
+const StudentEdit = () => import('@/components/add.vue')
+
+// Fee
+const FeeHome = () => import('@/components/fee/feeHome.vue')
+const FeePay = () => import('@/components/fee/feeEntry.vue')
+const FeeRoot = () => import('@/components/fee/feeRouteView.vue')
+const FeePayment = () => import('@/components/fee/paymentPage.vue')
+
+
+
+// Student Fee Module
+const StudentLayout = () => import('@/components/student/home.vue')
+const StudentFee = () => import('@/components/student/fee.vue')
+
 const routes = [
   {
     path: '/',
     name: 'login',
-    component: () => import('@/components/login.vue'), 
+    component: Login
   },
+
   {
     path: '/home',
-    name: 'main',
-    component: () => import('@/components/home.vue'), 
-    children:[
+    component: MainLayout,
+    meta: { requiresAuth: true },
+
+    children: [
       {
-        path:'',
-        name:'home',
-        component: () => import('@/components/quickAccess.vue'), 
+        path: '',
+        name: 'dashboard',
+        component: QuickAccess
       },
+
+      // ✅ Batch
       {
-        path:'add',
-        name:'add',
-        component: () => import('@/components/add.vue'), 
+        path: 'batch',
+        name: 'batch.list',
+        component: BatchList
       },
+
+      // ✅ Staff Module
       {
-        path:'update',
-        name:'update',
-        component: () => import('@/components/update.vue'), 
+        path: 'staff',
+        children: [
+          {
+            path: '',
+            name: 'staff.list',
+            component: StaffList
+          },
+          {
+            path: 'add',
+            name: 'staff.add',
+            component: StaffAdd
+          }
+        ]
       },
+
+      // ✅ Student Module
       {
-        path:'delete',
-        name:'delete',
-        component: () => import('@/components/delete.vue'), 
+        path: 'student',
+        children: [
+          {
+            path: '',
+            name: 'student.list',
+            component: StudentList
+          },
+          {
+            path: 'add',
+            name: 'student.add',
+            component: StudentAdd
+          },
+          {
+            path: 'edit/:id',
+            name: 'student.edit',
+            component: StudentEdit,
+            props: true
+          },
+
+          // Nested Student Fee
+          {
+            path: 'home',
+            component: StudentLayout,
+            children: [
+              {
+                path: '',
+                name: 'student.home',
+                component: StudentFee
+              }
+            ]
+          },
+           {
+            path: 'fee',
+            component: StudentFee,
+            children: [
+              {
+                path: '',
+                name: 'student.home',
+                component: StudentFee
+              }
+            ]
+          }
+        ]
       },
+
+      // ✅ Fee Module
       {
-        path:'list',
-        name:'list',
-        component: () => import('@/components/list.vue'), 
-      },
-      {
-        path:'batch-home',
-        name:'/home/batch-home',
-        component: () => import('@/components/batchListView.vue'),
-      },
-      {
-        path:'staff-home',
-        name:'/home/staff-home',
-        component: () => import('@/components/listView.vue'),
-      },
-      {
-        path:'staff-add',
-        name:'/home/staff-add',
-        component: () => import('@/components/add.vue'),
-      },
-       {
-        path:'student-edit/:id',
-        name:'/home/student-edit',
-        component: () => import('@/components/add.vue'),
-      },
-      {
-        path:'student-home',
-        name:'/home/student-home',
-        component: () => import('@/components/listView.vue'),
-      },
-      {
-        path:'student-add',
-        name:'/home/student-add',
-        component: () => import('@/components/add.vue'),
-      },
-      {
-        path:'fee-home',
-        name:'/home/fee-home',
-        component: () => import('@/components/fee/feeHome.vue'),
+        path: 'fee',
+        component: FeeRoot,
+        children:[
+          {
+            path:'',
+            name: 'fee.home',
+            component:FeeHome
+          },
+          {
+            path:'pay',
+            name: 'fee.pay',
+            component:FeePay
+          },{
+            path:'payment/:id',
+            name:'fee.final',
+            component:FeePayment
+          }
+        ]
       }
     ]
+  },
+
+  // ✅ Fallback (important)
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 })
 
-export default router
+export default router;

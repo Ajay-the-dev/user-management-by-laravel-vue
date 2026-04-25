@@ -123,10 +123,10 @@
                     <div class="d-flex">
                         <input type="text" class="form-control w-auto mx-3" placeholder="Search " v-model="searchQuery"
                         @change="handleSearch">
-                         <button class="btn btn-primary btn-sm" v-if="isStaff" @click="navigateTo('/home/staff-add')">
+                         <button class="btn btn-primary btn-sm" v-if="isStaff" @click="navigateTo('/home/staff/add')">
                             <i class="fas fa-plus me-2"></i>Add New
                         </button>
-                        <button class="btn btn-primary btn-sm" v-else @click="navigateTo('/home/student-add')">
+                        <button class="btn btn-primary btn-sm" v-else @click="navigateTo('/home/student/add')">
                             <i class="fas fa-plus me-2"></i>Add New
                         </button>
                     </div>
@@ -176,7 +176,7 @@
                                         <button  type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN'"  @click="deleteUser(user)" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                         <button type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN' && !isStaff" title="Edit"   @click="navigateTo('/home/student-edit/'+user.id)">
+                                         <button type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN' && !isStaff" title="Edit"   @click="navigateTo('/home/student/edit/'+user.id)">
                                             <i class="fa fa-edit"></i>
                                         </button>
                                         <button type="button" class="btn btn-outline-primary" v-if="user.role !== 'ADMIN'" title="Reset Password"   @click="resetPassword(user)">
@@ -291,7 +291,6 @@
 
 
     const getAllUsers = (page = null) =>{
-        console.log(isStaff.value);
         
         let staffFlag = isStaff.value ? 1:0
         const url = page ? page+`&isStaff=${staffFlag}` : `${baseURL}/users?isStaff=${staffFlag}` 
@@ -534,11 +533,11 @@
 
     const  modeSelected = computed(()=>{
         
-        if(routes.name === '/home/staff-home')
+        if(routes.name === 'staff.list')
         {
             return 'STAFF'
         }
-        else if(routes.name === '/home/student-home')
+        else if(routes.name === 'student.list')
         {
             return 'STUDENT'
         }

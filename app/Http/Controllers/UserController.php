@@ -19,6 +19,7 @@ class UserController extends Controller
             {
                 $res = new stdClass();
                 $user = Auth::user();
+                $user->load('batches');
                 $res->status = 1;
                 $res->message = 'Validated successfully';
                 $res->data = $user;
@@ -429,17 +430,42 @@ class UserController extends Controller
     public function getUserById(Request $request)
     {
         try {
-
-        $id = $request->id;
-        $user = User::findOrFail($id);
-        $res = new stdClass();
-        $res->status = 1;
-        $res->message = 'fetched successfully';
-        $res->data = $user;
-        return response()->json($user);
+            $id = $request->id;
+            $user = User::findOrFail($id)->load('batches');
+            $res = new stdClass();
+            $res->status = 1;
+            $res->message = 'fetched successfully';
+            $res->data = $user;
+            return response()->json($user);
             
         } catch (\Throwable $th) {
             return response()->json(['message' => 'error while checking username', 'error' => $th->getMessage(), 'status' => 0], 500);
+        }
+    }
+
+    public function getStudentsByBatch(Request $request,$id)
+    {
+        try{
+            if(!$id)
+            {
+                return response()->json([
+                'status' => 0,
+                'message' => 'Batch ID is required'
+                ], 400);
+            }
+            else{
+                $query = User::query($id);
+                $query->where('batchId', $id);
+                $entries = $query->orderBy('id','asc')->get();
+                $res = new stdClass();
+                $res->status = 1;
+                $res->message = 'fetched successfully';
+                $res->data = $entries;
+                return response()->json($res);
+            }
+        }
+         catch (\Throwable $th) {
+            return response()->json(['message' => 'error while fetching students', 'error' => $th->getMessage(), 'status' => 0], 500);
         }
     }
 }

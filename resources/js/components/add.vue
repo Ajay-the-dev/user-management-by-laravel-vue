@@ -509,10 +509,6 @@ const addOrUpdateUser = () =>{
       userData.role = "STUDENT"
     }
 
-    console.log(userData);
-  
-    
-
     var mappings = {}
     mappings.name = 'Name'
     mappings.gender = 'Gender'
@@ -735,7 +731,7 @@ const addOrUpdateUser = () =>{
               showToast({title:data.message,icon:'error'})
           }
         }).catch((error)=>{
-              console.log(error);
+              showToast({title:'Something went wrong',icon:'error'})
         })
       }
     }
@@ -780,11 +776,11 @@ onMounted(()=>{
 
  const  modeSelected = computed(()=>{
         
-        if(route.name === '/home/staff-add' ||  route.name === '/home/staff-edit')
+        if(route.name === 'staff.add')
         {
             return 'STAFF'
         }
-        else if(route.name === '/home/student-add' || route.name === '/home/student-edit')
+        else if(route.name === 'student.add' || route.name === 'student.edit')
         {
             return 'STUDENT'
         }
@@ -872,7 +868,6 @@ const checkUsername = debounce(async() =>{
         const response = api.get(url).then((response)=>{
             batches.value = response.data.data
         }).catch((error)=>{
-            console.log(error);
             showToast({title:error,icon:'error'})
         })
 
@@ -880,7 +875,7 @@ const checkUsername = debounce(async() =>{
 
 
     const getUserDetails = () =>{
-    if(route.name === '/home/student-edit' || route.name === '/home/student-edit')
+    if(route.name === 'student.edit')
     {
       const id = route.params.id
       const url =  `${baseURL}/users/getById`
@@ -904,10 +899,10 @@ const checkUsername = debounce(async() =>{
         city.value = userData.address[0].city
         country.value = userData.address[0].country
 
-        parentName.value = userData.parentDetails[0].name
-        parentRelation.value = userData.parentDetails[0].relation
-        parentEmail.value = userData.parentDetails[0].email
-        parentMobile.value = userData.parentDetails[0].mobile
+        parentName.value = userData.parentDetails[0]?.name
+        parentRelation.value = userData.parentDetails[0]?.relation
+        parentEmail.value = userData.parentDetails[0]?.email
+        parentMobile.value = userData.parentDetails[0]?.mobile
 
         visaType.value = userData.visaType,
         visaStatus.value = userData.visaStatus,
@@ -924,7 +919,6 @@ const checkUsername = debounce(async() =>{
         uploadedImage.value = userData.profile_picture,
         selectedBatch.value = userData.batchId
       }).catch((error)=>{
-          console.log(error);
           showToast({title:error,icon:'error'})
       })
       
@@ -933,7 +927,7 @@ const checkUsername = debounce(async() =>{
     }
 
     const isEditing = computed(()=>{
-      return route.name === '/home/student-edit' || route.name === '/home/student-edit'
+      return route.name === 'student.edit'
     })
 
     const cancelStudent = async() =>{
@@ -976,10 +970,6 @@ const checkUsername = debounce(async() =>{
   background: #f8fafc;
 }
 
-.content-scroll {
-  height: 100%;
-  overflow-y: auto;
-}
 
 .form-container {
   max-width: 1100px;

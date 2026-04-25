@@ -20,8 +20,7 @@ Route::prefix('users')->group(function () {
         Route::post('/find', [UserController::class, 'findByName']);
         Route::post('/checking',[UserController::class, 'isChecking']);
         Route::post('/getById',[UserController::class, 'getUserById']);
-
-
+        Route::get('/bybatchId/{id}',[UserController::class, 'getStudentsByBatch']);
 });
 
 //batches
@@ -31,20 +30,21 @@ Route::prefix('batches')->group(function () {
         Route::get('/all', [BatchController::class, 'getAll']);
         Route::put('/{id}', [BatchController::class, 'update']);
         Route::delete('/{id}', [BatchController::class, 'remove']);
-
         Route::post('/find', [BatchController::class, 'findByName']);
-
 });
-
+        
 //images
 Route::prefix('images')->group(function () {
-        Route::post('/upload-image', [ImageController::class, 'upload']);
-        Route::post('/remove', [ImageController::class, 'deletePicture']);
+Route::post('/upload-image', [ImageController::class, 'upload']);
+Route::post('/remove', [ImageController::class, 'deletePicture']);
 
 });
 
 //fee
 Route::prefix('fees')->group(function () {
         Route::get('/', [FeeController::class, 'index']);
+        Route::get('/bybatch/{id}',[FeeController::class, 'getFeesByBatch']);
+        Route::post('/feePayment',[FeeController::class, 'insertPayment']);
+        Route::get('/paymentSummary/{id}',[FeeController::class, 'getStudentFeeSummary']);
 });
 
