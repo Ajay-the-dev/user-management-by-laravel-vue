@@ -99,12 +99,12 @@
             </div>
 
             <!-- IMAGE -->
-            <div class="col-md-12" v-if="uploadedImage?.length === 0 ">
+            <div class="col-md-12" v-if="uploadedImage?.length <=0 ">
                 <label class="form-label">Profile Picture</label>
                 <small class="mx-2 text-muted">(100KB - 2MB)</small>
                 <input type="file" class="form-control" @change="handleFileUpload">
             </div>
-            <div class="col-md-12" v-if="uploadedImage?.length > 0">
+            <div class="col-md-12" v-else>
                 <label class="form-label">Profile Picture Preview</label>
                 <div class="profile-preview-container card p-2 d-flex align-items-center w-50" >
                     <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1" style="width: 10rem;">
@@ -344,6 +344,7 @@ import { ref,onMounted,computed, watch } from 'vue'
 import { useRoute,useRouter } from 'vue-router';
 import { showToast } from '../utils/toastr'
 import api from '@/utils/axios'
+import docApi from '@/utils/axiosdoc'
 import required from './required.vue';
 import { useValidators } from "../utils/validator";
 import debounce from 'lodash/debounce';
@@ -810,12 +811,13 @@ const handleFileUpload = async(event) => {
 
     const formData = new FormData();
     formData.append('image', profile_picture.value);
-
-    const response = await api.post('/images/upload-image',formData).catch((err)=>{
+    const response = await docApi.post('/images/upload-image',formData).catch((err)=>{
         return err;
     })
-    uploadedImage.value = imageURL+response.data.url 
+    uploadedImage.value = imageURL+response.data.url     
     imageName.value = response.data.fileName   
+    console.log(imageURL,response.data.url);
+    
 };
 
 

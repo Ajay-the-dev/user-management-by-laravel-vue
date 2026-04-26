@@ -79,4 +79,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(batches::class, 'batchId');
     }
+
+    public function StudentDoc()
+    {
+        return $this->hasMany(StudentDoc::class, 'userId');
+    }
 }

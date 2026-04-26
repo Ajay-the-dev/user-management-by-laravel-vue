@@ -257,9 +257,7 @@ const getPaidFeeDetails = async(feeId)=>{
     const req= {}
     req.userId = currentStudentId.value
     req.feeId = feeId
-    const response = await api.post('/fees/paidFee/',req)
-    console.log(response.data.data);
-    
+    const response = await api.post('/fees/paidFee/',req)    
     return response.data.data
 }
 

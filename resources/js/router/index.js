@@ -30,6 +30,8 @@ const FeePayment = () => import('@/components/fee/paymentPage.vue')
 // Student Fee Module
 const StudentLayout = () => import('@/components/student/home.vue')
 const StudentFee = () => import('@/components/student/fee.vue')
+const StudentDocument = () => import('@/components/student/document.vue')
+
 
 const routes = [
   {
@@ -117,6 +119,9 @@ const routes = [
                 component: StudentFee
               }
             ]
+          },{
+            path: 'document',
+            component:StudentDocument
           }
         ]
       },
@@ -145,11 +150,11 @@ const routes = [
     ]
   },
 
-  // ✅ Fallback (important)
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/'
-  }
+  // // ✅ Fallback (important)
+  // {
+  //   path: '/:pathMatch(.*)*',
+  //   redirect: '/'
+  // }
 ]
 
 const router = createRouter({

@@ -1,119 +1,146 @@
 <template>
 <div class="row my-5 mx-2">
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="extraLargeModalLabel" aria-hidden="true" ref="myModalRef">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-            
-            <div class="modal-header">
-                <h5 class="modal-title" id="extraLargeModalLabel" v-if="modeSelected === 'STAFF'">Staff Details</h5>
-                <h5 class="modal-title" id="extraLargeModalLabel" v-else-if="modeSelected === 'ADMIN'">Staff Details</h5>
-                <h5 class="modal-title" id="extraLargeModalLabel" v-else>Student Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="myModal" tabindex="-1" aria-hidden="true" ref="myModalRef">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+      <div class="modal-header bg-dark text-white border-0">
+        <h5 class="modal-title fw-semibold p-1">
+          <span v-if="modeSelected === 'STAFF'">Staff Details</span>
+          <span v-else-if="modeSelected === 'ADMIN'">Staff Details</span>
+          <span v-else>Student Details</span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white px-4" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body bg-light" style="max-height:70vh; overflow-y:auto;">
+        <div class="row">
+          <div class="col-12" v-if="selectedUser!==null">
+
+            <div class="d-flex justify-content-around mb-4 text-center">
+              <img v-if="profile_picture" :src="profile_picture" class="rounded-circle shadow-sm border" width="90" height="90">
+              <img v-else src="http://localhost:8000/storage/images/profile.svg" class="rounded-circle shadow-sm border" width="90" height="90">
             </div>
-            
-            
-            <div class="modal-body">
+
+            <div class="card p-2 border-0 shadow-sm rounded-4 mb-3">
+              <div class="card-body">
+                <h6 class="text-uppercase text-primary fw-bold small mb-3">Personal Information</h6>
                 <div class="row">
-                    <div class="col-12" v-if="selectedUser!==null">
-                        <div class="profile-view">
-                            <div class="profile-section mb-4">
-                                <div class="text-center mb-4">
-                                    <img v-if="profile_picture" :src="profile_picture" alt="Profile Picture" class="round-thumb-pw">
-                                    <img v-else src="http://localhost:8000/storage/images/profile.svg" alt="Profile Picture" class="round-thumb-pw">
-                                </div>
-                                <h6 class="section-title">Personal Information</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>Name:</strong> {{ name }}</p>
-                                        <p><strong>Username:</strong> {{ username }}</p>
-                                        <p><strong>Email:</strong> {{ email }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Mobile:</strong> {{ mobile }}</p>
-                                        <p><strong>Date of Birth:</strong> {{ dob }}</p>
-                                        <p><strong>Gender:</strong> {{ gender }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profile-section mb-4" v-if="isStaff">
-                                <h6 class="section-title">Profile & Role</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>Role:</strong> {{ role }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Designation:</strong> {{ designation || 'N/A' }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profile-section mb-4" v-if="!isStaff">
-                                <h6 class="section-title">Academic Information</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>Course:</strong> {{ course || 'N/A' }}</p>
-                                        <p><strong>Roll Number:</strong> {{ rollNo || 'N/A' }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>University:</strong> {{ university }}</p>
-                                        <p><strong>Batch:</strong> {{ batchName || '-' }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profile-section mb-4" v-if="!isStaff">
-                                <h6 class="section-title">Location & Visa</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>Location:</strong> {{ location }}</p>
-                                        <p><strong>Visa Type:</strong> {{ visaType }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Visa Status:</strong> {{ visaStatus }}</p>
-                                        <p><strong>Visa Expiry Date:</strong> {{ visaExpiryDate || 'N/A' }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profile-section mb-4" v-if="!isStaff">
-                                <h6 class="section-title">Insurance</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>Insurance Status:</strong> {{ insuranceStatus }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Insurance Expiry Date:</strong> {{ insuranceExpiryDate || 'N/A' }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profile-section" v-if="!isStaff">
-                                <h6 class="section-title">Address</h6>
-                                <div class="row">
-                                     <div class="col-md-4">
-                                         <p><strong>Street:</strong> {{ street || '-' }}</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>City:</strong> {{ city || '-' }}</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>Country:</strong> {{ country || '-' }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                  <div class="col-md-6">
+                    <p class="mb-2"><span class="text-muted small">Name</span><br><span class="fw-semibold">{{ name }}</span></p>
+                    <p class="mb-2"><span class="text-muted small">Username</span><br><span class="fw-semibold">{{ username }}</span></p>
+                    <p class="mb-0"><span class="text-muted small">Email</span><br><span class="fw-semibold">{{ email }}</span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="mb-2"><span class="text-muted small">Mobile</span><br><span class="fw-semibold">{{ mobile }}</span></p>
+                    <p class="mb-2"><span class="text-muted small">Date of Birth</span><br><span class="fw-semibold">{{ dob ? new Date(dob).toLocaleDateString('en-GB').replace(/\//g, '-') : "-" }}</span></p>
+                    <p class="mb-0"><span class="text-muted small">Gender</span><br><span class="fw-semibold text-capitalize">{{ gender }}</span></p>
+                  </div>
                 </div>
+              </div>
             </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            <div v-if="isStaff" class="card p-2 border-0 shadow-sm rounded-4 mb-3">
+              <div class="card-body">
+                <h6 class="text-uppercase text-primary fw-bold small mb-3">Profile & Role</h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p class="mb-0"><span class="text-muted small">Role</span><br><span class="fw-semibold">{{ role }}</span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="mb-0"><span class="text-muted small">Designation</span><br><span class="fw-semibold">{{ designation || 'N/A' }}</span></p>
+                  </div>
+                </div>
+              </div>
             </div>
-            
+
+            <div v-if="!isStaff" class="card p-2 border-0 shadow-sm rounded-4 mb-3">
+              <div class="card-body">
+                <h6 class="text-uppercase text-primary fw-bold small mb-3">Academic Information</h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p class="mb-2"><span class="text-muted small">Course</span><br><span class="fw-semibold">{{ course || 'N/A' }}</span></p>
+                    <p class="mb-0"><span class="text-muted small">Roll Number</span><br><span class="fw-semibold">{{ rollNo || 'N/A' }}</span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="mb-2"><span class="text-muted small">University</span><br><span class="fw-semibold">{{ university }}</span></p>
+                    <p class="mb-0"><span class="text-muted small">Batch</span><br><span class="fw-semibold">{{ batchName || '-' }}</span></p>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <div v-if="!isStaff" class="card p-2 border-0 shadow-sm rounded-4 mb-3">
+              <div class="card-body">
+                <h6 class="text-uppercase text-primary fw-bold small mb-3">Location & Visa</h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p class="mb-2"><span class="text-muted small">Location</span><br><span class="fw-semibold">{{ location }}</span></p>
+                    <p class="mb-0"><span class="text-muted small">Visa Type</span><br><span class="fw-semibold">{{ visaType }}</span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="mb-2"><span class="text-muted small">Visa Status</span><br><span class="fw-semibold">{{ visaStatus }}</span></p>
+                    <p class="mb-0"><span class="text-muted small">Expiry</span><br><span class="fw-semibold">{{ visaExpiryDate || 'N/A' }}</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="!isStaff" class="card p-2 border-0 shadow-sm rounded-4 mb-3">
+              <div class="card-body">
+                <h6 class="text-uppercase text-primary fw-bold small mb-3">Insurance</h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p class="mb-0"><span class="text-muted small">Status</span><br><span class="fw-semibold">{{ insuranceStatus }}</span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="mb-0"><span class="text-muted small">Expiry</span><br><span class="fw-semibold">{{ insuranceExpiryDate || 'N/A' }}</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="!isStaff" class="card p-2 border-0 shadow-sm rounded-4 mb-3">
+              <div class="card-body">
+                <h6 class="text-uppercase text-primary fw-bold small mb-3">Address</h6>
+                <div class="row">
+                  <div class="col-md-4">
+                    <p class="mb-0"><span class="text-muted small">Street</span><br><span class="fw-semibold">{{ street || '-' }}</span></p>
+                  </div>
+                  <div class="col-md-4">
+                    <p class="mb-0"><span class="text-muted small">City</span><br><span class="fw-semibold">{{ city || '-' }}</span></p>
+                  </div>
+                  <div class="col-md-4">
+                    <p class="mb-0"><span class="text-muted small">Country</span><br><span class="fw-semibold">{{ country || '-' }}</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="!isStaff" class="card p-2 border-0 shadow-sm rounded-4">
+              <div class="card-body" v-if="fileUploads.length === 0">
+                <h6 class="text-uppercase text-primary fw-bold small mb-3">Uploads</h6>
+                <div class="text-center text-muted small">No uploads available</div>
+              </div>
+              <div class="card-body" v-else>
+                    <h6 class="text-uppercase text-primary fw-bold small mb-3">Uploads</h6>
+                    <button class="btn btn-sm btn-outline-dark m-2" v-for="file in fileUploads" @click="openInNewTab(file.url)">
+                        <i class="fa fa-arrow-circle-down mx-2"></i> {{ file.title }}
+                    </button>
+                </div>    
+            </div>
+
+          </div>
         </div>
+      </div>
+
+      <div class="modal-footer bg-white border-0">
+        <button type="button" class="btn btn-dark rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+      </div>
+
     </div>
+  </div>
+</div>
 
     <div class="col-12 w-75">
         <div class="card shadow-sm">
@@ -270,6 +297,8 @@
     const showBatch = ref(false)
     const searchQuery = ref('')
 
+    const fileUploads = ref([])
+
 
 
 
@@ -284,6 +313,7 @@
             showBatch.value = false
             isEditMode.value = false
             selectedAddress.value = []
+            fileUploads.value = []
         })
 
     })
@@ -385,6 +415,7 @@
             street.value = newVal.address[0].street || ''
             city.value = newVal.address[0].city || ''
             country.value = newVal.address[0].country || ''
+            fileUploads.value = newVal.student_doc
 
         }
         else{
@@ -411,6 +442,7 @@
             street.value = ''
             city.value = ''
             country.value = ''
+            fileUploads.value = []
         }
     })
 
@@ -558,6 +590,9 @@
         getAllUsers();
     })
 
+    const openInNewTab = (url) => {
+         window.open(url, '_blank', 'noreferrer');
+    };
 </script>
 
 <style scoped>

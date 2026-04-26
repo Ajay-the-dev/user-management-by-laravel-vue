@@ -4,6 +4,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\DocumentController;
+
 
 
 
@@ -46,5 +48,14 @@ Route::prefix('fees')->group(function () {
         Route::post('/feePayment',[FeeController::class, 'insertPayment']);
         Route::get('/paymentSummary/{id}',[FeeController::class, 'getStudentFeeSummary']);
         Route::post('/paidFee',[FeeController::class, 'getFeeSummaryByFeeId']);
+});
+
+//document
+
+Route::prefix('documents')->group(function (){
+        Route::post('/upload',[DocumentController::class,'upload']);
+        Route::post('/userdocs',[DocumentController::class,'documentEntryForUser']);
+        Route::get('/{id}',[DocumentController::class,'getDocumentsByUser']);
+        Route::delete('/{id}',[DocumentController::class,'remove']);
 });
 

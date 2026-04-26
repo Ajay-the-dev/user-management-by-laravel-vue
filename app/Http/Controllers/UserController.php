@@ -150,7 +150,7 @@ class UserController extends Controller
                 if ($isStaff == "1") {
                     $query->whereIn('role', ['STAFF', 'ADMIN']);
                 } else if ($isStaff == "0") {
-                    $query = User::with('batches');
+                    $query = User::with(['batches','StudentDoc']);
                     $query->where('role', 'STUDENT');
                 }
                 

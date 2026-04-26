@@ -72,9 +72,7 @@ const role = ref('')
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
-const menuForSelectedRole = computed(()=>{
-  console.log(role);
-  
+const menuForSelectedRole = computed(()=>{  
   if(role.value==='STUDENT')
   {
     return studentMenuItems
@@ -134,11 +132,6 @@ const staffMenuItems = [
     icon: 'fa fa-money-bill-trend-up', 
     route: '/home/fee' ,
     children:[
-      {
-        name: 'Fee Home',
-        icon: 'fa fa-home',
-        route:  '/home/fee'
-      },
       {
         name: 'Pay Fee',
         icon: 'fa fa-money-bill-alt',
