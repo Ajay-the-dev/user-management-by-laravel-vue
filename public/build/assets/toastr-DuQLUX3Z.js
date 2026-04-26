@@ -1,0 +1,1 @@
+import{S as e}from"./app-B3lrR-Vg.js";function a({title:r="",icon:t="success",position:o="top-end",timer:n=3e3}){e.fire({toast:!0,position:o,icon:t,title:r,showConfirmButton:!1,timer:n,timerProgressBar:!0,didOpen:s=>{s.addEventListener("mouseenter",e.stopTimer),s.addEventListener("mouseleave",e.resumeTimer)}})}export{a as s};
