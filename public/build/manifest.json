@@ -1,13 +1,13 @@
 {
-  "_axios-Bd5b6yL_.js": {
-    "file": "assets/axios-Bd5b6yL_.js",
+  "_axios-xEbgpfVd.js": {
+    "file": "assets/axios-xEbgpfVd.js",
     "name": "axios",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_axiosdoc-CQA0ScMS.js": {
-    "file": "assets/axiosdoc-CQA0ScMS.js",
+  "_axiosdoc-DchhHldl.js": {
+    "file": "assets/axiosdoc-DchhHldl.js",
     "name": "axiosdoc",
     "imports": [
       "resources/js/app.js"
@@ -17,22 +17,22 @@
     "file": "assets/debounce-B9j8fP-T.js",
     "name": "debounce"
   },
-  "_required-C4fiOpZU.js": {
-    "file": "assets/required-C4fiOpZU.js",
+  "_required-CIZkIrM-.js": {
+    "file": "assets/required-CIZkIrM-.js",
     "name": "required",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_toastr-wFdF0hFs.js": {
-    "file": "assets/toastr-wFdF0hFs.js",
+  "_toastr-DuQLUX3Z.js": {
+    "file": "assets/toastr-DuQLUX3Z.js",
     "name": "toastr",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_userStore-DSVPJ-zk.js": {
-    "file": "assets/userStore-DSVPJ-zk.js",
+  "_userStore-Dc6p7zUu.js": {
+    "file": "assets/userStore-Dc6p7zUu.js",
     "name": "userStore",
     "imports": [
       "resources/js/app.js"
@@ -76,7 +76,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CeL8t6a4.js",
+    "file": "assets/app-B3lrR-Vg.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -113,16 +113,16 @@
     ]
   },
   "resources/js/components/add.vue": {
-    "file": "assets/add-Cc4euOB-.js",
+    "file": "assets/add-B-f2GPWU.js",
     "name": "add",
     "src": "resources/js/components/add.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_toastr-wFdF0hFs.js",
-      "_axios-Bd5b6yL_.js",
-      "_axiosdoc-CQA0ScMS.js",
-      "_required-C4fiOpZU.js",
+      "_toastr-DuQLUX3Z.js",
+      "_axios-xEbgpfVd.js",
+      "_axiosdoc-DchhHldl.js",
+      "_required-CIZkIrM-.js",
       "_debounce-B9j8fP-T.js"
     ],
     "css": [
@@ -130,15 +130,15 @@
     ]
   },
   "resources/js/components/batchListView.vue": {
-    "file": "assets/batchListView-DUiNMcHm.js",
+    "file": "assets/batchListView-CXcswg18.js",
     "name": "batchListView",
     "src": "resources/js/components/batchListView.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_axios-Bd5b6yL_.js",
-      "_toastr-wFdF0hFs.js",
-      "_required-C4fiOpZU.js",
+      "_axios-xEbgpfVd.js",
+      "_toastr-DuQLUX3Z.js",
+      "_required-CIZkIrM-.js",
       "_debounce-B9j8fP-T.js"
     ],
     "css": [
@@ -146,30 +146,30 @@
     ]
   },
   "resources/js/components/fee/feeEntry.vue": {
-    "file": "assets/feeEntry-a5C7Q1LU.js",
+    "file": "assets/feeEntry-CBNICc7Y.js",
     "name": "feeEntry",
     "src": "resources/js/components/fee/feeEntry.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_axios-Bd5b6yL_.js"
+      "_axios-xEbgpfVd.js"
     ],
     "css": [
       "assets/feeEntry-COwY4Ixn.css"
     ]
   },
   "resources/js/components/fee/feeHome.vue": {
-    "file": "assets/feeHome-CR9S2KTX.js",
+    "file": "assets/feeHome-DWT5fAQ6.js",
     "name": "feeHome",
     "src": "resources/js/components/fee/feeHome.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_axios-Bd5b6yL_.js",
+      "_axios-xEbgpfVd.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/components/fee/feeRouteView.vue": {
-    "file": "assets/feeRouteView-hW4RDVwj.js",
+    "file": "assets/feeRouteView-pCQbMeIB.js",
     "name": "feeRouteView",
     "src": "resources/js/components/fee/feeRouteView.vue",
     "isDynamicEntry": true,
@@ -178,38 +178,38 @@
     ]
   },
   "resources/js/components/fee/paymentPage.vue": {
-    "file": "assets/paymentPage-BeYsDoc1.js",
+    "file": "assets/paymentPage-xFHRhVqz.js",
     "name": "paymentPage",
     "src": "resources/js/components/fee/paymentPage.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_axios-Bd5b6yL_.js",
-      "_toastr-wFdF0hFs.js"
+      "_axios-xEbgpfVd.js",
+      "_toastr-DuQLUX3Z.js"
     ]
   },
   "resources/js/components/home.vue": {
-    "file": "assets/home-B3HNCEJu.js",
+    "file": "assets/home-nQ9I15ji.js",
     "name": "home",
     "src": "resources/js/components/home.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_userStore-DSVPJ-zk.js"
+      "_userStore-Dc6p7zUu.js"
     ],
     "css": [
       "assets/home-CvqKFj4H.css"
     ]
   },
   "resources/js/components/listView.vue": {
-    "file": "assets/listView-B1DtdEFu.js",
+    "file": "assets/listView-BX4Tbnp2.js",
     "name": "listView",
     "src": "resources/js/components/listView.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_axios-Bd5b6yL_.js",
-      "_toastr-wFdF0hFs.js",
+      "_axios-xEbgpfVd.js",
+      "_toastr-DuQLUX3Z.js",
       "_debounce-B9j8fP-T.js"
     ],
     "css": [
@@ -217,54 +217,54 @@
     ]
   },
   "resources/js/components/login.vue": {
-    "file": "assets/login-DDFWGM9Z.js",
+    "file": "assets/login-CZqiQKtT.js",
     "name": "login",
     "src": "resources/js/components/login.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_toastr-wFdF0hFs.js",
-      "_userStore-DSVPJ-zk.js",
-      "_axios-Bd5b6yL_.js"
+      "_toastr-DuQLUX3Z.js",
+      "_userStore-Dc6p7zUu.js",
+      "_axios-xEbgpfVd.js"
     ],
     "css": [
       "assets/login-TFi0GxN3.css"
     ]
   },
   "resources/js/components/quickAccess.vue": {
-    "file": "assets/quickAccess-Bhz42-wY.js",
+    "file": "assets/quickAccess-CEZ6167q.js",
     "name": "quickAccess",
     "src": "resources/js/components/quickAccess.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_axios-Bd5b6yL_.js",
+      "_axios-xEbgpfVd.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/components/student/document.vue": {
-    "file": "assets/document-BfHDINvb.js",
+    "file": "assets/document-HjZwPqZ0.js",
     "name": "document",
     "src": "resources/js/components/student/document.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_axios-Bd5b6yL_.js",
-      "_axiosdoc-CQA0ScMS.js",
-      "_userStore-DSVPJ-zk.js",
-      "_toastr-wFdF0hFs.js"
+      "_axios-xEbgpfVd.js",
+      "_axiosdoc-DchhHldl.js",
+      "_userStore-Dc6p7zUu.js",
+      "_toastr-DuQLUX3Z.js"
     ],
     "css": [
       "assets/document-uEu7nKTm.css"
     ]
   },
   "resources/js/components/student/fee.vue": {
-    "file": "assets/fee-DSU4Jy3Q.js",
+    "file": "assets/fee-CNtLpebP.js",
     "name": "fee",
     "src": "resources/js/components/student/fee.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_axios-Bd5b6yL_.js",
-      "_userStore-DSVPJ-zk.js",
+      "_axios-xEbgpfVd.js",
+      "_userStore-Dc6p7zUu.js",
       "resources/js/app.js"
     ],
     "css": [
@@ -272,7 +272,7 @@
     ]
   },
   "resources/js/components/student/home.vue": {
-    "file": "assets/home-BiJD6Y3h.js",
+    "file": "assets/home-YCUR8wS0.js",
     "name": "home",
     "src": "resources/js/components/student/home.vue",
     "isDynamicEntry": true,
