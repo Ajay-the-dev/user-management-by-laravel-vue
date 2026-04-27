@@ -39,10 +39,6 @@ watch(filteredValues,(newVal)=>{
     }, 500);
 })
 
-onMounted(()=>{
-    console.log('update changed');
-    
-})
 
 
         

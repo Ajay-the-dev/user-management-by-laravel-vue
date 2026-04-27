@@ -108,7 +108,7 @@
                 <label class="form-label">Profile Picture Preview</label>
                 <div class="profile-preview-container card p-2 d-flex align-items-center w-50" >
                     <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1" style="width: 10rem;">
-                    <button class="btn btn-sm btn-outline-danger remove-image-btn" @click="removeImage">
+                    <button class="btn btn-sm btn-outline-danger remove-image-btn" @click="removeImage" :disabled="deleteToken.length===0">
                         <i class="fa fa-times"></i> Remove
                     </button>
                 </div>
@@ -321,7 +321,7 @@
 
       <!-- VISA DETAILS -->
 
-      <div class="action-bar bg-body-secondary d-flex justify-content-end p-4">
+      <div class="action-bar bg-body-secondary d-flex justify-content-end p-4 z-3">
         <button class="btn btn-primary" @click="addOrUpdateUser" v-if="!isEditing">
           <i class="fa fa-save mx-2"></i>Save 
         </button>
@@ -349,14 +349,13 @@ import required from './required.vue';
 import { useValidators } from "../utils/validator";
 import debounce from 'lodash/debounce';
 import Swal from 'sweetalert2'
-
-
-
-const {isValidPhoneNumber, isValidEmail, isValidName, isAddress, isValidUsername,isValidPassword} = useValidators();
-
-
-
+import {useCloudinary} from '../utils/uploader'
 import { getMedicalUniversities, getMedicalCourses, getUniversityCourses,getMedicalDepartments,getCountries } from "../utils/dataHelper";
+
+
+
+const {isValidPhoneNumber, isValidEmail, isValidName, isAddress} = useValidators();
+const {uploadImage, deleteByToken} = useCloudinary();
 
 const medicalUniversities = getMedicalUniversities()
 const universityCourses = getUniversityCourses()
@@ -417,6 +416,7 @@ const department = ref('')
 
 const uploadedImage = ref('')
 const imageName = ref('')
+const deleteToken = ref('')
 
 const usernameExists = ref(false)
 
@@ -808,15 +808,12 @@ const handleFileUpload = async(event) => {
     }
     profile_picture.value = file;
     if (!profile_picture.value) return;
-
-    const formData = new FormData();
-    formData.append('image', profile_picture.value);
-    const response = await docApi.post('/images/upload-image',formData).catch((err)=>{
-        return err;
-    })
-    uploadedImage.value = imageURL+response.data.url     
-    imageName.value = response.data.fileName   
-    console.log(imageURL,response.data.url);
+    const res =  await uploadImage(profile_picture.value)
+    uploadedImage.value = `${res.url}`
+    imageName.value = `${res.fileName}`
+    deleteToken.value = `${res.deleteToken}`
+    // uploadedImage.value = imageURL+response.data.url     
+    // imageName.value = response.data.fileName   
     
 };
 
@@ -826,11 +823,15 @@ const removeImage = async() =>{
     profile_picture.value = ''
     const req = {}
     req.fileName = imageName.value
-    const response = await api.post('images/remove',req).catch((err)=>{
-        return err;
-    })
+
+    // const response = await api.post('images/remove',req).catch((err)=>{
+    //     return err;
+    // })
+    deleteByToken(deleteToken.value)
+
     setTimeout(() => {
         imageName.value = ''
+        deleteToken.value = ''
     }, 500);
     
 }

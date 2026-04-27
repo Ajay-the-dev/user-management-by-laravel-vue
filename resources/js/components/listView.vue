@@ -324,10 +324,7 @@
         
         let staffFlag = isStaff.value ? 1:0
         const url = page ? page+`&isStaff=${staffFlag}` : `${baseURL}/users?isStaff=${staffFlag}` 
-        lastInPage.value = url
-
-        console.log(url);
-        
+        lastInPage.value = url        
         const response = api.get(url).then((response)=>{
             users.value = response.data.data
         }).catch((error)=>{
@@ -390,9 +387,6 @@
         
         if(newVal)
         {
-            console.log(newVal);
-            
-            // selectedAddress.value = newVal.address ? JSON.parse(newVal.address) : selectedAddress.value
             name.value = newVal.name
             username.value = newVal.username
             email.value = newVal.email
@@ -516,7 +510,6 @@
         if(result.isConfirmed)
         {
             const response = api.get(`${baseURL}/users/${user.id}`).then((response)=>{
-                console.log(response)
             if(response.data.status === 1)
             {
                 showToast({title:response.data.message, icon:'success'})
@@ -546,7 +539,6 @@
             request.name = request.name.trim()
             const url = page ? page : `${baseURL}/users/find` 
             const response = await api.post(url,request).then((response) =>{
-                console.log(response);
                             
                 if(response.data.status === 1)
                 {

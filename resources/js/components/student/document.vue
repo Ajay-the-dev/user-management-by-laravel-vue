@@ -51,7 +51,7 @@
       <div class="card-body px-4 py-3">
         <div class="section-label mb-3">Uploading</div> 
         <div class="d-flex flex-column gap-2">
-          <div v-for="(item, i) in uploadQueue" :key="i" class="upload-progress-row d-flex align-items-center gap-3">
+          <div v-for="(item, i) in uploadQueue" :key="i" class="upload-progress-row d-flex align-items-center gap-3 p-2">
             <div class="file-type-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" :class="fileIconClass(item.name)">
               <i :class="fileIcon(item.name)"></i>
             </div>
@@ -59,6 +59,9 @@
               <div class="d-flex justify-content-between mb-1">
                 <span class="upload-file-name fw-semibold">{{ item.name }}</span>
                 <span class="upload-pct">{{ item.progress }}%</span>
+                <button class="btn" @click="deleteByToken(item.deleteToken)">
+                  <i class="fa fa-trash-can"></i>
+                </button>
               </div>
               <div class="progress rounded-pill upload-bar">
                 <div class="progress-bar rounded-pill" role="progressbar" :style="{ width: item.progress + '%' }"></div>
@@ -165,6 +168,8 @@ import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/utils/axios'
 import docApi from '@/utils/axiosdoc'
 import { useUserStore } from '@/stores/userStore'
+import {useCloudinary} from '@/utils/uploader'
+
 
 const docURL = import.meta.env.VITE_DOC_BASE_URL;
 
@@ -185,6 +190,8 @@ const pendingUploads = ref(0);
 const uploadedFiles = ref([])
 const uploadCompleted = ref(false)
 
+const {uploadFile, deleteByToken} = useCloudinary();
+
 const initials = computed(() =>
   userData?.value?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
 )
@@ -201,9 +208,7 @@ const fetchDocuments = async () => {
   try {
     let req = {}
     req.id = userData.value.id
-    const res = await api.get(`/documents/${userData.value.id}`)
-    console.log(res);
-    
+    const res = await api.get(`/documents/${userData.value.id}`)    
     documents.value = res.data.data
   } catch (err) {
     console.error(err)
@@ -232,7 +237,7 @@ const handleFiles = async (files) => {
   uploadedFiles.value = results.filter(Boolean)
 
   if (uploadedFiles.value.length) {
-    makeDocEntries()
+    // makeDocEntries()
   }
 }
 
@@ -302,8 +307,8 @@ const makeDocEntries = async () => {
 
 
 const uploadSingleFile = (file) => {
-  return new Promise((resolve, reject) => {
-    const item = { name: file.name, progress: 0, file }
+  return new Promise(async(resolve, reject) => {
+    const item = { name: file.name, progress: 0, deleteToken:'', file }
     uploadQueue.value.push(item)
 
     const formData = new FormData()
@@ -314,28 +319,45 @@ const uploadSingleFile = (file) => {
       if (item.progress < 90) item.progress += 10
     }, 150)
 
-    docApi.post('/documents/upload', formData)
-      .then(res => {
-        clearInterval(interval)
-        item.progress = 100
-
-        const fileData = {
-          url: docURL + res.data.url,
-          fileName: file.name
-        }
+    const res = await uploadFile(file)
+    clearInterval(interval)
+    item.progress = 100
+    console.log(res);
+    const fileData = {
+        url: docURL + res.url,
+        fileName: res.fileName
+    }
+    item.deleteToken = res.deleteToken
 
         setTimeout(() => {
           uploadQueue.value = uploadQueue.value.filter(q => q !== item)
         }, 600)
+    resolve(fileData)
 
-        resolve(fileData)
-      })
-      .catch(err => {
-        clearInterval(interval)
-        uploadQueue.value = uploadQueue.value.filter(q => q !== item)
-        console.error(err)
-        resolve(null) // prevent Promise.all crash
-      })
+    
+
+    // docApi.post('/documents/upload', formData)
+    //   .then(res => {
+    //     clearInterval(interval)
+    //     item.progress = 100
+
+    //     const fileData = {
+    //       url: docURL + res.data.url,
+    //       fileName: file.name
+    //     }
+
+    //     setTimeout(() => {
+    //       uploadQueue.value = uploadQueue.value.filter(q => q !== item)
+    //     }, 600)
+
+    //     resolve(fileData)
+    //   })
+    //   .catch(err => {
+    //     clearInterval(interval)
+    //     uploadQueue.value = uploadQueue.value.filter(q => q !== item)
+    //     console.error(err)
+    //     resolve(null) // prevent Promise.all crash
+    //   })
   })
 }
 </script>

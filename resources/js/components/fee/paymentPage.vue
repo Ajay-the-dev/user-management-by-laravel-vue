@@ -161,7 +161,6 @@ const pendingFees = computed(() => {
 const submitPayment = async() => {
   if (!entry.value.amount || !entry.value.type) return
 
-    console.log(entry.value);
 
     if(parseFloat(entry.value.type.amount) < parseFloat(entry.value.amount) )
     {

@@ -166,7 +166,6 @@ onMounted(() => {
 const getAllFees = async () => {
   try {
     const response = await api.get(`${baseURL}/fees`)
-    console.log(response);
     allFees.value = response.data.data
     let s = allFees.value
     s.forEach((el) =>{

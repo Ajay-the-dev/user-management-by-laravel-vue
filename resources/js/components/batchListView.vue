@@ -216,9 +216,6 @@
 
     onMounted(()=>{
 
-        console.log('mounted in list')
-
-
         if(Object.keys(props.filteredData).length > 0)
         {
             batches.value = props.filteredData
@@ -373,7 +370,6 @@
             else
             {
                 const response = api.post(`${baseURL}/batches/create`,payload).then((response)=>{
-                    console.log(response)
                     if(response.data.status === 1)
                     {
                         showToast({title:response.data.message, icon:'success'})
@@ -427,7 +423,6 @@
     const getBatchesByName = async (page=null)=>{        
         const request = {}
         request.name = searchQuery.value
-        console.log('Search query:', request.name.trim()=== '');
         
         if(request.name.trim() === '')
         {

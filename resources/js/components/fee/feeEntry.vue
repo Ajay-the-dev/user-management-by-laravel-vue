@@ -394,7 +394,6 @@ const avatarGradient = (name) => {
 const getStudentsByBatch = async(id)=>{
     const response = await api.get(`users/bybatchId/${id}`)
     students.value = response.data.data
-    console.log('students',response);
     
 }
 
