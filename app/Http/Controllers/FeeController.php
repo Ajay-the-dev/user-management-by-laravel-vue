@@ -54,6 +54,7 @@ class FeeController extends Controller
         try {
             $feeId = $request->input('feeId');
             $userId = $request->input('userId');
+            $payment = json_encode($request->input('payment'));
             $amount = $request->input('paid_amount') ?  (float)$request->input('paid_amount'):0;
 
 
@@ -95,6 +96,7 @@ class FeeController extends Controller
                             "feeId" => $feeId,
                             "userId" => $userId,
                             "paid_amount"=>$amount,
+                            "payment" =>$payment,
                             "created_by" =>1
                         ]);
 
@@ -165,5 +167,41 @@ class FeeController extends Controller
                 'error' => $th->getMessage()
             ], 500);
         }
+    }
+
+    public function getRecentFee(Request $request)
+    {
+        try {
+            
+                $students = FeeStudent::with('fee','student')
+                    ->orderBy('id', 'desc')
+                    ->limit(5)
+                    ->get();
+                return response()->json([
+                    'status' => 1,
+                    'message' => 'fetched successfully',
+                    'data' => $students
+                ]);
+        } catch (\Throwable $th) {
+             return response()->json([
+                'status' => 0,
+                'message' => 'Error fetching fee summary',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function getYearlyReport()
+    {
+        $currentYear = date('Y');
+
+        $recentStudents = $this->getRecentFee();
+        $totalCollected = FeeStudent::whereYear('created_at', $currentYear)
+            ->sum('paid_amount');
+
+        return response()->json([
+            'year' => $currentYear,
+            'total_amount' => $totalCollected,
+            'recent_records' => $recentStudents
+        ]);
     }
 }

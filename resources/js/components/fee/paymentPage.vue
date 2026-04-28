@@ -9,7 +9,7 @@
         <div class="text-end">
           <p class="mb-0 text-muted">Total Balance</p>
           <h3 :class="totalDue > 0 ? 'text-danger' : 'text-success'">
-             $ {{ totalDue.toLocaleString() }}
+             {{ chosenCurrency }} {{ totalDue.toLocaleString() }}
           </h3>
         </div>
       </div>
@@ -17,10 +17,10 @@
 
     <div class="card mb-4 border-primary">
       <div class="card-header bg-primary text-white">Record New Payment</div>
-      <div class="card-body">
+      <div class="card-body px-5 py-4">
         <form @submit.prevent="submitPayment">
           <div class="row g-3">
-            <div class="col-md-5">
+            <div class="col-3">
               <label class="form-label">Fee Type</label>
               <select v-model="entry.type" class="form-select" required>
                 <option value="" disabled>Select Fee Type</option>
@@ -29,15 +29,30 @@
                 </option>
               </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+              <label class="form-label">Payment type</label>
+              <select v-model="selectedPaymentMode" class="form-select" required>
+                <option value="" disabled>Select payment Type</option>
+                <option v-for="mode in paymentModes" :key="mode" :value="mode">
+                  {{ mode }} 
+                </option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Reference</label>
+              <div class="input-group">
+                <input v-model="paymentReference" type="text" class="form-control" placeholder="UPI REF/ NEFT REF / CASH" required />
+              </div>
+            </div>
+             <div class="col-md-3">
               <label class="form-label">Amount to Pay</label>
               <div class="input-group">
-                <span class="input-group-text"> $</span>
+                <span class="input-group-text">{{ chosenCurrency }}</span>
                 <input v-model.number="entry.amount" type="number" class="form-control" placeholder="0.00" required />
               </div>
             </div>
-            <div class="col-md-3 d-flex align-items-end">
-              <button type="submit" class="btn btn-primary w-100" :disabled="entry.amount === '' || entry.amount===null">Submit Payment</button>
+            <div class="align-items-end col-md-3 d-flex justify-content-center mt-4 w-100">
+              <button type="submit" class="btn btn-primary p-2 mt-2" :disabled="entry.amount === '' || entry.amount===null">Submit Payment</button>
             </div>
           </div>
         </form>
@@ -61,9 +76,9 @@
           <tbody v-if="feeData.length > 0">
             <tr v-for="fee in feeData" :key="fee.id">
               <td>{{ fee.type }}</td>
-              <td>{{ fee.amount.toLocaleString() }}</td>
-              <td>{{ paidAmounts[fee.id]?.paid.toLocaleString() }}</td>
-              <td>{{ paidAmounts[fee.id]?.balance.toLocaleString() }}</td>
+              <td>{{chosenCurrency}} {{ fee.amount.toLocaleString() }}</td>
+              <td>{{chosenCurrency}} {{ paidAmounts[fee.id]?.paid.toLocaleString() }}</td>
+              <td>{{chosenCurrency}} {{ paidAmounts[fee.id]?.balance.toLocaleString() }}</td>
               <td>{{ fee.due ? fee.due : '-' }}</td>
               <td>
                 <span v-if="parseFloat(paidAmounts[fee.id]?.balance) === 0" class="badge bg-success">
@@ -111,33 +126,27 @@ import { ref, computed, onMounted,watch } from 'vue'
 import { useRoute,useRouter } from 'vue-router'
 import api from '@/utils/axios'
 
+
 import { showToast } from '@/utils/toastr'
 import Swal from 'sweetalert2'
 
+
+const payment = import.meta.env.VITE_PAYMENT
+const chosenCurrency = import.meta.env.VITE_CURRENCY
 const route = useRoute()
 const router = useRouter()
 const currentStudentId = computed(()=>{
-    return route.params.id
+  return route.params.id
 })
 
 const student = ref({})
 const feeData = ref([])
-const feeSummary = ref([])
-
 const paidAmounts = ref([]);
-
-const props = defineProps({
-  studentId:   { type: String, default: 'STU-7742' },
-  studentName: { type: String, default: 'Sneha Patel' },
-  batchName:   { type: String, default: 'Morning Batch' },
-})
+const selectedPaymentMode = ref('CASH')
+const paymentReference = ref('')
 
 // Data
-const assignedFees = ref([
-  { id: 1, type: 'Tuition', amount: 5000, payment_status: 'paid', due: '2025-06-01' },
-  { id: 2, type: 'Lab Fee', amount: 1200, payment_status: 'pending', due: '2025-07-15' },
-  { id: 3, type: 'Exam Fee', amount: 800, payment_status: 'pending', due: '2025-04-10' },
-])
+
 
 const entry = ref({
   type: '',
@@ -153,19 +162,32 @@ const totalDue = computed(() => {
   return sum
 })
 
-const pendingFees = computed(() => {
-  return assignedFees.value.filter(f => f.payment_status !== 'paid')
+const paymentModes = computed(()=>{
+  return payment.split(",")
 })
+
 
 
 const submitPayment = async() => {
   if (!entry.value.amount || !entry.value.type) return
 
-
     if(parseFloat(entry.value.type.amount) < parseFloat(entry.value.amount) )
     {
         showToast({title:'You cannot pay more than the assigned',icon:'error'})
         return 
+    }
+
+    if(selectedPaymentMode.value === '')
+    {
+      showToast({title:'Choose a payment type',icon:'error'})
+      return
+    }
+
+    
+    if(paymentReference.value === '')
+    {
+      showToast({title:'Payment reference is required',icon:'error'})
+      return
     }
     
     if(parseFloat(entry.value.type.amount) > parseFloat(entry.value.amount) )
@@ -224,6 +246,9 @@ const payFee = async(entry) =>{
     req.feeId = entry.value.type.id
     req.userId = currentStudentId.value
     req.paid_amount = entry.value.amount
+    req.payment = {}
+    req.payment.selectedPaymentMode = selectedPaymentMode.value
+    req.payment.paymentReference = paymentReference.value
     
     const response = await api.post('fees/feePayment',req);
     if(response.data.status === 1)

@@ -15,6 +15,7 @@ class FeeStudent extends Model
         'updated_by',
         'deleted_by',
         'paid_amount',
+        'payment'
     ];
 
     public function fee(): BelongsTo

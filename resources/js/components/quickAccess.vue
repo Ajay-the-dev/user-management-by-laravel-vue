@@ -167,10 +167,10 @@ const getAllFees = async () => {
   try {
     const response = await api.get(`${baseURL}/fees`)
     allFees.value = response.data.data
-    let s = allFees.value
-    s.forEach((el) =>{
-        allFees.value.push(el)
-    })
+    // let s = allFees.value
+    // s.forEach((el) =>{
+    //     allFees.value.push(el)
+    // })
   } catch (err) {
     console.error(err)
   }

@@ -95,12 +95,6 @@
                       </td>
                       <td><code class="text-muted small">{{ student.rollNo }}</code></td>
                       <td><code class="text-muted small">{{ student.course }}</code></td>
-                      <!-- <td class="small fw-semibold text-dark"> $ {{ student?.totalFees?.toLocaleString() }}</td> -->
-                      <!-- <td>
-                        <span :class="student.balance > 0 ? 'text-danger fw-bold' : 'text-success fw-bold'">
-                          {{ student.balance > 0 ? ' $ ' + student.balance.toLocaleString() : '✓ Cleared' }}
-                        </span>
-                      </td> -->
                       <td>
                         <span
                           class="badge rounded-pill px-2 py-1"
@@ -134,143 +128,6 @@
       
             </div>
           </div>
-      
-          <!-- ══════════════════════════════════════════════
-               PAY MODAL (Bootstrap 5)
-          ══════════════════════════════════════════════ -->
-          <div
-            class="modal fade"
-            id="payFeeModal"
-            tabindex="-1"
-            ref="payModal"
-          >
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
-      
-                <!-- Modal Header -->
-                <div class="modal-header border-0 px-4 pt-4 pb-2">
-                  <div class="d-flex align-items-center gap-3">
-                    <div class="modal-avatar" v-if="payingStudent" :style="{ background: avatarGradient(payingStudent.name) }">
-                      {{ initials(payingStudent.name) }}
-                    </div>
-                    <div>
-                      <h5 class="modal-title fw-bold mb-0">Record Payment</h5>
-                      <small class="text-muted">{{ payingStudent?.name }} · {{ payingStudent?.studentId }}</small>
-                    </div>
-                  </div>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-      
-                <!-- Balance Ribbon -->
-                <div v-if="payingStudent" class="balance-ribbon mx-4 mb-3 rounded-3 px-3 py-2 d-flex justify-content-between align-items-center">
-                  <span class="small text-muted fw-semibold">Outstanding Balance</span>
-                  <span class="fw-bold text-danger"> $ {{ payingStudent?.balance?.toLocaleString() }}</span>
-                </div>
-      
-                <div class="modal-body px-4 pb-0">
-                  <form @submit.prevent="submitPayment">
-      
-                    <!-- Fee Type -->
-                    <div class="mb-3">
-                      <label class="form-label fw-semibold small text-dark">Fee Type</label>
-                      <select v-model="form.feeType" class="form-select rounded-3" required>
-                        <option value="" disabled>Select fee type</option>
-                        <option v-for="fee in payingStudent?.fees" :key="fee.id" :value="fee.id">
-                          {{ fee.type }} —  $ {{ Number(fee.amount).toLocaleString() }}
-                        </option>
-                      </select>
-                    </div>
-      
-                    <!-- Amount -->
-                    <div class="mb-3">
-                      <label class="form-label fw-semibold small text-dark">Amount ( $)</label>
-                      <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0 text-muted fw-bold"> $</span>
-                        <input
-                          v-model.number="form.amount"
-                          type="number"
-                          class="form-control border-start-0 rounded-end-3"
-                          placeholder="0.00"
-                          min="1"
-                          required
-                        />
-                      </div>
-                    </div>
-      
-                    <!-- Payment Mode -->
-                    <div class="mb-3">
-                      <label class="form-label fw-semibold small text-dark">Payment Mode</label>
-                      <div class="d-flex gap-2 flex-wrap">
-                        <label
-                          v-for="mode in paymentModes"
-                          :key="mode.value"
-                          class="pay-mode-chip"
-                          :class="{ 'pay-mode-chip--active': form.paymentMode === mode.value }"
-                        >
-                          <input type="radio" v-model="form.paymentMode" :value="mode.value" class="d-none" />
-                          <i :class="mode.icon + ' me-1'"></i> {{ mode.label }}
-                        </label>
-                      </div>
-                    </div>
-      
-                    <!-- Reference / Transaction ID -->
-                    <div class="mb-3" v-if="form.paymentMode !== 'cash'">
-                      <label class="form-label fw-semibold small text-dark">Transaction / Reference ID</label>
-                      <input
-                        v-model="form.referenceId"
-                        type="text"
-                        class="form-control rounded-3"
-                        placeholder="e.g. TXN123456789"
-                      />
-                    </div>
-      
-                    <!-- Date -->
-                    <div class="mb-3">
-                      <label class="form-label fw-semibold small text-dark">Payment Date</label>
-                      <input
-                        v-model="form.paymentDate"
-                        type="date"
-                        class="form-control rounded-3"
-                        required
-                      />
-                    </div>
-      
-                    <!-- Note -->
-                    <div class="mb-3">
-                      <label class="form-label fw-semibold small text-dark">Note <span class="text-muted fw-normal">(optional)</span></label>
-                      <textarea
-                        v-model="form.note"
-                        class="form-control rounded-3"
-                        rows="2"
-                        placeholder="Any remarks…"
-                      ></textarea>
-                    </div>
-      
-                  </form>
-                </div>
-      
-                <!-- Modal Footer -->
-                <div class="modal-footer border-0 px-4 pb-4 pt-2 gap-2">
-                  <button type="button" class="btn btn-light rounded-3 flex-fill fw-semibold" data-bs-dismiss="modal">
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-dark rounded-3 flex-fill fw-semibold"
-                    :disabled="submitting"
-                    @click="submitPayment"
-                  >
-                    <span v-if="submitting" class="spinner-border spinner-border-sm me-2"></span>
-                    <i v-else class="fa fa-check me-2"></i>
-                    {{ submitting ? 'Processing…' : 'Confirm Payment' }}
-                  </button>
-                </div>
-      
-              </div>
-            </div>
-          </div>
-          <!-- /modal -->
-      
         </div>
     </div>
 </template>
@@ -282,6 +139,7 @@ import { useRoute,useRouter } from 'vue-router';
 
 const route = useRoute()
 const router = useRouter()
+const chosenCurrency = import.meta.env.VITE_CURRENCY
 
 // import Swal from 'sweetalert2'
 
@@ -376,7 +234,7 @@ const submitPayment = async () => {
   bsModal?.hide()
 
   // Swal.fire({ icon: 'success', title: 'Payment Recorded', timer: 1800, showConfirmButton: false })
-  alert(`Payment of  $${form.value.amount} recorded for ${payingStudent.value.name}`)
+  alert(`Payment of ${chosenCurrency} ${form.value.amount} recorded for ${payingStudent.value.name}`)
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────

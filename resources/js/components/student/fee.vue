@@ -16,7 +16,7 @@
         </div>
 
         <span class="balance-pill badge rounded-pill px-3 py-2 fw-semibold" :class="totalDue > 0 ? 'balance-pill--due' : 'balance-pill--paid'">
-          {{ totalDue > 0 ? '$ ' + totalDue.toLocaleString() + ' Due' : '✓ Fully Paid' }}
+          {{ totalDue > 0 ? `${chosenCurrency} ` + totalDue.toLocaleString() + ' Due' : '✓ Fully Paid' }}
         </span>
 
       </div>
@@ -28,11 +28,11 @@
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="progress-label d-flex align-items-center gap-2">
             <span class="dot dot--green"></span>
-            Paid &nbsp;<strong class="text-dark">$ {{ totalPaid.toLocaleString() }}</strong>
+            Paid &nbsp;<strong class="text-dark">{{ chosenCurrency }} {{ totalPaid.toLocaleString() }}</strong>
           </span>
           <span class="progress-percent fw-bold">{{ paidPercent }}%</span>
           <span class="progress-label">
-            <strong class="text-dark">$ {{ totalAssigned.toLocaleString() }}</strong> &nbsp;Total
+            <strong class="text-dark">{{ chosenCurrency }} {{ totalAssigned.toLocaleString() }}</strong> &nbsp;Total
           </span>
         </div>
         <div class="progress rounded-pill progress-track">
@@ -71,7 +71,7 @@
             </div>
 
             <div class="fee-amount fw-bold mb-3 text-dark">
-              $ {{ Number(fee.amount).toLocaleString() }}
+              {{ chosenCurrency }} {{ Number(fee.amount).toLocaleString() }}
             </div>
 
             <div class="d-flex gap-3 flex-wrap">
@@ -139,6 +139,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/utils/axios'
 import { useUserStore } from '@/stores/userStore'
+const chosenCurrency = import.meta.env.VITE_CURRENCY
+
 
 const userStore = useUserStore()
 const userData = ref({})

@@ -57,10 +57,8 @@
             </div>
             <div class="flex-grow-1">
               <div class="d-flex justify-content-between mb-1">
-                <span class="upload-file-name fw-semibold">{{ item.name }}</span>
-                <span class="upload-pct">{{ item.progress }}%</span>
-                <button class="btn" @click="deleteByToken(item.deleteToken)">
-                  <i class="fa fa-trash-can"></i>
+                <span class="upload-file-name fw-semibold">{{ item.name }} <span class="upload-pct px-2" v-if="item.progress > 0 && item.progress < 100">( {{ item.progress }}% )</span></span>
+                <button class="btn btn-close btn-sm p-2" @click="removeFromQueue(item)" :disabled="item.progress !== 100">
                 </button>
               </div>
               <div class="progress rounded-pill upload-bar">
@@ -76,7 +74,7 @@
     <div class="card border-0 rounded-4 shadow-sm mb-5">
       <div class="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between rounded-top-4">
         <h2 class="card-title mb-0 fw-bold">My Documents</h2>
-        <div class="d-flex gap-2">
+        <!-- <div class="d-flex gap-2">
           <span
             v-for="filter in filters"
             :key="filter"
@@ -86,7 +84,7 @@
           >
             {{ filter }}
           </span>
-        </div>
+        </div> -->
       </div>
 
       <!-- Empty State -->
@@ -169,6 +167,7 @@ import api from '@/utils/axios'
 import docApi from '@/utils/axiosdoc'
 import { useUserStore } from '@/stores/userStore'
 import {useCloudinary} from '@/utils/uploader'
+import Swal from 'sweetalert2'
 
 
 const docURL = import.meta.env.VITE_DOC_BASE_URL;
@@ -237,15 +236,48 @@ const handleFiles = async (files) => {
   uploadedFiles.value = results.filter(Boolean)
 
   if (uploadedFiles.value.length) {
-    // makeDocEntries()
+        const result = await Swal.fire({
+            title: 'Confirm',
+            text: `You are uploading ${uploadedFiles.value.length} files ` ,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Upload',
+            cancelButtonText: 'Cancel',
+        })
+
+        if(result.isConfirmed)
+        {
+          makeDocEntries()
+        }
   }
 }
 
 const deleteDoc = async (doc) => {
   try {
-    await api.delete(`/documents/${doc.id}`)
-    documents.value = documents.value.filter(d => d.id !== doc.id)
-    if (previewDoc.value?.id === doc.id) previewDoc.value = null
+    const result = await Swal.fire({
+            title: 'Confirm',
+            text: `You are deleting an uploaded file, continue ? ` ,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'No',
+        })
+
+        if(result.isConfirmed)
+        {
+            await api.delete(`/documents/${doc.id}`)
+            documents.value = documents.value.filter(d => d.id !== doc.id)
+            if (previewDoc.value?.id === doc.id) previewDoc.value = null
+        }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const removeFromQueue = async (item) => {
+  try {
+    deleteByToken(item.deleteToken)
+    uploadQueue.value = uploadQueue.value.filter(d => d.deleteToken !== item.deleteToken)
   } catch (err) {
     console.error(err)
   }
@@ -322,12 +354,12 @@ const uploadSingleFile = (file) => {
     const res = await uploadFile(file)
     clearInterval(interval)
     item.progress = 100
-    console.log(res);
     const fileData = {
         url: docURL + res.url,
         fileName: res.fileName
-    }
+      }
     item.deleteToken = res.deleteToken
+    
 
         setTimeout(() => {
           uploadQueue.value = uploadQueue.value.filter(q => q !== item)

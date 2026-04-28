@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('updated_by')->nullable();
             $table->string('deleted_by')->nullable();
             $table->float('paid_amount')->default(0);
+            $table->json('payment');
             $table->softDeletes();
         });
     }
