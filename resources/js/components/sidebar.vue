@@ -138,6 +138,18 @@ const staffMenuItems = [
         route:  '/home/fee/pay'
       }
     ]
+  },
+  { 
+    name: 'Notice Board', 
+    icon: 'fa fa-money-bill-trend-up', 
+    route: '/home/notice' ,
+    children:[
+      {
+        name: 'create',
+        icon: 'fa fa-comment-alt',
+        route:  '/home/notice'
+      }
+    ]
   }
 ]
 

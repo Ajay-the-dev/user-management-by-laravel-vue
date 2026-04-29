@@ -16,7 +16,7 @@
           </div>
           <div>
             <h2 class="mb-0 fw-bold" style="font-size:15px;color:#111827;letter-spacing:-0.2px;">Fee Collection</h2>
-            <span class="badge rounded-pill text-secondary bg-light border" style="font-size:11px;font-weight:600;letter-spacing:0.3px;">FY 2025–26</span>
+            <span class="badge rounded-pill text-secondary bg-light border" style="font-size:11px;font-weight:600;letter-spacing:0.3px;">{{ finYear }}</span>
           </div>
         </div>
         <button class="btn btn-dark fw-bold d-flex align-items-center gap-2" style="font-size:13px;border-radius:10px;" @click="router.push('/home/fee/pay')">
@@ -158,6 +158,7 @@ import { useRoute, useRouter } from 'vue-router'
 const routes = useRoute()
 const router = useRouter()
 const baseURL = import.meta.env.VITE_API_BASE_URL
+const finYear = import.meta.env.VITE_FINYEAR
 
 const transactions = ref([
   { studentName: 'Ajay C',      id: 'STU-9746', method: 'Bank Transfer', amount: '1,200', status: 'Completed' },

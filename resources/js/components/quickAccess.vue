@@ -16,9 +16,13 @@
           </div>
           <div>
             <h2 class="fw-bold mb-0" style="font-size:15px;color:#111827;letter-spacing:-0.2px;">Fee Collection</h2>
-            <span class="badge rounded-pill text-secondary border mt-1" style="font-size:11px;background:#f3f4f6;">FY 2025–26</span>
+            <span class="badge rounded-pill text-secondary border mt-1" style="font-size:11px;background:#f3f4f6;">{{ finYear }}</span>
           </div>
         </div>
+        <button class="fw-bold btn btn-sm btn-outline-secondary" @click="refreshHelper">
+          <i class="fa fa-refresh slow-rotation" id="rotater"></i>
+           Refresh
+        </button>
         <button class="fw-bold btn btn-sm btn-primary" @click="router.push('/home/fee/pay')">
           <i class="fa fa-hand-holding-dollar"></i>
           Pay fee
@@ -29,20 +33,20 @@
       <div class="d-flex align-items-stretch px-4 py-3 border-bottom">
         <div class="flex-fill d-flex flex-column gap-1">
           <span class="text-uppercase fw-500" style="font-size:11px;color:#9ca3af;letter-spacing:.5px;">Total Collected</span>
-          <span class="fw-bold" style="font-size:22px;color:#059669;letter-spacing:-.5px;">$ 45,250</span>
-          <span style="font-size:11px;color:#9ca3af;">↑ 12% this month</span>
+          <span class="fw-bold" style="font-size:22px;color:#059669;letter-spacing:-.5px;">{{ chosenCurrency }} {{ totalCollected }}</span>
+          <!-- <span style="font-size:11px;color:#9ca3af;">↑ 12% this month</span> -->
         </div>
         <div class="vr mx-4 my-1"></div>
         <div class="flex-fill d-flex flex-column gap-1">
           <span class="text-uppercase fw-500" style="font-size:11px;color:#9ca3af;letter-spacing:.5px;">Pending Dues</span>
-          <span class="fw-bold" style="font-size:22px;color:#dc2626;letter-spacing:-.5px;">$ 12,800</span>
-          <span style="font-size:11px;color:#9ca3af;">↓ 3 students</span>
+          <span class="fw-bold" style="font-size:22px;color:#dc2626;letter-spacing:-.5px;">{{ chosenCurrency }} {{ totalPending }}</span>
+          <!-- <span style="font-size:11px;color:#9ca3af;">↓ 3 students</span> -->
         </div>
         <div class="vr mx-4 my-1"></div>
         <div class="flex-fill d-flex flex-column gap-1">
-          <span class="text-uppercase fw-500" style="font-size:11px;color:#9ca3af;letter-spacing:.5px;">Total Students</span>
+          <span class="text-uppercase fw-500" style="font-size:11px;color:#9ca3af;letter-spacing:.5px;">Fee forms active</span>
           <span class="fw-bold" style="font-size:22px;color:#4f46e5;letter-spacing:-.5px;">{{ allFees.length || 48 }}</span>
-          <span style="font-size:11px;color:#9ca3af;">Enrolled this FY</span>
+          <!-- <span style="font-size:11px;color:#9ca3af;">Enrolled this FY</span> -->
         </div>
       </div>
 
@@ -60,21 +64,21 @@
           @mouseleave="e => e.currentTarget.style.background=''"
         >
           <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold flex-shrink-0" style="width:34px;height:34px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#6d28d9;font-size:13px;">
-            {{ tx.studentName.charAt(0) }}
+            <!-- {{ tx.studentName.charAt(0) }} -->{{ tx.student.name.charAt(0) }}
           </div>
           <div class="flex-fill d-flex flex-column" style="gap:1px;">
-            <span class="fw-semibold" style="font-size:13px;color:#111827;">{{ tx.studentName }}</span>
-            <span style="font-size:11px;color:#9ca3af;">{{ tx.id }} · {{ tx.method }}</span>
+            <span class="fw-semibold" style="font-size:13px;color:#111827;">{{ tx.student.name }}</span>
+            <span style="font-size:11px;color:#9ca3af;">{{ JSON.parse(tx.payment).paymentReference }} · {{ JSON.parse(tx.payment).selectedPaymentMode }}</span>
           </div>
           <div class="d-flex flex-column align-items-end" style="gap:3px;">
-            <span class="fw-bold" style="font-size:13px;color:#111827;">+${{ tx.amount }}</span>
+            <span class="fw-bold" style="font-size:13px;color:#111827;">+{{chosenCurrency}}{{ tx.paid_amount }}</span>
             <span
               class="badge rounded-pill"
-              :style="tx.status === 'Completed'
+              :style="parseFloat(tx.fee.amount) === parseFloat(tx.paid_amount)
                 ? 'background:#d1fae5;color:#059669;font-size:10px;'
                 : 'background:#fef3c7;color:#d97706;font-size:10px;'"
             >
-              {{ tx.status }}
+              {{ parseFloat(tx.fee.amount) === parseFloat(tx.paid_amount)  ? 'Fully paid' : 'Partially paid'}}
             </span>
           </div>
         </div>
@@ -143,36 +147,77 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import api from '@/utils/axios'
 import { useRoute, useRouter } from 'vue-router'
 
 const routes = useRoute()
 const router = useRouter()
 const baseURL = import.meta.env.VITE_API_BASE_URL
+const chosenCurrency = import.meta.env.VITE_CURRENCY
+const finYear = import.meta.env.VITE_FINYEAR
+const transactions = ref([])
 
-const transactions = ref([
-  { studentName: 'Ajay C',      id: 'STU-9746', method: 'Bank Transfer', amount: '1,200', status: 'Completed' },
-  { studentName: 'Rahul Sharma', id: 'STU-8821', method: 'Credit Card',   amount: '850',   status: 'Pending'   },
-  { studentName: 'Sneha Patel',  id: 'STU-7742', method: 'UPI',           amount: '2,100', status: 'Completed' },
-])
+const totalCollected = ref(0)
+const totalAssigned = ref(0)
+
+const totalPending = computed(()=>totalAssigned.value - totalCollected.value)
+
 
 const allFees = ref([])
 
 onMounted(() => {
   getAllFees()
+  getYearlyReportWithRecents()
 })
+
+const refreshHelper = () =>{
+  const el = document.getElementById('rotater');
+  el.classList.add('active');
+  getAllFees()
+  getYearlyReportWithRecents()
+  setTimeout(() => {
+      el.classList.remove('active');
+  }, 5000);
+}
 
 const getAllFees = async () => {
   try {
     const response = await api.get(`${baseURL}/fees`)
     allFees.value = response.data.data
-    // let s = allFees.value
-    // s.forEach((el) =>{
-    //     allFees.value.push(el)
-    // })
   } catch (err) {
     console.error(err)
   }
 }
+
+const getYearlyReportWithRecents = async () =>{
+  try {
+      const response = await api.get('/fees/yearly')
+      console.log(response.data.data);
+      let money = response.data.data
+      totalAssigned.value = money.totalAssigned
+      totalCollected.value = money.totalAmount
+      transactions.value = money.recentRecords
+
+  } catch (error) {
+        console.error(err)
+  }
+}
 </script>
+<style scoped>
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.slow-rotation {
+  /* 10s = very slow, linear = constant speed */
+  animation: spin 5s linear infinite;
+  animation-play-state: paused; /* Start paused */
+}
+
+.slow-rotation.active {
+  animation-play-state: running;
+}
+
+</style>

@@ -80,10 +80,10 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" width="10%" class="fw-bold text-muted">#</th>
+                                <th scope="col" width="5%" class="fw-bold text-muted text-center">#</th>
                                 <th scope="col" width="40%" class="fw-bold text-muted">Batch Name</th>
                                 <th scope="col" width="25%" class="fw-bold text-muted">Current Semester</th>
-                                <th scope="col" width="25%" class="fw-bold text-muted text-center">Actions</th>
+                                <th scope="col" width="30%" class="fw-bold text-muted text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody v-if="batches?.data?.length === 0">
@@ -96,7 +96,7 @@
                         </tbody>
                         <tbody v-else>
                             <tr v-for="(batche, index) in batches?.data" :key="batche.id" class="align-middle border-bottom">
-                                <td class="fw-bold">{{ batches.per_page * (batches.current_page - 1) + index + 1 }}</td>
+                                <td class="fw-bold text-center">{{ batches.per_page * (batches.current_page - 1) + index + 1 }}</td>
                                 <td class="fw-500">{{ batche.name }}</td>
                                 <td>
                                     <span v-if="batche.is_passout === 1" class="badge bg-success">

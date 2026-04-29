@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FeeStudent extends Model
 {
@@ -18,13 +19,13 @@ class FeeStudent extends Model
         'payment'
     ];
 
-    public function fee(): BelongsTo
+    public function fee()
     {
         return $this->belongsTo(Fee::class, 'feeId');
     }
 
     
-    public function student(): BelongsTo
+    public function student()
     {
         return $this->belongsTo(User::class, 'userId');
     }

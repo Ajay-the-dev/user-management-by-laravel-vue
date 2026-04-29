@@ -160,18 +160,18 @@
                 </div>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
+                <div class="table-responsive" v-if="!isLoading">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col" width="5%" class="fw-bold text-muted text-center">#</th>
-                                <th scope="col" width="30%" class="fw-bold text-muted">Name</th>
+                                <th scope="col" width="25%" class="fw-bold text-muted">Name</th>
                                 <th scope="col" width="15%" class="fw-bold text-muted" v-if="isStaff">Designation</th>
                                 <th scope="col" width="15%" class="fw-bold text-muted" v-else>Batch</th>
                                 <th scope="col" width="15%" class="fw-bold text-muted" v-if="!isStaff">Dept.</th>
                                 <th scope="col" width="15%" class="fw-bold text-muted" v-if="isStaff">Phone</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted" v-else>Roll No</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted text-center">Actions</th>
+                                <th scope="col" width="10%" class="fw-bold text-muted" v-else>Roll No</th>
+                                <th scope="col" width="20%" class="fw-bold text-muted text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody v-if="users?.data?.length === 0">
@@ -215,6 +215,11 @@
                         </tbody>
                     </table>
                 </div>
+                <div v-else class="d-flex justify-content-center p-3">
+                     <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
             </div>
             <div class="card-footer bg-light p-3" v-if="users?.links">
                 <nav aria-label="Page navigation">
@@ -255,6 +260,7 @@
 
     const emit = defineEmits(['trigger']);
 
+    const isLoading = ref(true)
 
     const users = ref([])
 
@@ -331,6 +337,9 @@
             console.log(error);
             showToast({title:error,icon:'error'})
         })
+        setTimeout(() => {
+            isLoading.value = false
+        }, 1000);
     }
 
     const showAddModal = () => {

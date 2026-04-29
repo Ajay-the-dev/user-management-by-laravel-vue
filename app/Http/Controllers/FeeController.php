@@ -173,15 +173,15 @@ class FeeController extends Controller
     {
         try {
 
-                $students = FeeStudent::with('fee','student')
-                    ->orderBy('id', 'desc')
-                    ->limit(5)
-                    ->get();
-                return response()->json([
-                    'status' => 1,
-                    'message' => 'fetched successfully',
-                    'data' => $students
-                ]);
+            $students = FeeStudent::with(['fee','student'])
+                ->orderBy('id', 'desc')
+                ->limit(5)
+                ->get();
+            return response()->json([
+                'status' => 1,
+                'message' => 'fetched successfully',
+                'data' => $students
+            ]);
         } catch (\Throwable $th) {
              return response()->json([
                 'status' => 0,
@@ -190,18 +190,76 @@ class FeeController extends Controller
             ], 500);
         }
     }
-    public function getYearlyReport()
+
+
+    public function getTotalAssigned(Request $request)
     {
-        $currentYear = date('Y');
+        try {
+          $results = DB::table('fees as fs')
+            ->join('batches as b', 'b.id', '=', 'fs.batchId')
+            ->join('users as u', 'u.batchId', '=', 'b.id')
+            ->select(
+                'fs.id as fee',
+                'b.id as batch',
+                'fs.amount',
+                DB::raw('COUNT(u.id) as user_count'),
+                DB::raw('COUNT(u.id) * fs.amount as total_revenue')
+            )
+            ->whereYear('fs.created_at', now()->year) 
+            ->groupBy('fs.id', 'b.id', 'fs.amount')
+            ->orderBy('fs.id')
+            ->get();
+            $grandTotal = $results->sum('total_revenue');
+            return response()->json([
+                'status' => 1,
+                'message' => 'fetched successfully',
+                'data' => $grandTotal
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Error fetching fee summary',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 
-        $recentStudents = $this->getRecentFee();
-        $totalCollected = FeeStudent::whereYear('created_at', $currentYear)
-            ->sum('paid_amount');
 
-        return response()->json([
-            'year' => $currentYear,
-            'total_amount' => $totalCollected,
-            'recent_records' => $recentStudents
-        ]);
+    public function getYearlyReportWithRecents(Request $request)
+    {
+        try {
+
+            $currentYear = date('Y');
+            $recentStudents = [];
+
+            $getRecentStudents = $this->getRecentFee($request);
+            $recentData = (Object)$getRecentStudents->getData(true);
+
+            if($recentData)
+            {
+                $recentStudents = $recentData->data;
+            }
+
+            $getAssignedFees = $this->getTotalAssigned($request);
+            $assignedFeeData = (Object)$getAssignedFees->getData();
+            $assignedFees = $assignedFeeData->data;
+            $totalCollected = FeeStudent::whereYear('created_at', $currentYear)->sum('paid_amount');
+
+            $data = json_encode([
+                'year' => $currentYear,
+                'totalAmount' => $totalCollected,
+                'totalAssigned' => $assignedFees,
+                'recentRecords' => $recentStudents
+            ]);
+
+    
+            return response()->json(["message"=>"fetched successfully","data" => json_decode($data),"status" => 1 ]);
+        } catch (\Throwable $th) {
+             return response()->json([
+                'status' => 0,
+                'message' => 'Error fetching fee summary',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 }

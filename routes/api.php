@@ -48,7 +48,7 @@ Route::prefix('fees')->group(function () {
         Route::post('/feePayment',[FeeController::class, 'insertPayment']);
         Route::get('/paymentSummary/{id}',[FeeController::class, 'getStudentFeeSummary']);
         Route::post('/paidFee',[FeeController::class, 'getFeeSummaryByFeeId']);
-        Route::get('/yearly',[FeeController::class, 'getYearlyReport']);
+        Route::get('/yearly',[FeeController::class, 'getYearlyReportWithRecents']);
 });
 
 //document

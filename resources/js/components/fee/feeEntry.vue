@@ -9,7 +9,7 @@
               <h4 class="fw-bold mb-1 text-dark">Fee Payment</h4>
               <p class="text-muted small mb-0">Select a batch, choose a student, and record payment</p>
             </div>
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-3 py-2">FY 2025–26</span>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-3 py-2">{{ finYear }}</span>
           </div>
       
           <!-- ── Step 1: Batch Selector ── -->
@@ -140,6 +140,8 @@ import { useRoute,useRouter } from 'vue-router';
 const route = useRoute()
 const router = useRouter()
 const chosenCurrency = import.meta.env.VITE_CURRENCY
+const finYear = import.meta.env.VITE_FINYEAR
+
 
 // import Swal from 'sweetalert2'
 

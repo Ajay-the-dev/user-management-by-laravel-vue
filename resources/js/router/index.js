@@ -33,6 +33,10 @@ const StudentFee = () => import('@/components/student/fee.vue')
 const StudentDocument = () => import('@/components/student/document.vue')
 
 
+//notice
+
+const NoticeLayout = () => import('@/components/notice/noticeMaker.vue');
+
 const routes = [
   {
     path: '/',
@@ -146,6 +150,10 @@ const routes = [
             component:FeePayment
           }
         ]
+      },
+      {
+        path:'notice',
+        component:NoticeLayout
       }
     ]
   },
