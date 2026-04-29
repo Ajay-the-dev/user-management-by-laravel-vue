@@ -172,7 +172,7 @@ class FeeController extends Controller
     public function getRecentFee(Request $request)
     {
         try {
-            
+
                 $students = FeeStudent::with('fee','student')
                     ->orderBy('id', 'desc')
                     ->limit(5)
