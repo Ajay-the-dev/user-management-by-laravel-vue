@@ -133,4 +133,5 @@ class BatchController extends Controller
             return response()->json(['message' => 'error while geting batch', 'error' => $e->getMessage()], 500);
         }
     }
+    
 }

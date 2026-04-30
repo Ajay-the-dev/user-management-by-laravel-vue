@@ -5,6 +5,7 @@ use App\Http\Controllers\BatchController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\NoticeController;
 
 
 
@@ -58,5 +59,11 @@ Route::prefix('documents')->group(function (){
         Route::post('/userdocs',[DocumentController::class,'documentEntryForUser']);
         Route::get('/{id}',[DocumentController::class,'getDocumentsByUser']);
         Route::delete('/{id}',[DocumentController::class,'remove']);
+});
+
+//notice
+
+Route::prefix('notice')->group(function (){
+        Route::post('/create',[NoticeController::class,'createNotice']);
 });
 

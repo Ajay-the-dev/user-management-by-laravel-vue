@@ -2,7 +2,7 @@
   <div class="p-4 content-scroll" style="background:#f4f6fb; height:100vh;">
 
     <!-- TOP SUMMARY CARD -->
-    <div class="card border-0 rounded-4 shadow-sm">
+    <div class="card border-0 rounded-4 shadow-sm" v-if="!isLoading">
       <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between rounded-top-4 px-4 py-3">
         <div class="d-flex align-items-center gap-3">
           <div class="d-flex align-items-center justify-content-center rounded-3" style="width:36px;height:36px;background:linear-gradient(135deg,#e8f5ee,#d1fae5);color:#059669;">
@@ -84,6 +84,13 @@
         </div>
       </div>
     </div>
+    <div class="card border-0 rounded-4 shadow-sm" v-else>
+        <div class="d-flex justify-content-center p-4">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+    </div>
 
     <!-- FEES OVERVIEW TABLE -->
     <div class="card border-0 rounded-4 shadow-sm p-2 my-5">
@@ -160,6 +167,7 @@ const transactions = ref([])
 
 const totalCollected = ref(0)
 const totalAssigned = ref(0)
+const isLoading = ref(true)
 
 const totalPending = computed(()=>totalAssigned.value - totalCollected.value)
 
@@ -193,11 +201,13 @@ const getAllFees = async () => {
 const getYearlyReportWithRecents = async () =>{
   try {
       const response = await api.get('/fees/yearly')
-      console.log(response.data.data);
       let money = response.data.data
       totalAssigned.value = money.totalAssigned
       totalCollected.value = money.totalAmount
       transactions.value = money.recentRecords
+      setTimeout(() => {
+        isLoading.value =false
+      }, 2000);
 
   } catch (error) {
         console.error(err)

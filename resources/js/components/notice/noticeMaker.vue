@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-4 content-scroll vh-100">
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -33,7 +33,59 @@
         <div class="card-body">
 
           <!-- TOOLBAR -->
-          <div class="btn-group flex-wrap w-100 mb-3 border-bottom pb-2">
+
+          <!-- TITLE -->
+          <input
+            v-model="title"
+            class="form-control mb-3"
+            placeholder="Enter notice title..."
+          />
+
+          <!-- TYPE -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Notice Type</label>
+
+            <div class="btn-group w-100 flex-wrap">
+
+              <button
+                v-for="t in noticeTypes"
+                :key="t.value"
+                class="btn btn-outline-secondary btn-sm"
+                :class="{ active: noticeType === t.value }"
+                @click="noticeType = t.value"
+              >
+                {{ t.label }}
+              </button>
+
+            </div>
+          </div>
+
+          <!-- AUDIENCE -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Audience</label>
+
+            <div class="d-flex flex-wrap gap-2">
+
+              <button
+                v-for="a in audienceOptions"
+                :key="a.value"
+                class="btn btn-sm"
+                :class="selectedAudience.includes(a.value) ? 'btn-dark' : 'btn-outline-secondary'"
+                @click="toggleAudience(a.value)"
+              >
+                {{ a.name }}
+              </button>
+              <select name="selectedBatch" id="" v-if="selectedAudience==='STUDENT'" class="form-control w-auto border-secondary" v-model="selectedBatch">
+                <option value="">All Batch</option>
+                <option v-for="value in batches" :value="value.id">{{ value.name }}</option>
+              </select>
+
+            </div>
+          </div>
+
+          <!-- EDITOR -->
+          <div class="card px-3 py-2">
+             <div class="btn-group flex-wrap w-100 mb-3 border-bottom pb-2">
 
             <button class="btn btn-light btn-sm"
               :class="{ active: editor.isActive('bold') }"
@@ -94,55 +146,9 @@
             </button>
 
           </div>
-
-          <!-- TITLE -->
-          <input
-            v-model="title"
-            class="form-control form-control-lg mb-3"
-            placeholder="Enter notice title..."
-          />
-
-          <!-- TYPE -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Notice Type</label>
-
-            <div class="btn-group w-100 flex-wrap">
-
-              <button
-                v-for="t in noticeTypes"
-                :key="t.value"
-                class="btn btn-outline-secondary btn-sm"
-                :class="{ active: noticeType === t.value }"
-                @click="noticeType = t.value"
-              >
-                {{ t.label }}
-              </button>
-
+            <div class="border rounded p-3 bg-light">
+              <editor-content :editor="editor" />
             </div>
-          </div>
-
-          <!-- AUDIENCE -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Audience</label>
-
-            <div class="d-flex flex-wrap gap-2">
-
-              <button
-                v-for="a in audienceOptions"
-                :key="a"
-                class="btn btn-sm"
-                :class="selectedAudience.includes(a) ? 'btn-dark' : 'btn-outline-secondary'"
-                @click="toggleAudience(a)"
-              >
-                {{ a }}
-              </button>
-
-            </div>
-          </div>
-
-          <!-- EDITOR -->
-          <div class="border rounded p-3 bg-light">
-            <editor-content :editor="editor" />
           </div>
 
           <!-- FOOTER -->
@@ -155,14 +161,14 @@
 
             <div class="d-flex gap-2">
 
-              <button class="btn btn-outline-secondary btn-sm"
+              <!-- <button class="btn btn-outline-secondary btn-sm"
                 @click="$emit('schedule', payload)">
                 Schedule
-              </button>
+              </button> -->
 
               <button class="btn btn-primary btn-sm"
                 @click="publish">
-                Publish Notice →
+                Publish
               </button>
 
             </div>
@@ -185,11 +191,9 @@
           <div class="mb-3">
             <span class="badge bg-primary me-2">{{ noticeType }}</span>
             <span
-              v-for="a in selectedAudience"
-              :key="a"
               class="badge bg-secondary me-1"
             >
-              {{ a }}
+              {{ selectedAudience }}
             </span>
           </div>
 
@@ -219,13 +223,18 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import api from '@/utils/axios'
+import { ref, computed,onMounted } from 'vue'
+import { useRouter } from "vue-router";
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
+import { showToast } from '@/utils/toastr'
 
 const emit = defineEmits(['save', 'schedule'])
+
+const router = useRouter()
 
 // ---------------- EDITOR ----------------
 const editor = useEditor({
@@ -240,11 +249,16 @@ const editor = useEditor({
 // ---------------- STATE ----------------
 const title = ref('')
 const noticeType = ref('general')
-const selectedAudience = ref(['All Students'])
+const selectedAudience = ref('')
 const isDirty = ref(false)
 const toast = ref('')
 const lastEdited = ref('')
 const isPreview = ref(false)
+const batches = ref([])
+const selectedBatch = ref('')
+
+
+
 
 // ---------------- DATA ----------------
 const noticeTypes = [
@@ -255,13 +269,10 @@ const noticeTypes = [
 ]
 
 const audienceOptions = [
-  'All Students',
-  'Year 1',
-  'Year 2',
-  'Year 3',
-  'Postgrad',
-  'Faculty'
-]
+  { name:"All",value:"ALL"},
+  { name:"Students",value:"STUDENT" },
+  { name:"faculties",value:"STAFF" },
+   ]
 
 // ---------------- COMPUTED ----------------
 const bodyText = computed(() => editor.value?.getText() ?? '')
@@ -280,15 +291,13 @@ const payload = computed(() => ({
   title: title.value,
   type: noticeType.value,
   audience: selectedAudience.value,
+  customBatch: selectedBatch.value,
   html: editor.value?.getHTML() ?? ''
 }))
 
 // ---------------- METHODS ----------------
 function toggleAudience(a) {
-  const i = selectedAudience.value.indexOf(a)
-  i === -1
-    ? selectedAudience.value.push(a)
-    : selectedAudience.value.splice(i, 1)
+  selectedAudience.value = a
 }
 
 function updateLastEdited() {
@@ -304,26 +313,45 @@ function setLink() {
   editor.value?.chain().focus().setLink({ href: url }).run()
 }
 
-let toastTimer
-function showToast(msg) {
-  toast.value = msg
-  clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => (toast.value = ''), 2500)
-}
 
-function publish() {
+
+async function publish() {
   if (!title.value.trim()) {
-    showToast('Title is required')
+    showToast({title:'Title is required',icon:'error'})
+    return
+  }
+
+  
+  if(!selectedAudience.value.trim())
+  {
+    showToast({title:'Please choose an audience',icon:'error'})
     return
   }
 
   if (!bodyText.value.trim()) {
-    showToast('Notice content is empty')
+    showToast({title:'Notice content is empty',icon:'error'})
     return
   }
-
-  emit('save', payload.value)
+  
   isDirty.value = false
-  showToast('Notice published successfully')
+  const response = await api.post('notice/create',payload.value)
+  if(response.data.status === 1){
+    showToast({title:response.data.message,icon:'success'})
+    setTimeout(() => {
+      router.go(0)
+    }, 2000);
+  }
+  else{
+    showToast({title:'Notice creation is failed',icon:'error'})
+  }
+}
+
+onMounted(()=>{
+  loadBatches()
+})
+
+const loadBatches = async() => {
+  const res = await api.get('/batches/all');   
+  batches.value = res.data.data
 }
 </script>

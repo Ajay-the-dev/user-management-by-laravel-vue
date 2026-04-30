@@ -141,12 +141,17 @@ const staffMenuItems = [
   },
   { 
     name: 'Notice Board', 
-    icon: 'fa fa-money-bill-trend-up', 
+    icon: 'fa fa-comment-alt', 
     route: '/home/notice' ,
     children:[
       {
         name: 'create',
-        icon: 'fa fa-comment-alt',
+        icon: 'fa fa-comment-medical',
+        route:  '/home/notice'
+      },
+      {
+        name: 'history',
+        icon: 'fa fa-list-dots',
         route:  '/home/notice'
       }
     ]
