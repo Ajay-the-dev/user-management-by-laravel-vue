@@ -13,4 +13,9 @@ class Notice extends Model
         'customBatch',
         'html'
     ];
+
+    public function batches()
+    {
+        return $this->belongsTo(batches::class, 'customBatch');
+    }
 }

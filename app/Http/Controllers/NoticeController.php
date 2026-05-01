@@ -43,4 +43,58 @@ class NoticeController extends Controller
             return response()->json(['message' => 'error while craeting notice  ', 'error' => $e->getMessage()], 500);
         }
     }
+
+     public function index(Request $request)
+    {
+        try {
+            $query = Notice::query();
+            $query = Notice::with(['batches']);
+            $notices = $query->orderBy('created_at', 'desc')->paginate(10);
+            return response()->json([
+                'status' => 1,
+                'data' => $notices,
+                'message' => "fetched successfully"
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'error while fetching notice  ', 'error' => $th->getMessage()], 500);
+        }
+    }
+
+    public function findByTitle(Request $request)
+    {
+        try {
+            $title = $request->input('title', '');
+            $notices = Notice::where('title', 'like', '%' . $title . '%')
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+            return response()->json([
+                'status' => 1,
+                'data' => $notices,
+                'message' => "fetched successfully"
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'error while fetching notice  ', 'error' => $th->getMessage()], 500);
+        }
+    }
+
+    public function getDetailsById(Request $request, $id)
+    {
+        try {
+
+            $notice = Notice::findOrFail($id);
+            if ($notice) {
+                 return response()->json([
+                'status' => 1,
+                'data' => $notice,
+                'message' => "fetched successfully"
+                ]);
+            }
+            else{
+                return response()->json(['message' => 'notice not found'], 401);
+            }
+            
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'error while fetching notice details ', 'error' => $th->getMessage()], 500);
+        }
+    }
 }

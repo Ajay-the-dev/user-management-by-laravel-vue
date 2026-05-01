@@ -19,7 +19,11 @@ return new class extends Migration
             $table->string('audience'); 
             $table->unsignedBigInteger('customBatch')->nullable();
             $table->longText('html');
+            $table->foreign('customBatch')->references('id')->on('batches')->onDelete('set null');
+            $table->boolean('show')->default(true);
         });
+
+
     }
 
     /**

@@ -97,12 +97,19 @@ const validateLogin = () => {
     username: username.value,
     password: password.value
   }).then((response) => {
+    console.log(response);
+    
     const data = response.data.data
+    const token = response.data.token
     if (data === '') {
       showToast({ title: 'Invalid Credentials', icon: 'error' })
     } else {
       showToast({ title: 'Logging in', icon: 'info' })
+
       userStore.setLoggedIn(data)
+      userStore.setToken(token)
+
+
       if (userStore.allData.role === 'STUDENT') {
         router.push('/home/student/home')
       } else {

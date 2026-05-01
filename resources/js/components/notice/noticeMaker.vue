@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
         <h4 class="mb-0">Notice Board</h4>
-        <small class="text-muted">Create and publish announcements</small>
+        <small class="text-muted">{{isEditMode?'Update published announcements':'Create and publish announcements'}}</small>
       </div>
 
       <div class="d-flex align-items-center gap-2">
@@ -166,11 +166,12 @@
                 Schedule
               </button> -->
 
-              <button class="btn btn-primary btn-sm"
-                @click="publish">
-                Publish
+              <button class="btn btn-primary btn-sm"  @click="initPublish">
+                {{isEditMode ? 'Publish as new':'Publish'}}
               </button>
-
+              <button class="btn btn-secondary btn-sm" v-if="isEditMode">
+                Cancel
+              </button>
             </div>
 
           </div>
@@ -225,16 +226,20 @@
 <script setup>
 import api from '@/utils/axios'
 import { ref, computed,onMounted } from 'vue'
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import { showToast } from '@/utils/toastr'
+import Swal from 'sweetalert2'
+
 
 const emit = defineEmits(['save', 'schedule'])
 
 const router = useRouter()
+const route = useRoute()
+const selectedNotice = ref(null)
 
 // ---------------- EDITOR ----------------
 const editor = useEditor({
@@ -249,13 +254,14 @@ const editor = useEditor({
 // ---------------- STATE ----------------
 const title = ref('')
 const noticeType = ref('general')
-const selectedAudience = ref('')
+const selectedAudience = ref('ALL')
 const isDirty = ref(false)
 const toast = ref('')
 const lastEdited = ref('')
 const isPreview = ref(false)
 const batches = ref([])
 const selectedBatch = ref('')
+const isEditMode = ref(false)
 
 
 
@@ -314,8 +320,28 @@ function setLink() {
 }
 
 
+const initPublish = async()=>{
+  
+  let msgString = isEditMode.value ? 'Do you want to public this updated notice? It will be shown on designated users':'Do you want to public this notice? It will be shown on designated users';
+  const result = await Swal.fire({
+  title: 'Confirmation',
+  text: msgString,
+  icon: 'info',
+  showCancelButton: true,
+  confirmButtonColor: '#6366f1',
+  confirmButtonText: 'Publish',
+  cancelButtonText: "Cancel",
+})
+
+  if (result.isConfirmed) {
+    publish()
+  }
+}
+
+
 
 async function publish() {
+
   if (!title.value.trim()) {
     showToast({title:'Title is required',icon:'error'})
     return
@@ -346,9 +372,29 @@ async function publish() {
   }
 }
 
+
+const getNoticeDetails = async()=>
+{
+  const response = await api.get('/notice/getDetails/'+selectedNotice.value)
+  let notice = response.data.data
+  title.value = notice.title
+  noticeType.value = notice.type
+  selectedAudience.value = notice.audience
+  selectedBatch.value = notice.customBatch
+  editor.value?.commands.setContent(notice.html)
+  isEditMode.value = true
+}
+
 onMounted(()=>{
   loadBatches()
-})
+  if(route.name === 'notice.edit')
+  {
+    selectedNotice.value = route.params.id
+    setTimeout(() => {
+      getNoticeDetails();
+    }, 300);
+  }
+});
 
 const loadBatches = async() => {
   const res = await api.get('/batches/all');   

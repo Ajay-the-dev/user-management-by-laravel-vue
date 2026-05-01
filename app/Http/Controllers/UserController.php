@@ -14,33 +14,45 @@ class UserController extends Controller
 {
     public function login(Request $request)
     {
+        $res = new stdClass();
         try {
-            if(Auth::attempt(["username"=>$request->username, "password"=>$request->password]))
+
+            $validator = Validator::make($request->all(), [
+                'username' => 'required',
+                'password' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $res->status = 0;
+                $res->message = 'Validation failed';
+                $res->data = $validator->errors();
+                return response()->json($res, 422);
+            }
+
+            if(Auth::attempt(["username" => $request->username, "password" => $request->password]))
             {
-                $res = new stdClass();
                 $user = Auth::user();
+                $tokenName = $request->header('User-Agent') ?? 'web-access-token';
+                $token = $user->createToken($tokenName)->plainTextToken;
+
                 $user->load('batches');
                 $res->status = 1;
                 $res->message = 'Validated successfully';
                 $res->data = $user;
+                $res->token = $token;
                 return response()->json($res);
             }
             else{
-                $res = new stdClass();
-                $user = Auth::user();
                 $res->status = 0;
                 $res->message = 'Invalid username/password';
                 $res->data = '';
                 return response()->json($res);
             }
 
-
-
         } catch (\Throwable $th) {
-            $res = new stdClass();
             $res->status = 0;
             $res->message = 'Something went wrong while loggin in';
-            $res->data = $request->all();
+            $res->error = $th->getMessage();
             return response()->json($res);
         }
     }

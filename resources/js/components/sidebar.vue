@@ -145,14 +145,14 @@ const staffMenuItems = [
     route: '/home/notice' ,
     children:[
       {
-        name: 'create',
+        name: 'Create',
         icon: 'fa fa-comment-medical',
-        route:  '/home/notice'
+        route:  '/home/notice-create'
       },
       {
-        name: 'history',
+        name: 'Old notices',
         icon: 'fa fa-list-dots',
-        route:  '/home/notice'
+        route:  '/home/notice-list'
       }
     ]
   }

@@ -35,7 +35,9 @@ const StudentDocument = () => import('@/components/student/document.vue')
 
 //notice
 
-const NoticeLayout = () => import('@/components/notice/noticeMaker.vue');
+const NoticeCreate = () => import('@/components/notice/noticeMaker.vue');
+const NoticeList = () => import('@/components/notice/noticeList.vue');
+
 
 const routes = [
   {
@@ -152,8 +154,17 @@ const routes = [
         ]
       },
       {
-        path:'notice',
-        component:NoticeLayout
+        path:'notice-create',
+        component:NoticeCreate
+      },
+       {
+        path:'notice-list',
+        component:NoticeList
+      },
+      {
+        path:'notice-edit/:id',
+        name:'notice.edit',
+        component:NoticeCreate
       }
     ]
   },
