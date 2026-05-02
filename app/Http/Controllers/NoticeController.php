@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Notice;
 use Illuminate\Support\Str;
+use App\Events\NewNotification;
 
 class NoticeController extends Controller
 {
@@ -18,7 +19,8 @@ class NoticeController extends Controller
                 'type' => 'required|string',
                 'audience' => 'required|string',
                 'html' => 'required|string',
-                'customBatch' => 'nullable|exists:batches,id']);
+                'customBatch' => 'nullable|exists:batches,id',
+                'expiry' => 'required|date']);
 
             if ($validate->fails()) {
                 return response()->json(['errors' => $validate->errors()], 422);
@@ -29,15 +31,28 @@ class NoticeController extends Controller
             $audience = $request->input('audience');
             $customBatch = $request->input('customBatch');
             $html = $request->input('html');
-            $html = Str::markdown($html);
+            $expiry = $request->input('expiry');
+            // $html = Str::markdown($html);
 
             $notice = Notice::create([
                 "title" => $title,
                 "type" => $type,
                 "audience" => $audience,
                 "customBatch" => $customBatch,
-                "html"  => $html
+                "html"  => $html,
+                "expiry" => $expiry
             ]);
+
+            switch ($type) {
+                case 'ALL':
+                    $this->pushNoticeForAll("New notice is published");
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+
             return response()->json(['message' => "notice created successfully","data"=> $notice,"status"=>1], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => 'error while craeting notice  ', 'error' => $e->getMessage()], 500);
@@ -95,6 +110,28 @@ class NoticeController extends Controller
             
         } catch (\Throwable $th) {
             return response()->json(['message' => 'error while fetching notice details ', 'error' => $th->getMessage()], 500);
+        }
+    }
+
+    public function pushNoticeForAll($message)
+    {
+        
+        //pushing to notification 
+        event(new NewNotification($message));
+    }
+
+    public function getAllAllocatedNotifications(Request $request,$id)
+    {
+        try {
+            $notices = Notice::all();
+            return response()->json([
+                'status' => 1,
+                'data' => $notices,
+                'message' => "fetched successfully"
+            ]);
+            
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'error while fetching notices ', 'error' => $th->getMessage()], 500);
         }
     }
 }

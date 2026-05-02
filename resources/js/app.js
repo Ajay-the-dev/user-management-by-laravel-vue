@@ -9,6 +9,8 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 import '@fortawesome/fontawesome-free/css/all.min.css'
 
+import './utils/echo'
+
 
 import { createPinia } from 'pinia'
 import piniaPersistedState from 'pinia-plugin-persistedstate'

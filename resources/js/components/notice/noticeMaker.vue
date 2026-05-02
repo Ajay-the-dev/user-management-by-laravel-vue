@@ -82,6 +82,22 @@
 
             </div>
           </div>
+          <!-- auto expire -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Auto Expiry</label>
+
+            <div class="d-flex flex-wrap gap-2">
+               <button
+                v-for="a in expiryOptions"
+                :key="a.value"
+                class="btn btn-sm"
+                :class="selectedExpiry===a.value ? 'btn-dark' : 'btn-outline-secondary'"
+                @click="toggleExpiry(a.value)"
+              >
+                {{ a.name }}
+              </button>
+            </div>
+          </div>
 
           <!-- EDITOR -->
           <div class="card px-3 py-2">
@@ -169,7 +185,7 @@
               <button class="btn btn-primary btn-sm"  @click="initPublish">
                 {{isEditMode ? 'Publish as new':'Publish'}}
               </button>
-              <button class="btn btn-secondary btn-sm" v-if="isEditMode">
+              <button class="btn btn-secondary btn-sm" v-if="isEditMode" @click="router.go(-1)">
                 Cancel
               </button>
             </div>
@@ -233,6 +249,7 @@ import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import { showToast } from '@/utils/toastr'
 import Swal from 'sweetalert2'
+import { values } from 'lodash';
 
 
 const emit = defineEmits(['save', 'schedule'])
@@ -263,6 +280,7 @@ const batches = ref([])
 const selectedBatch = ref('')
 const isEditMode = ref(false)
 
+const selectedExpiry = ref(30)
 
 
 
@@ -279,6 +297,12 @@ const audienceOptions = [
   { name:"Students",value:"STUDENT" },
   { name:"faculties",value:"STAFF" },
    ]
+
+  const expiryOptions = [
+    {name:'30 Days',value:30},
+    {name:'7 Days',value:7},
+    {name:'One day',value:1}
+  ]
 
 // ---------------- COMPUTED ----------------
 const bodyText = computed(() => editor.value?.getText() ?? '')
@@ -298,12 +322,18 @@ const payload = computed(() => ({
   type: noticeType.value,
   audience: selectedAudience.value,
   customBatch: selectedBatch.value,
-  html: editor.value?.getHTML() ?? ''
+  html: editor.value?.getHTML() ?? '',
+  expiry:expiryCalculated.value.dbDate
 }))
 
 // ---------------- METHODS ----------------
 function toggleAudience(a) {
   selectedAudience.value = a
+}
+
+function toggleExpiry(expiry)
+{
+  selectedExpiry.value = expiry
 }
 
 function updateLastEdited() {
@@ -322,7 +352,7 @@ function setLink() {
 
 const initPublish = async()=>{
   
-  let msgString = isEditMode.value ? 'Do you want to public this updated notice? It will be shown on designated users':'Do you want to public this notice? It will be shown on designated users';
+  let msgString = isEditMode.value ? 'Do you want to public this updated notice? It will be shown on designated users and will expire in '+expiryCalculated.value.showDate:'Do you want to public this notice? It will be shown on designated users and will expire in '+expiryCalculated.value.showDate;
   const result = await Swal.fire({
   title: 'Confirmation',
   text: msgString,
@@ -400,4 +430,23 @@ const loadBatches = async() => {
   const res = await api.get('/batches/all');   
   batches.value = res.data.data
 }
+
+const expiryCalculated = computed(()=>{
+    const today = new Date()
+    let targetDate;
+    targetDate = new Date(today)
+    console.log(selectedExpiry.value);
+    
+    targetDate.setDate(today.getDate() + selectedExpiry.value)
+  
+    const year = targetDate.getFullYear()
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0')
+    const day = String(targetDate.getDate()).padStart(2, '0')
+    let res ={}
+    res.dbDate =  `${year}-${month}-${day}`
+    res.showDate = `${day}-${month}-${year}`
+    return res
+
+  return selectedExpiry;
+})
 </script>

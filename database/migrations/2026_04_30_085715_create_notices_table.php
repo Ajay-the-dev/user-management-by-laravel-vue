@@ -21,6 +21,7 @@ return new class extends Migration
             $table->longText('html');
             $table->foreign('customBatch')->references('id')->on('batches')->onDelete('set null');
             $table->boolean('show')->default(true);
+            $table->date('expiry');
         });
 
 

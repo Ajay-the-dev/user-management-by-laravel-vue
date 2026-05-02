@@ -11,7 +11,8 @@ class Notice extends Model
         'type',
         'audience',
         'customBatch',
-        'html'
+        'html',
+        'expiry'
     ];
 
     public function batches()

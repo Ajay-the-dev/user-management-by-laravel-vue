@@ -160,12 +160,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import api from '@/utils/axios'
-import { showToast } from '@/utils/toastr'
 import { Modal } from 'bootstrap'
 import debounce from 'lodash/debounce'
 import { useRoute,useRouter } from 'vue-router'
+import { showToast } from '@/utils/toastr'
+
 
 const baseURL = import.meta.env.VITE_API_BASE_URL
 
@@ -184,7 +185,8 @@ onMounted(() => {
     viewModalInstance = new Modal(noticeViewModalRef.value)
     noticeViewModalRef.value.addEventListener('hidden.bs.modal', () => {
         selectedNotice.value = null
-    })
+    });
+    listenForNotifications()
 })
 
 const getAllNotices = (page = null) => {
@@ -260,6 +262,26 @@ const typeIcon = (type) => {
         exam: 'fas fa-pen',
     }
     return map[type?.toLowerCase()] || 'fas fa-bell'
+}
+
+onBeforeUnmount(() => {
+  if (window.Echo) {
+    window.Echo.leave('notifications')
+  }
+});
+
+const listenForNotifications = () => {
+  if (!window.Echo) {
+    console.error("Echo not initialized")
+    return
+  }
+
+
+    window.Echo.channel('notifications')
+    .listen('NewNotification', (e) => {
+        console.log(e.message)
+        showToast({title:e.message,icon:'info'})
+    })
 }
 </script>
 
