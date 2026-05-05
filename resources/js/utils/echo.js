@@ -1,6 +1,9 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import axios from 'axios'
 
+window.axios = axios
+window.axios.defaults.withCredentials = true
 window.Pusher = Pusher;
 
 window.Echo = new Echo({
@@ -11,4 +14,5 @@ window.Echo = new Echo({
     wssPort: import.meta.env.VITE_REVERB_PORT ?? 8080,
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
+    withCredentials: true
 });

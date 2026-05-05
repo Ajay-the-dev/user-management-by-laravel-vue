@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+
+Broadcast::channel('student-notice', function ($user) {
+    return $user->role === 'STUDENT';
+});
+
+Broadcast::channel('staff-notice', function ($user) {
+    return $user->role === 'STAFF' || $user->role === 'ADMIN';
 });

@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { Modal } from 'bootstrap'
 import api from '@/utils/axios'
 import { useUserStore } from '@/stores/userStore'
@@ -144,7 +144,6 @@ onMounted(() => {
   previewModalRef.value.addEventListener('hidden.bs.modal', () => {
     selectedNotice.value = null
   })
-  listenForNotifications()
 })
 
 const fetchNotices = async () => {
@@ -210,23 +209,4 @@ const filteredNotices = computed(() => {
 })
 
 
-onBeforeUnmount(()=>{
-  if (window.Echo) {
-    window.Echo.leave('notifications')
-  }
-})
-
-const listenForNotifications = () => {
-  if (!window.Echo) {
-    console.error("Echo not initialized")
-    return
-  }
-
-  window.Echo.channel('notifications')
-  .listen('NewNotification', (e) => {
-      console.log(e.message)
-      showToast({title:e.message,icon:'info'})
-      fetchNotices()
-  })
-}
 </script>

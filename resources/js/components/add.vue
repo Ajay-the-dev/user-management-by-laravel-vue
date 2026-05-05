@@ -353,7 +353,7 @@ import {useCloudinary} from '../utils/uploader'
 import { getMedicalUniversities, getMedicalCourses, getUniversityCourses,getMedicalDepartments,getCountries } from "../utils/dataHelper";
 
 
-
+const defaultPassword = import.meta.env.VITE_DEFAULT_USER_PASSWORD
 const {isValidPhoneNumber, isValidEmail, isValidName, isAddress} = useValidators();
 const {uploadImage, deleteByToken} = useCloudinary();
 
@@ -773,6 +773,11 @@ onMounted(()=>{
       getAllBatches()
     }, 500);
     getUserDetails();
+    //default password set in .env
+    if(defaultPassword.value !== '')
+    {
+      password.value = defaultPassword
+    }
 })
 
  const  modeSelected = computed(()=>{

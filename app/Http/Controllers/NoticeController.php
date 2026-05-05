@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Notice;
 use Illuminate\Support\Str;
 use App\Events\NewNotification;
+use App\Events\UserNotice;
 use App\Http\Controllers\UserController;
 
 class NoticeController extends Controller
@@ -47,13 +48,16 @@ class NoticeController extends Controller
                 "expiry" => $expiry
             ]);
 
+            //sending socket notification to realtime
             switch ($audience) {
                 case 'ALL':
                     $this->pushNoticeForAll("New notice is published");
                     break;
-                
+                case 'STUDENT':
+                    $this->pushNotificationForStudents("New notice is published");
+                    break;
                 default:
-                    # code...
+                    $this->pushNotificationForFaculties("New notice is published");
                     break;
             }
 
@@ -118,7 +122,7 @@ class NoticeController extends Controller
                 ]);
             }
             else{
-                return response()->json(['message' => 'notice not found'], 401);
+                return response()->json(['message' => 'notice not found'], 400);
             }
             
         } catch (\Throwable $th) {
@@ -231,5 +235,22 @@ class NoticeController extends Controller
             ->get();
 
         return response()->json($notices);
+    }
+
+    /**
+     * push notice to students
+     */
+    public function pushNotificationForStudents($message)
+    {
+        event(new UserNotice($message, 'student-notice'));
+    }
+
+
+    /**
+     * push notice to staffs
+     */
+    public function pushNotificationForFaculties($message)
+    {
+        event(new UserNotice($message, 'staff-notice'));
     }
 }

@@ -140,7 +140,7 @@ class UserController extends Controller
                 
                 $res = new stdClass();
                 $res->status = 1;
-                $res->message = 'Data stored successfully';
+                $res->message = 'New user added successfully';
                 $res->data = $entry;
                 return response()->json($res);
            
