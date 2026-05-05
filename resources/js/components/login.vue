@@ -92,12 +92,11 @@ const validateLogin = () => {
     showToast({ title: 'Password is required !', icon: 'error' })
     return
   }
-
+  
   api.post(`${baseURL}/users/authenticate`, {
     username: username.value,
     password: password.value
   }).then((response) => {
-    console.log(response);
     
     const data = response.data.data
     const token = response.data.token

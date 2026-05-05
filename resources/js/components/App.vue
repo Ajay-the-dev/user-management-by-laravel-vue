@@ -2,8 +2,12 @@
   <router-view />
 </template>
 <script setup>
-import { ref,onMounted,onBeforeUnmount } from "vue";
+import { ref,onMounted,onBeforeUnmount, computed } from "vue";
 import { showToast } from '../utils/toastr'
+import { useUserStore } from '@/stores/userStore'
+
+const userStore = useUserStore()
+const role = computed(()=>userStore.allData.role)
 
 onBeforeUnmount(() => {
   if (window.Echo) {
@@ -25,16 +29,28 @@ const listenForNotifications = async() => {
         showToast({title:e.message,icon:'info'})
     })
 
-    //student notifications
+  switch (role.value) {
+    case "STUDENT":
+        listenForStudentNotices()
+        break;
+    default:
+        listenForStaffNotices()
+        break;
+  }
 
+  }
+  
+  //student notices listener
+  const listenForStudentNotices = () =>{
     Echo.private('student-notice')
     .listen('UserNotice', (e) => {
         showToast({title:e.message,icon:'info'})
     })
+}
 
-    //faculty notifications
-
-      Echo.private('staff-notice')
+//staff notices listener
+  const listenForStaffNotices = () =>{
+    Echo.private('staff-notice')
     .listen('UserNotice', (e) => {
         showToast({title:e.message,icon:'info'})
     })

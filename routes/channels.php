@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Broadcast;
 
 
 Broadcast::channel('student-notice', function ($user) {
-    return $user->role === 'STUDENT';
+    // return $user->role === 'STUDENT';
+        dd($user);
+    return true;
 });
 
 Broadcast::channel('staff-notice', function ($user) {
