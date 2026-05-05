@@ -1,0 +1,18 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = git@github.com:Ajay-the-dev/user-management-by-laravel-vue.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+	vscode-merge-base = origin/master
+[branch "main"]
+	vscode-merge-base = origin/master
+	remote = origin
+	merge = refs/heads/main
+[branch "qa1"]
+	vscode-merge-base = origin/master

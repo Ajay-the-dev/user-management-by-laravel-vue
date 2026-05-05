@@ -7,27 +7,26 @@
         <div class="modal-content rounded-4 border-0 shadow">
           <div class="modal-header border-0 pb-0" v-if="selectedNotice">
             <div>
-              <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge rounded-pill text-uppercase" :class="typeBadgeClass(selectedNotice.type)">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <!-- <span class="badge rounded-pill text-uppercase" :class="typeBadgeClass(selectedNotice.type)">
                   {{ selectedNotice.type }}
                 </span>
                 <span class="badge rounded-pill bg-secondary text-uppercase">
                   {{ selectedNotice.audience }}
-                </span>
-              </div>
-              <h5 class="fw-bold text-dark mb-0">{{ selectedNotice.title }}</h5>
-              <small class="text-muted">
-                <i class="fa fa-clock me-1"></i>{{ formatDate(selectedNotice.created_at) }}
-                <!-- <span v-if="selectedNotice.expiry" class="ms-3">
-                  <i class="fa fa-calendar-times me-1"></i>Expires: {{ formatDate(selectedNotice.expiry) }}
                 </span> -->
-              </small>
+              </div>
+              <h5 class="fw-bold text-dark mb-1">{{ selectedNotice.title }}</h5>
+              <!-- <small class="text-muted">
+                <i class="fa fa-clock me-1"></i>{{ formatDate(selectedNotice.created_at) }}
+                &nbsp;·&nbsp;
+                <i class="fa fa-hourglass-end me-1"></i>Expires {{ formatDate(selectedNotice.expiry) }}
+              </small> -->
             </div>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body pt-3" v-if="selectedNotice">
+          <div class="modal-body pt-2" v-if="selectedNotice">
             <hr class="mt-0">
-            <div class="p-2" v-html="selectedNotice.html"></div>
+            <div v-html="selectedNotice.html"></div>
           </div>
           <div class="modal-footer border-0">
             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
@@ -37,12 +36,26 @@
     </div>
 
     <!-- Card Header -->
-    <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
-      <div class="d-flex align-items-center">
-        <div class="icon-box bg-primary-subtle text-primary rounded-3 p-2 me-3">
+    <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;">
           <i class="fa fa-bullhorn"></i>
         </div>
-        <h5 class="fw-bold m-0 text-dark">Important Notices</h5>
+        <h5 class="fw-bold m-0">Important Notices</h5>
+        <span class="badge bg-secondary rounded-pill ms-1">{{ filteredNotices.length }}</span>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="d-flex flex-wrap gap-1">
+        <button
+          v-for="f in filters"
+          :key="f.value"
+          class="btn btn-sm rounded-pill"
+          :class="activeFilter === f.value ? typeBadgeClass(f.value === 'all' ? null : f.value) : 'btn-outline-secondary'"
+          @click="activeFilter = f.value"
+        >
+          {{ f.label }}
+        </button>
       </div>
     </div>
 
@@ -50,44 +63,45 @@
     <div class="card-body px-4 pb-4">
 
       <!-- Loading -->
-      <div v-if="loading" class="text-center py-4 text-muted">
+      <div v-if="loading" class="text-center py-5 text-muted">
         <div class="spinner-border spinner-border-sm me-2" role="status"></div>
         Loading notices...
       </div>
 
       <!-- Empty -->
-      <div v-else-if="filteredNotices.length === 0" class="text-center py-4 text-muted">
-        <i class="fa fa-bell-slash fa-2x mb-2 d-block"></i>
+      <div v-else-if="filteredNotices.length === 0" class="text-center py-5 text-muted">
+        <i class="fa fa-bell-slash fa-2x mb-3 d-block"></i>
         No notices available.
       </div>
 
       <!-- Notice List -->
-      <div v-else class="notice-list">
+      <div v-else class="d-flex flex-column gap-2 mt-2">
         <div
-          v-for="(notice, index) in filteredNotices"
+          v-for="notice in filteredNotices"
           :key="notice.id"
-          class="notice-item p-3 mb-3 border-start border-4 rounded-3 cursor-pointer"
-          :class="notice.type === 'urgent' ? 'border-danger bg-danger-subtle' : 'border-primary bg-light'"
+          class="d-flex align-items-stretch rounded-3 border overflow-hidden cursor-pointer"
+          :class="notice.type === 'urgent' ? 'border-danger' : 'border'"
+          role="button"
           @click="openPreview(notice)"
           data-bs-toggle="modal"
           data-bs-target="#noticePreviewModal"
-          role="button"
         >
-          <div class="d-flex justify-content-between align-items-start mb-1">
-            <h6 class="fw-bold mb-0 text-dark">{{ notice.title }}</h6>
-            <span
-              class="badge rounded-pill text-uppercase ms-2 flex-shrink-0"
-              :class="typeBadgeClass(notice.type)"
-            >
-              {{ notice.type }}
-            </span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between text-muted small mt-2">
-            <span><i class="fa fa-calendar-alt me-1"></i>{{ formatDate(notice.created_at) }}</span>
-            <span v-if="notice.expiry" class="text-danger">
-              <i class="fa fa-hourglass-end me-1"></i>Expires {{ formatDate(notice.expiry) }}
-            </span>
-            <span class="text-primary"><i class="fa fa-eye me-1"></i>Read more</span>
+          <!-- Accent Bar -->
+          <div class="flex-shrink-0" :class="typeAccentClass(notice.type)" style="width:5px;"></div>
+
+          <!-- Content -->
+          <div class="flex-grow-1 px-3 py-2">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <p class="fw-semibold mb-1 text-dark small">{{ notice.title }}</p>
+              <span class="badge rounded-pill text-uppercase flex-shrink-0" :class="typeBadgeClass(notice.type)">
+                {{ notice.type }}
+              </span>
+            </div>
+            <div class="d-flex gap-3 text-muted" style="font-size:0.75rem;">
+              <span><i class="fa fa-calendar-alt me-1"></i>{{ formatDate(notice.created_at) }}</span>
+              <!-- <span><i class="fa fa-hourglass-end me-1"></i>Expires {{ formatDate(notice.expiry) }}</span> -->
+              <span class="ms-auto text-primary"><i class="fa fa-eye me-1"></i>Read more</span>
+            </div>
           </div>
         </div>
       </div>
@@ -97,20 +111,32 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
 import { Modal } from 'bootstrap'
 import api from '@/utils/axios'
 import { useUserStore } from '@/stores/userStore'
+import { showToast } from '@/utils/toastr'
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const userStore = useUserStore()
 const userId = computed(() => userStore.allData.id)
 
 const notices = ref([])
 const selectedNotice = ref(null)
 const loading = ref(false)
+const activeFilter = ref('all')
 
 const previewModalRef = ref(null)
 let modalInstance = null
+
+const filters = [
+  { value: 'all',     label: 'All'      },
+  { value: 'general', label: 'General'  },
+  { value: 'urgent',  label: 'Urgent'   },
+  { value: 'event',   label: 'Events'   },
+  { value: 'exam',    label: 'Exams'    },
+]
 
 onMounted(() => {
   fetchNotices()
@@ -118,6 +144,7 @@ onMounted(() => {
   previewModalRef.value.addEventListener('hidden.bs.modal', () => {
     selectedNotice.value = null
   })
+  listenForNotifications()
 })
 
 const fetchNotices = async () => {
@@ -145,43 +172,61 @@ const formatDate = (dateStr) => {
 
 const typeBadgeClass = (type) => {
   const map = {
-    urgent: 'bg-danger',
-    general: 'bg-primary',
-    event: 'bg-success',
+    urgent:  'bg-danger text-white',
+    general: 'bg-primary text-white',
+    event:   'bg-success text-white',
     holiday: 'bg-warning text-dark',
-    exam: 'bg-dark',
+    exam:    'bg-dark text-white',
+  }
+  return map[type?.toLowerCase()] ?? 'bg-secondary text-white'
+}
+
+const typeAccentClass = (type) => {
+  const map = {
+    urgent:  'bg-danger',
+    general: 'bg-primary',
+    event:   'bg-success',
+    holiday: 'bg-warning',
+    exam:    'bg-dark',
   }
   return map[type?.toLowerCase()] ?? 'bg-secondary'
 }
 
-const filteredNotices = computed(()=>{
-  if (notices.value.length===0) return []
+const filteredNotices = computed(() => {
+  const today = new Date()
   return notices.value.filter(notice => {
-    const expiryDate = new Date(notice.expiry);
-    const today = new Date();
-    const isNotExpired = expiryDate >= today;
-    
-    if (notice.audience === "ALL" && isNotExpired) return true;
-    if (notice.audience === "STAFF" && isNotExpired) return true;
-    if (notice.audience === "STUDENT" && isNotExpired && notice.customBatch === userStore.allData.batchId) return true;
-    return false;
+    const notExpired = new Date(notice.expiry) >= today
+    if (!notExpired) return false
 
-  })})
+    const audienceMatch =
+      notice.audience === 'ALL' ||
+      notice.audience === 'STAFF' ||
+      (notice.audience === 'STUDENT' && notice.customBatch === userStore.allData.batchId)
+
+    if (!audienceMatch) return false
+
+    return activeFilter.value === 'all' || notice.type === activeFilter.value
+  })
+})
+
+
+onBeforeUnmount(()=>{
+  if (window.Echo) {
+    window.Echo.leave('notifications')
+  }
+})
+
+const listenForNotifications = () => {
+  if (!window.Echo) {
+    console.error("Echo not initialized")
+    return
+  }
+
+  window.Echo.channel('notifications')
+  .listen('NewNotification', (e) => {
+      console.log(e.message)
+      showToast({title:e.message,icon:'info'})
+      fetchNotices()
+  })
+}
 </script>
-
-<style scoped>
-.icon-box {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.notice-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.notice-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-}
-</style>

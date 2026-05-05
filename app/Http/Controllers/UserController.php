@@ -439,10 +439,10 @@ class UserController extends Controller
     }
 
 
-    public function getUserById(Request $request)
+    public function getUserById(Request $request,$user="")
     {
         try {
-            $id = $request->id;
+            $id = $user ? $user : $request->id;
             $user = User::findOrFail($id)->load('batches');
             $res = new stdClass();
             $res->status = 1;

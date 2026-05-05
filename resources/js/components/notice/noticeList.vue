@@ -280,7 +280,7 @@ const listenForNotifications = () => {
     window.Echo.channel('notifications')
     .listen('NewNotification', (e) => {
         console.log(e.message)
-        showToast({title:e.message,icon:'info'})
+        // showToast({title:e.message,icon:'info'})
     })
 }
 </script>

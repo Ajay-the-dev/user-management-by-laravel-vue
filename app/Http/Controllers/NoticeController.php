@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Notice;
 use Illuminate\Support\Str;
 use App\Events\NewNotification;
+use App\Http\Controllers\UserController;
 
 class NoticeController extends Controller
 {
+    /**
+     *  create notice for users
+     */
     public function createNotice(Request $request)
     {
         try {
@@ -43,7 +47,7 @@ class NoticeController extends Controller
                 "expiry" => $expiry
             ]);
 
-            switch ($type) {
+            switch ($audience) {
                 case 'ALL':
                     $this->pushNoticeForAll("New notice is published");
                     break;
@@ -59,6 +63,9 @@ class NoticeController extends Controller
         }
     }
 
+    /**
+     * get all notices (paginated)
+     */
      public function index(Request $request)
     {
         try {
@@ -75,6 +82,9 @@ class NoticeController extends Controller
         }
     }
 
+    /**
+     * find notices by name(paginated)
+     */
     public function findByTitle(Request $request)
     {
         try {
@@ -92,6 +102,9 @@ class NoticeController extends Controller
         }
     }
 
+    /**
+     * get notice by id 
+     */
     public function getDetailsById(Request $request, $id)
     {
         try {
@@ -113,6 +126,9 @@ class NoticeController extends Controller
         }
     }
 
+    /**
+     * Broadcast notice
+     */
     public function pushNoticeForAll($message)
     {
         
@@ -120,18 +136,100 @@ class NoticeController extends Controller
         event(new NewNotification($message));
     }
 
+    /**
+     * get notice for role and audience
+     */
     public function getAllAllocatedNotifications(Request $request,$id)
     {
         try {
-            $notices = Notice::all();
+            $userController = new UserController();
+            $userData = $userController->getUserById($request,$id)->getData();
+            $batchId = $userData->batchId;
+            $role = $userData->role;
+            $finalNotice = [];
+            if($role === "STAFF" || $role === "ADMIN")
+            {
+                $publicNotices = $this->getPublicNotices();
+                $notices = [];
+                $notices = $publicNotices->getData();
+                foreach($notices as $n)
+                {
+                    $finalNotice[] = $n;   
+                }
+
+                $notices = [];
+                $staffNotices = $this->getInternalNotices();
+                $notices = $staffNotices->getData();
+                foreach($notices as $n)
+                {
+                    $finalNotice[] = $n;   
+                }
+            }
+            else{
+                $publicNotices = $this->getPublicNotices();
+                $notices = [];
+                $notices = $publicNotices->getData();
+                foreach($notices as $n)
+                {
+                    $finalNotice[] = $n;   
+                }
+
+                $studentNotices = $this->getStudentBatchNotices($batchId);
+                $notices = [];
+                $notices = $studentNotices->getData();
+                foreach($notices as $n)
+                {
+                    $finalNotice[] = $n;   
+                }
+            }
             return response()->json([
                 'status' => 1,
-                'data' => $notices,
+                'data' => $finalNotice,
                 'message' => "fetched successfully"
             ]);
             
         } catch (\Throwable $th) {
             return response()->json(['message' => 'error while fetching notices ', 'error' => $th->getMessage()], 500);
         }
+    }
+
+    /**
+     * get all public notices
+     */
+
+    public function getPublicNotices()
+    {
+        $notices = Notice::where('audience', 'ALL')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($notices);
+    }
+
+
+    /**
+     * get all notices for staff
+     */
+
+    public function getInternalNotices()
+    {
+        $notices = Notice::whereIn('audience', ['STAFF', 'ADMIN'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($notices);
+    }
+
+    /**
+     * get all notices for a particular batch
+     */
+    public function getStudentBatchNotices($batchId)
+    {
+        $notices = Notice::where('audience', 'STUDENT')
+            ->where('customBatch', $batchId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($notices);
     }
 }
