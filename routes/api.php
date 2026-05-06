@@ -6,6 +6,10 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\NoticeController;
+use Illuminate\Support\Facades\Broadcast;
+
+
+// Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 
 
@@ -63,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/paymentSummary/{id}',[FeeController::class, 'getStudentFeeSummary']);
                 Route::post('/paidFee',[FeeController::class, 'getFeeSummaryByFeeId']);
                 Route::get('/yearly',[FeeController::class, 'getYearlyReportWithRecents']);
+                Route::get('/getActive',[FeeController::class, 'getActiveFees']);
         });
 });
 

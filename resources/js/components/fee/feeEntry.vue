@@ -266,7 +266,6 @@ watch(selectedBatch,(batchId)=>{
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 .pay-fee-wrapper {
-  font-family: 'Plus Jakarta Sans', sans-serif;
   padding: 28px;
   background: #f4f6fb;
   height: 100vh;

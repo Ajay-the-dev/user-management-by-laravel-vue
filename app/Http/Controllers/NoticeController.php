@@ -54,7 +54,8 @@ class NoticeController extends Controller
                     $this->pushNoticeForAll("New notice is published");
                     break;
                 case 'STUDENT':
-                    $this->pushNotificationForStudents("New notice is published");
+                    $batchId = $customBatch ? $customBatch : null;
+                    $this->pushNotificationForStudents("New notice is published", $batchId);
                     break;
                 default:
                     $this->pushNotificationForFaculties("New notice is published");
@@ -240,9 +241,15 @@ class NoticeController extends Controller
     /**
      * push notice to students
      */
-    public function pushNotificationForStudents($message)
+    public function pushNotificationForStudents($message, $batchId = null)
     {
-        event(new UserNotice($message, 'student-notice'));
+        if($batchId)
+        {
+            event(new UserNotice($message, 'student-notice-'.$batchId));
+        }
+        else{
+            event(new UserNotice($message, 'student-notice'));
+        }
     }
 
 

@@ -6,10 +6,12 @@
       <div class="student-bar__glow position-absolute top-0 end-0 w-50 h-100"></div>
       <div class="d-flex align-items-center gap-3">
 
-        <div class="student-avatar rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0 text-white">
+        <div class="student-avatar rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0 text-white" v-if="userData.profile_picture !== null">
+          <img class="rounded-3" :src="userData.profile_picture" alt="">
+        </div>
+        <div class="student-avatar rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0 text-white" v-else>
           {{ initials }}
         </div>
-
         <div class="flex-grow-1">
           <h6 class="fw-bold mb-1 text-white text-capitalize">{{ userData.name }}</h6>
           <code class="student-meta">{{ userData.rollNo }} · {{ userData?.batches?.name }}</code>

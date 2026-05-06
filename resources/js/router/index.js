@@ -24,6 +24,8 @@ const FeeHome = () => import('@/components/fee/feeHome.vue')
 const FeePay = () => import('@/components/fee/feeEntry.vue')
 const FeeRoot = () => import('@/components/fee/feeRouteView.vue')
 const FeePayment = () => import('@/components/fee/paymentPage.vue')
+const FeeManage = () => import('@/components/fee/manage.vue')
+
 
 
 
@@ -31,6 +33,7 @@ const FeePayment = () => import('@/components/fee/paymentPage.vue')
 const StudentLayout = () => import('@/components/student/home.vue')
 const StudentFee = () => import('@/components/student/fee.vue')
 const StudentDocument = () => import('@/components/student/document.vue')
+const StudentProfile = () => import('@/components/student/profile.vue')
 
 
 //notice
@@ -127,7 +130,13 @@ const routes = [
             ]
           },{
             path: 'document',
+            name:'student.document',
             component:StudentDocument
+          },
+          {
+            path: 'profile',
+            name:'student.profile',
+            component:StudentProfile
           }
         ]
       },
@@ -150,6 +159,11 @@ const routes = [
             path:'payment/:id',
             name:'fee.final',
             component:FeePayment
+          },
+          {
+            path:'manage',
+            name:'fee.manage',
+            component:FeeManage
           }
         ]
       },

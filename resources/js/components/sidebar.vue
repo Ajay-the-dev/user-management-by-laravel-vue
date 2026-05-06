@@ -5,7 +5,7 @@
       
       <div class="sidebar-header px-4 py-4">
         <h5 class="fw-bold m-0">FeeMo</h5>
-        <small class="text-white-50">Welcome!</small>
+        <small class="text-white-50 text-capitalize">Welcome {{userStore.name}}!</small>
       </div>
 
       <div class="flex-grow-1 px-3 overflow-y-auto" v-if="!isLoading">
@@ -136,6 +136,11 @@ const staffMenuItems = [
         name: 'Pay Fee',
         icon: 'fa fa-money-bill-alt',
         route:  '/home/fee/pay'
+      },
+      {
+        name: 'Manage',
+        icon: 'fa fa-gear',
+        route:  '/home/fee/manage'
       }
     ]
   },
@@ -164,13 +169,19 @@ const studentMenuItems = [
     icon: 'fa fa-home', 
     route: '/home/student/home'   // dashboard (quickAccess)
   },
+  
+  { 
+    name: 'My profile', 
+    icon: 'fa fa-address-card', 
+    route: '/home/student/profile' 
+  },
 
   { 
     name: 'My Fees', 
     icon: 'fa fa-money-bill-transfer', 
     route: '/home/student/fee' 
   },
-
+  
   { 
     name: 'My Documents', 
     icon: 'fa fa-file-alt', 

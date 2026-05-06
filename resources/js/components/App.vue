@@ -32,6 +32,7 @@ const listenForNotifications = async() => {
   switch (role.value) {
     case "STUDENT":
         listenForStudentNotices()
+        listenForStudentBatchNotices()
         break;
     default:
         listenForStaffNotices()
@@ -42,22 +43,32 @@ const listenForNotifications = async() => {
   
   //student notices listener
   const listenForStudentNotices = () =>{
-    Echo.private('student-notice')
+    window.Echo.private('student-notice')
     .listen('UserNotice', (e) => {
         showToast({title:e.message,icon:'info'})
     })
-}
+  }
 
 //staff notices listener
   const listenForStaffNotices = () =>{
-    Echo.private('staff-notice')
+    window.Echo.private('staff-notice')
     .listen('UserNotice', (e) => {
         showToast({title:e.message,icon:'info'})
     })
-}
+  }
+
+   //student notices listener
+  const listenForStudentBatchNotices = () =>{    
+    window.Echo.private('student-notice-'+userStore.allData.batchId)
+    .listen('UserNotice', (e) => {
+        showToast({title:e.message,icon:'info'})
+    })
+  }
 
 onMounted(()=>{
-  listenForNotifications();
+  setTimeout(() => {
+    listenForNotifications();
+  }, 3000);
 })
 </script>
 <style>

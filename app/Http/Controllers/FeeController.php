@@ -12,6 +12,9 @@ use stdClass;
 
 class FeeController extends Controller
 {
+    /**
+     * get all fees paginated
+     */
     public function index()
     {
         try {
@@ -26,6 +29,9 @@ class FeeController extends Controller
         return response()->json(["data"=>$fees,"status"=>1]);
     }
 
+    /**
+     * get fees by batch id
+     */
     public function getFeesByBatch(Request $request,$id)
     {
         try {
@@ -49,6 +55,9 @@ class FeeController extends Controller
         }
     }
 
+    /**
+     * insert a transaction
+     */
     public function insertPayment(Request $request)
     {
         try {
@@ -119,7 +128,9 @@ class FeeController extends Controller
         }
     }
 
-
+    /**
+     * get student fee summary by  student id
+     */
     public function getStudentFeeSummary(Request $request,$id)
     {
         try {
@@ -151,6 +162,9 @@ class FeeController extends Controller
         }
     }
 
+    /**
+     * get fee details by fee id
+     */
     public function getFeeSummaryByFeeId(Request $request)
     {
         try {
@@ -169,6 +183,9 @@ class FeeController extends Controller
         }
     }
 
+    /**
+     * get recent 5 fee entries
+     */
     public function getRecentFee(Request $request)
     {
         try {
@@ -191,7 +208,9 @@ class FeeController extends Controller
         }
     }
 
-
+    /**
+     * get total assigned fee of current year
+     */
     public function getTotalAssigned(Request $request)
     {
         try {
@@ -225,6 +244,9 @@ class FeeController extends Controller
     }
 
 
+    /**
+     *  consolidated year wise report for current year
+     */
     public function getYearlyReportWithRecents(Request $request)
     {
         try {
@@ -258,6 +280,23 @@ class FeeController extends Controller
              return response()->json([
                 'status' => 0,
                 'message' => 'Error fetching fee summary',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * get active fee headers
+     */
+    public function getActiveFees(Request $request)
+    {
+        try {
+            $activeFees = Fee::where('status', 'ACTIVE')->latest()->with('batches')->get();
+            return response()->json(["message"=>"fetched successfully","data" => $activeFees,"status" => 1 ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Error fetching active fees',
                 'error' => $th->getMessage()
             ], 500);
         }

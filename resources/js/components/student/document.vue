@@ -4,7 +4,10 @@
     <div class="student-bar rounded-4 p-4 mb-3 position-relative overflow-hidden">
       <div class="bar-glow position-absolute top-0 end-0 h-100"></div>
       <div class="d-flex align-items-center gap-3">
-        <div class="avatar-pill rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0">
+        <div class="avatar-pill rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0" v-if="userData.profile_picture !== null">
+          <img class="rounded-3" :src="userData.profile_picture"/>
+        </div>
+         <div class="avatar-pill rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0" v-else>
           {{ initials }}
         </div>
         <div class="flex-grow-1">

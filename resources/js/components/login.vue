@@ -6,7 +6,7 @@
         <div class="brand-logo mb-4">
           <i class="fa fa-graduation-cap fa-2x text-white"></i>
         </div>
-        <h1 class="text-white fw-bold display-5 mb-2">EduAdmin</h1>
+        <h1 class="text-white fw-bold display-5 mb-2">Feemo</h1>
         <p class="text-white-50 fs-5 mb-0">Manage students, fees, and batches — all in one place.</p>
       </div>
     </div>
@@ -107,6 +107,7 @@ const validateLogin = () => {
 
       userStore.setLoggedIn(data)
       userStore.setToken(token)
+      localStorage.setItem('token', token)
 
 
       if (userStore.allData.role === 'STUDENT') {
@@ -129,7 +130,7 @@ const validateLogin = () => {
 
 .login-brand {
   background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
-  background-image: url('bg2.jpg'), linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
+  background-image: url('image.webp'), linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
