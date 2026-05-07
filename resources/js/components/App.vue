@@ -68,6 +68,16 @@ const listenForNotifications = async() => {
 onMounted(()=>{
   setTimeout(() => {
     listenForNotifications();
+
+    window.Echo.connector.pusher.connection.bind('unavailable', () => {
+        console.log('Connection unavailable. Stopping reconnection attempts.');
+        window.Echo.disconnect();
+    });
+
+    window.Echo.connector.pusher.connection.bind('failed', () => {
+        console.log('Connection failed.');
+        window.Echo.disconnect();
+    });
   }, 3000);
 })
 </script>
