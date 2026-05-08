@@ -32,12 +32,12 @@
 
                             <div class="px-3 col-3">Start Date </div>
                             <div class="col-9 px-3">
-                                <input type="date" v-model="startDate" class="form-control my-1" :disabled="showBatch">
+                                <flat-pickr  v-model="startDate" :config="config" class="form-control my-1" :disabled="showBatch"/>
                             </div>
                             
                             <div class="px-3 col-3">End Date </div>
                             <div class="col-9 px-3">
-                                <input type="date" v-model="endDate" class="form-control my-1" :disabled="showBatch">
+                                <flat-pickr  v-model="endDate" :config="config" class="form-control my-1" :disabled="showBatch"/>
                             </div>
                             <div class="px-3 col-3">Status <required/></div>
                             <div class="col-9 px-3">
@@ -169,6 +169,12 @@
     import Swal from 'sweetalert2'
     import { Modal } from 'bootstrap'
     import required from './required.vue'
+    
+    import flatPickr from 'vue-flatpickr-component'
+    import 'flatpickr/dist/flatpickr.css'
+    const config = {
+    dateFormat: 'Y-m-d'
+    }
 
     import debounce from 'lodash/debounce';
 

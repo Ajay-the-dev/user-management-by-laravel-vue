@@ -52,7 +52,7 @@
 
             <div class="col-md-6">
               <label class="form-label">DOB</label>
-              <input type="date" class="form-control" v-model="dob">
+              <flat-pickr  v-model="dob" :config="config" class="form-control"/>
             </div>
 
             <div class="col-md-6" v-if="!isEditing">
@@ -221,7 +221,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Visa Expiry Date</label>
-              <input type="date" class="form-control" v-model="visaExpiryDate">
+              <flat-pickr  v-model="visaExpiryDate" :config="config" class="form-control"/>
             </div>
           </div>
         </div>
@@ -240,11 +240,11 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Passport Issue Date</label>
-              <input type="date" class="form-control" v-model="passportIssueDate">
+              <flat-pickr  v-model="passportIssueDate" :config="config" class="form-control"/>
             </div>
             <div class="col-md-6">
               <label class="form-label">Passport Expiry Date</label>
-              <input type="date" class="form-control" v-model="passportExpiryDate">
+              <flat-pickr  v-model="passportExpiryDate" :config="config" class="form-control"/>
             </div>
             <div class="col-md-6">
               <label class="form-label">Issuing Country</label>
@@ -311,7 +311,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Insurance Expiry Date</label>
-              <input type="date" class="form-control" v-model="insuranceExpiryDate">
+              <flat-pickr  v-model="insuranceExpiryDate" :config="config" class="form-control"/>
             </div>
           </div>
         </div>
@@ -351,7 +351,11 @@ import debounce from 'lodash/debounce';
 import Swal from 'sweetalert2'
 import {useCloudinary} from '../utils/uploader'
 import { getMedicalUniversities, getMedicalCourses, getUniversityCourses,getMedicalDepartments,getCountries } from "../utils/dataHelper";
-
+import flatPickr from 'vue-flatpickr-component'
+import 'flatpickr/dist/flatpickr.css'
+const config = {
+  dateFormat: 'Y-m-d'
+}
 
 const defaultPassword = import.meta.env.VITE_DEFAULT_USER_PASSWORD
 const {isValidPhoneNumber, isValidEmail, isValidName, isAddress} = useValidators();

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Fee;
 use App\Models\FeeStudent;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 use stdClass;
 
@@ -297,6 +298,55 @@ class FeeController extends Controller
             return response()->json([
                 'status' => 0,
                 'message' => 'Error fetching active fees',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+
+    /**
+     *  store fees headers
+     */
+    public function storeFeeHeader(Request $request)
+    {
+         $validator = Validator::make($request->all(), [
+            'batchId' => 'required|integer|exists:batches,id',
+            'type'    => 'required|string|max:255',
+            'amount'  => 'required|numeric|min:0',
+            'status' => 'required|in:ACTIVE,INACTIVE,ARCHIVE',
+            'due'     => 'nullable|date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+
+            $fee = Fee::create([
+                'batchId'   => $request->batchId,
+                'type'      => $request->type,
+                'amount'    => $request->amount,
+                'status'    => $request->status,
+                'due'       => $request->due,
+                'created_by'=> auth()->id(),
+            ]);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Fee created successfully',
+                'data' => $fee
+            ]);
+
+        } catch (\Throwable $th) {
+
+            return response()->json([
+                'status' => 0,
+                'message' => 'Something went wrong',
                 'error' => $th->getMessage()
             ], 500);
         }
