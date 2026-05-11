@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/yearly',[FeeController::class, 'getYearlyReportWithRecents']);
                 Route::get('/getActive',[FeeController::class, 'getActiveFees']);
                 Route::post('/assign',[FeeController::class, 'storeFeeHeader']);
+                Route::put('/{id}', [FeeController::class, 'updateHeader']);
         });
 });
 

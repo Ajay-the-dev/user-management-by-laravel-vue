@@ -8,7 +8,7 @@
                 </div>
                 <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-3 py-2">{{ finYear }}</span>
             </div>
-            <Overview :allFees="allFees" heading="Fee Headers" :interactive="1===1"/>
+            <Overview :allFees="allFees" heading="Fee Headers" :interactive="1===1" @close="refresh"/>
         </div>
      </div>
 </template>
@@ -27,11 +27,16 @@ onMounted(()=>{
 
 const getAllFees = async () => {
   try {
+    allFees.value = []
     const response = await api.get(`/fees`)
     allFees.value = response.data.data
   } catch (err) {
     console.error(err)
   }
+}
+
+const refresh = () => {
+  getAllFees()
 }
 </script>
 <style scoped>

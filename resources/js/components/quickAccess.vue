@@ -139,6 +139,7 @@ const getAllFees = async () => {
   try {
     const response = await api.get(`${baseURL}/fees/getActive`)
     allFees.value = response.data.data
+    allFees.value = allFees?.value?.slice(0,20)
   } catch (err) {
     console.error(err)
   }

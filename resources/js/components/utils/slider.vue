@@ -15,7 +15,7 @@
       <div class="offcanvas-header border-bottom">
         <!-- <h5 class="offcanvas-title">{{ heading }}</h5> -->
         <slot name="heading"></slot>
-        <button type="button" class="btn-close" @click="emit('close')"></button>
+        <button type="button" class="btn-close" @click="postEmit"></button>
       </div>
       <slot name="content"></slot>
     </div>
@@ -41,4 +41,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+
+
+const postEmit = () =>{
+  emit('close',false)
+}
 </script>

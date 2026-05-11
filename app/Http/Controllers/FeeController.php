@@ -19,7 +19,7 @@ class FeeController extends Controller
     public function index()
     {
         try {
-            $fees = Fee::with('batches')->get();
+            $fees = Fee::with('batches')->orderBy('id','desc')->get();
         } catch (\Throwable $th) {
             $res = new stdClass();
             $res->status = 0;
@@ -309,7 +309,7 @@ class FeeController extends Controller
      */
     public function storeFeeHeader(Request $request)
     {
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'batchId' => 'required|integer|exists:batches,id',
             'type'    => 'required|string|max:255',
             'amount'  => 'required|numeric|min:0',
@@ -347,6 +347,81 @@ class FeeController extends Controller
             return response()->json([
                 'status' => 0,
                 'message' => 'Something went wrong',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    //**
+    // update fee headers
+    //  */
+
+    public function updateHeader(Request $request,$id)
+    {
+        try {
+            $fee = Fee::findOrFail($id);
+            if($fee)
+            {
+                $validator = Validator::make($request->all(), [
+                'batchId' => 'required|integer|exists:batches,id',
+                'type'    => 'required|string|max:255',
+                'amount'  => 'required|numeric|min:0',
+                'status' => 'required|in:ACTIVE,INACTIVE,ARCHIVE',
+                'due'     => 'nullable|date',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'status' => 0,
+                        'message' => 'Validation failed',
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+                else{
+
+                    if($request->input('batchId'))
+                    {
+                        $fee->batchId = $request->input('batchId');
+                    }
+
+                    if($request->input('type'))
+                    {
+                        $fee->type = $request->input('type');
+                    }
+
+                    if($request->input('amount'))
+                    {
+                        $fee->amount = $request->input('amount');
+                    }
+
+                    if($request->input('status'))
+                    {
+                        $fee->status = $request->input('status');
+                    }
+
+                    $fee->due = $request->input('due');
+
+                    $fee->save();
+
+                    return response()->json([
+                        'status' => 1,
+                        'message' => 'Updated successfully',
+                        'data' => $fee
+                    ]);
+
+                }
+            }
+            else{
+                 return response()->json([
+                        'status' => 0,
+                        'message' => 'fee header not found',
+                        'errors' => $validator->errors()
+                    ], 422);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Something went wrong while updating',
                 'error' => $th->getMessage()
             ], 500);
         }
