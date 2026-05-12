@@ -310,7 +310,7 @@ class FeeController extends Controller
     public function storeFeeHeader(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'batchId' => 'required|integer|exists:batches,id',
+            'batchId' => 'required|array|min:1',
             'type'    => 'required|string|max:255',
             'amount'  => 'required|numeric|min:0',
             'status' => 'required|in:ACTIVE,INACTIVE,ARCHIVE',
@@ -327,14 +327,18 @@ class FeeController extends Controller
 
         try {
 
-            $fee = Fee::create([
-                'batchId'   => $request->batchId,
-                'type'      => $request->type,
-                'amount'    => $request->amount,
-                'status'    => $request->status,
-                'due'       => $request->due,
-                'created_by'=> auth()->id(),
-            ]);
+            $batchIds = $request->input('batchId');
+            $fee = [];
+            foreach ($batchIds as $batchId) {
+                $fee[] = Fee::create([
+                    'batchId'   => $batchId,
+                    'type'      => $request->type,
+                    'amount'    => $request->amount,
+                    'status'    => $request->status,
+                    'due'       => $request->due,
+                    'created_by'=> auth()->id(),
+                ]);
+            }
 
             return response()->json([
                 'status' => 1,
@@ -363,7 +367,7 @@ class FeeController extends Controller
             if($fee)
             {
                 $validator = Validator::make($request->all(), [
-                'batchId' => 'required|integer|exists:batches,id',
+                'batchId' => 'required|array|min:1',
                 'type'    => 'required|string|max:255',
                 'amount'  => 'required|numeric|min:0',
                 'status' => 'required|in:ACTIVE,INACTIVE,ARCHIVE',
@@ -381,7 +385,7 @@ class FeeController extends Controller
 
                     if($request->input('batchId'))
                     {
-                        $fee->batchId = $request->input('batchId');
+                        $fee->batchId = implode($request->input('batchId'));
                     }
 
                     if($request->input('type'))

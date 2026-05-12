@@ -24,7 +24,7 @@
     <div 
       v-if="showSidebar" 
       class="offcanvas-backdrop fade show" 
-      @click="emit('close')"
+      @click="postEmit"
     ></div>
   </div>
 </template>

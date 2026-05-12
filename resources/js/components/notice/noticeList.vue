@@ -186,7 +186,6 @@ onMounted(() => {
     noticeViewModalRef.value.addEventListener('hidden.bs.modal', () => {
         selectedNotice.value = null
     });
-    listenForNotifications()
 })
 
 const getAllNotices = (page = null) => {

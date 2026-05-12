@@ -138,8 +138,8 @@ const staffMenuItems = [
         route:  '/home/fee/pay'
       },
       {
-        name: 'Manage',
-        icon: 'fa fa-gear',
+        name: 'Fee Header',
+        icon: 'fa fa-money-check-dollar me-3',
         route:  '/home/fee/manage'
       }
     ]

@@ -12,7 +12,7 @@
           <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label class="form-label fw-medium">Batch <span class="text-danger">*</span></label>
-              <select class="form-select" v-model="selectedBatchId">
+              <!-- <select class="form-select" v-model="selectedBatchId">
                 <option value="">Choose</option>
                 <option
                   :value="batch.id"
@@ -20,7 +20,18 @@
                   v-for="batch in batches"
                   :selected="selectedFee?.batches?.id === batch.id"
                 >{{ batch.name }}</option>
-              </select>
+              </select> -->
+              <div class="custom-multiselect">
+                <Multiselect
+                  v-model="selectedBatchId"
+                  :options="batches"
+                  :multiple="Object.keys(selectedFee).length > 0 ? false:true"
+                  :close-on-select="true"
+                  placeholder="Choose batch"
+                  label="name"
+                  track-by="name"
+                />
+              </div>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">Type <span class="text-danger">*</span></label>
@@ -66,7 +77,6 @@
               >Remove date</button>
             </div>
           </div>
-
           <div class="d-flex gap-2 justify-content-end border-top pt-3">
             <button type="button" class="btn btn-outline-secondary" @click.prevent="closeSlider">
               Cancel
@@ -83,23 +93,35 @@
     <div class="card-header bg-white d-flex align-items-center justify-content-between py-3 px-4">
       <h6 class="fw-semibold mb-0 text-capitalize">{{ heading }}</h6>
       <div class="align-items-center d-flex py-3 row" v-if="interactive">
-        <div class="col-2">
-            <label for="">Status</label>
+        <div class="col-1">
+            <label for="" class="col-form-label col-form-label-sm text-nowrap">Status:</label>
         </div>
-        <div class="col-4">
+        <div class="col-2">
           <select class="form-select" aria-label="Default select example" v-model="filterStatus">
             <option value="">All</option>
             <option :value="fstatus.value" v-for="fstatus in feeStatus">{{ fstatus.name }}</option>
           </select>
         </div>
-        <div class="col-2">
-          <label for="">Type</label>
+        <div class="col-1">
+          <label for="" class="col-form-label col-form-label-sm text-nowrap">Type:</label>
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <select class="form-select" aria-label="Default select example" v-model="filterType">
             <option value="">All</option>
             <option :value="ftype.value" v-for="ftype in feeTypes">{{ ftype.name }}</option>
           </select>
+        </div>
+        <div class="custom-multiselect col-5 d-flex">
+                <select class="form-select" v-model="filteredbatchId">
+                <option value="">Choose Batch</option>
+                <option
+                  :value="batch.id"
+                  :key="batch.id"
+                  v-for="batch in batches"
+                  :selected="selectedFee?.batches?.id === batch.id"
+                >{{ batch.name }}</option>
+                </select>
+                <button class="btn btn-outline-secondary mx-2" @click="clearFilters">Clear</button>
         </div>
       </div>
       <button v-if="interactive" class="btn btn-primary btn-sm d-flex align-items-center gap-1" @click.prevent="assignFee">
@@ -130,7 +152,7 @@
             <th v-if="interactive" class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody v-if="filteredFees.length > 0">
           <tr v-for="(fee, index) in filteredFees" :key="fee.id || index">
             <td class="px-4 py-3 text-muted small fw-semibold">{{ index + 1 }}</td>
             <td class="px-4 py-3 fw-semibold">{{ fee.batches?.name || 'N/A' }}</td>
@@ -161,6 +183,13 @@
             </td>
           </tr>
         </tbody>
+        <tbody v-else>
+            <tr>
+              <td class="fst-italic p-3 text-center text-secondary" :colspan="interactive ? 7 : 6">
+                  <span>No fee entries !</span>
+              </td>
+            </tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -174,6 +203,10 @@ import Swal from 'sweetalert2'
 import { showToast } from '@/utils/toastr'
 import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
+import Multiselect from 'vue-multiselect'
+
+const selectedValue = ref([])
+
 
 const filterType = ref('')
 const filterStatus = ref('')
@@ -181,11 +214,23 @@ const emit = defineEmits(['close'])
 
 const config = { dateFormat: 'Y-m-d' }
 
-const selectedBatchId = ref('')
+const selectedBatchId = ref([])
 const selectedType = ref('')
 const amount = ref(0)
 const dueDate = ref('')
 const status = ref('ACTIVE')
+const filteredbatchId = ref('')
+
+
+const generatedBatchId = computed(()=>{
+  if(selectedBatchId.value?.length === 0)
+  {
+    return [] 
+  }
+  else{
+    return selectedBatchId.value?.map(batch => batch.id)
+  }
+})
 
 const chosenCurrency = import.meta.env.VITE_CURRENCY
 
@@ -215,26 +260,63 @@ const props = defineProps({
 })
 
 const hasFilled = computed(() =>
-  selectedBatchId.value !== '' ||
+  generatedBatchId.value?.length === 0 ||
   selectedType.value !== ''    ||
   amount.value !== 0           ||
   dueDate.value !== ''
 )
 
 const filteredFees = computed(()=>{
-  if(filterType.value === '' && filterStatus.value === '')
+
+  if(filteredbatchId.value === '')
   {
-    return props.allFees
+    if(filterType.value === '' && filterStatus.value === '')
+    {
+      return props.allFees
+    }
+  
+    if(filterType.value === '' && filterStatus.value !== '')
+    {
+      return props.allFees.filter((entry) => entry.status === filterStatus.value)
+    }
+  
+    if(filterType.value !== '' && filterStatus.value === '')
+    {
+      return props.allFees.filter((entry) => entry.type === filterType.value)
+    }
+  
+    if(filterType.value !== '' && filterStatus.value !== '')
+    {
+      return props.allFees.filter((entry) => entry.type === filterType.value && entry.status === filterStatus.value)
+    }
+  }
+  else{
+     if(filterType.value === '' && filterStatus.value === '')
+    {
+      return props.allFees.filter((entry)=>entry.batchId === filteredbatchId.value)
+    }
+  
+    if(filterType.value === '' && filterStatus.value !== '')
+    {
+      return props.allFees.filter((entry) => entry.status === filterStatus.value && entry.batchId === filteredbatchId.value)
+    }
+  
+    if(filterType.value !== '' && filterStatus.value === '')
+    {
+      return props.allFees.filter((entry) => entry.type === filterType.value  && entry.batchId === filteredbatchId.value)
+    }
+  
+    if(filterType.value !== '' && filterStatus.value !== '')
+    {
+      return props.allFees.filter((entry) => entry.type === filterType.value && entry.status === filterStatus.value  && entry.batchId === filteredbatchId.value)
+    }
   }
 
-  let all = props.allFees
-  var res = []
-  res = all.filter((entry) => entry.type === filterType.value)
 })
 
 const editFee = (fee) => {
   selectedFee.value     = fee
-  selectedBatchId.value = fee.batchId
+  selectedBatchId.value = batches.value.filter((batch)=> batch.id === fee.batchId)
   amount.value          = fee.amount
   selectedType.value    = fee.type
   dueDate.value         = fee.due
@@ -264,7 +346,7 @@ const closeSlider = async (success = false) => {
       cancelButtonText: 'Cancel',
     })
     if (result.isConfirmed) {
-      selectedBatchId.value = ''
+      selectedBatchId.value = []
       selectedType.value    = ''
       amount.value          = 0
       dueDate.value         = ''
@@ -272,7 +354,7 @@ const closeSlider = async (success = false) => {
       sliderToggle.value    = false
     }
   } else {
-    selectedBatchId.value = ''
+    selectedBatchId.value = []
     selectedType.value    = ''
     amount.value          = 0
     dueDate.value         = ''
@@ -288,7 +370,7 @@ const closeSlider = async (success = false) => {
 onMounted(() => { getAllBatches() })
 
 const insertUpdate = () => {
-  if (!selectedBatchId.value) { showToast({ title: 'Select a batch',    icon: 'error' }); return }
+  if (generatedBatchId.value.length <= 0) { showToast({ title: 'Select a batch',    icon: 'error' }); return }
   if (!selectedType.value)    { showToast({ title: 'Select a fee type', icon: 'error' }); return }
   if (!amount.value)          { showToast({ title: 'Amount cannot be 0',icon: 'error' }); return }
 
@@ -296,7 +378,7 @@ const insertUpdate = () => {
 }
 
 const buildPayload = () => ({
-  batchId: selectedBatchId.value,
+  batchId: generatedBatchId.value,
   type:    selectedType.value,
   amount:  amount.value,
   due:     dueDate.value,
@@ -327,7 +409,7 @@ const updateFee = async () => {
 
 
 const cleanUp = () => {
-    selectedBatchId.value = ''
+    selectedBatchId.value = []
     selectedType.value    = ''
     amount.value          = 0
     dueDate.value         = ''
@@ -335,4 +417,36 @@ const cleanUp = () => {
     sliderToggle.value    = false
     emit('close')
 }
+
+
+const clearFilters = () =>{
+  filteredbatchId.value = ''
+  filterType.value = ''
+  filterStatus.value = ''
+}
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.css">
+</style>
+<style>
+  /* Use a wrapper class to ensure your styles win the specificity battle */
+  .custom-multiselect .multiselect__tag {
+    background: #284cee !important; /* Your color here */
+  }
+
+  .custom-multiselect .multiselect__option--highlight {
+    background: #284cee !important;
+  }
+
+  .custom-multiselect .multiselect__option--highlight:after {
+    background: #284cee !important;
+  }
+
+  .custom-multiselect .multiselect__tag-icon:focus,
+  .custom-multiselect .multiselect__tag-icon:hover {
+    background: #284cee !important; /* Darker shade for hover */
+  }
+
+  .multiselect__tag-icon{
+    color: white;
+  }
+</style>
