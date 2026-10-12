@@ -1,12 +1,12 @@
 <template>
-     <div class=" content-scroll">
+     <div>
         <div class="pay-fee-wrapper">
-            <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="page-header">
                 <div>
-                <h4 class="fw-bold mb-1 text-dark">Fee Management</h4>
-                <p class="text-muted small mb-0">Manage your full fee related things here</p>
+                <h4 class="page-title">Fee Management</h4>
+                <p class="page-subtitle">Manage your full fee related things here</p>
                 </div>
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-3 py-2">{{ finYear }}</span>
+                <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle fw-semibold px-3 py-2">{{ finYear }}</span>
             </div>
             <Overview :allFees="allFees" heading="Fee Headers" :interactive="1===1" @close="refresh"/>
         </div>
@@ -39,10 +39,8 @@ const refresh = () => {
   getAllFees()
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 .pay-fee-wrapper {
-  padding: 28px;
-  background: #f4f6fb;
-  height: 100vh;
+  padding: 0.25rem;
 }
 </style>

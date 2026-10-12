@@ -1,0 +1,68 @@
+// Third-party widget theming: SweetAlert2, vue-multiselect, flatpickr.
+@use "sass:color";
+@use "../abstracts" as *;
+
+// --- SweetAlert2 (reads these custom properties) -----------------------------
+:root {
+  --swal2-confirm-button-background-color: #{$sky-600};
+  --swal2-confirm-button-border-radius: #{$radius-sm};
+  --swal2-cancel-button-background-color: #{$slate-500};
+  --swal2-cancel-button-border-radius: #{$radius-sm};
+}
+
+.swal2-popup {
+  font-family: $font-sans;
+  border-radius: $radius-lg;
+}
+
+// --- vue-multiselect ---------------------------------------------------------
+.custom-multiselect {
+  .multiselect__tags {
+    border-color: $border-soft;
+    border-radius: $radius-sm;
+  }
+
+  .multiselect--active .multiselect__tags {
+    border-color: $sky-400;
+  }
+
+  .multiselect__tag,
+  .multiselect__option--highlight,
+  .multiselect__option--highlight::after {
+    background: $sky-600;
+  }
+
+  .multiselect__tag-icon {
+    &::after {
+      color: $sky-100;
+    }
+
+    &:hover,
+    &:focus {
+      background: $sky-800;
+    }
+  }
+}
+
+// --- flatpickr ---------------------------------------------------------------
+.flatpickr-day {
+  &.selected,
+  &.startRange,
+  &.endRange {
+    &,
+    &:hover,
+    &:focus {
+      background: $sky-600;
+      border-color: $sky-600;
+    }
+  }
+
+  &.today {
+    border-color: $sky-400;
+  }
+}
+
+.flatpickr-calendar {
+  border-radius: $radius;
+  box-shadow: $shadow-md;
+}

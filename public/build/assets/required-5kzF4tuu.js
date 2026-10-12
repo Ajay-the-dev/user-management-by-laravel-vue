@@ -1,0 +1,1 @@
+import{_ as e}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{f as r,g as t}from"./app-C9CpBhnm.js";const c={},o={class:"text-danger"};function s(n,_){return r(),t("span",o,"*")}const i=e(c,[["render",s]]);export{i as r};

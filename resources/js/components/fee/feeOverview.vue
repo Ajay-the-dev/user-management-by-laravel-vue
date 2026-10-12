@@ -1,5 +1,5 @@
 <template>
-  <div class="card border rounded-3 my-4">
+  <div class="card border-0 shadow-sm rounded-4 my-4">
     <slider :showSidebar="sliderToggle" @close="closeSlider">
       <template #heading>
         <h5 class="offcanvas-title fw-semibold">
@@ -90,52 +90,40 @@
     </slider>
 
     <!-- Card Header -->
-    <div class="card-header bg-white d-flex align-items-center justify-content-between py-3 px-4">
-      <h6 class="fw-semibold mb-0 text-capitalize">{{ heading }}</h6>
-      <div class="align-items-center d-flex py-3 row" v-if="interactive">
-        <div class="col-1">
-            <label for="" class="col-form-label col-form-label-sm text-nowrap">Status:</label>
-        </div>
-        <div class="col-2">
-          <select class="form-select" aria-label="Default select example" v-model="filterStatus">
-            <option value="">All</option>
-            <option :value="fstatus.value" v-for="fstatus in feeStatus">{{ fstatus.name }}</option>
-          </select>
-        </div>
-        <div class="col-1">
-          <label for="" class="col-form-label col-form-label-sm text-nowrap">Type:</label>
-        </div>
-        <div class="col-3">
-          <select class="form-select" aria-label="Default select example" v-model="filterType">
-            <option value="">All</option>
-            <option :value="ftype.value" v-for="ftype in feeTypes">{{ ftype.name }}</option>
-          </select>
-        </div>
-        <div class="custom-multiselect col-5 d-flex">
-                <select class="form-select" v-model="filteredbatchId">
-                <option value="">Choose Batch</option>
-                <option
-                  :value="batch.id"
-                  :key="batch.id"
-                  v-for="batch in batches"
-                  :selected="selectedFee?.batches?.id === batch.id"
-                >{{ batch.name }}</option>
-                </select>
-                <button class="btn btn-outline-secondary mx-2" @click="clearFilters">Clear</button>
-        </div>
-      </div>
+    <div class="card-header bg-white list-header py-3 px-3 px-md-4 rounded-top-4">
+      <h2 class="card-heading text-capitalize">{{ heading }}</h2>
       <button v-if="interactive" class="btn btn-primary btn-sm d-flex align-items-center gap-1" @click.prevent="assignFee">
         <i class="fa fa-plus"></i> Assign fee
       </button>
+      <div class="list-header__tools w-100" v-if="interactive">
+        <select class="form-select form-select-sm" aria-label="Filter by status" v-model="filterStatus">
+          <option value="">All statuses</option>
+          <option :value="fstatus.value" v-for="fstatus in feeStatus">{{ fstatus.name }}</option>
+        </select>
+        <select class="form-select form-select-sm" aria-label="Filter by type" v-model="filterType">
+          <option value="">All types</option>
+          <option :value="ftype.value" v-for="ftype in feeTypes">{{ ftype.name }}</option>
+        </select>
+        <select class="form-select form-select-sm" aria-label="Filter by batch" v-model="filteredbatchId">
+          <option value="">All batches</option>
+          <option
+            :value="batch.id"
+            :key="batch.id"
+            v-for="batch in batches"
+            :selected="selectedFee?.batches?.id === batch.id"
+          >{{ batch.name }}</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" @click="clearFilters">Clear</button>
+      </div>
     </div>
 
     <!-- Empty State -->
-    <div v-if="!allFees.length" class="text-center py-5 px-4">
-      <div class="bg-light rounded-3 d-flex align-items-center justify-content-center mx-auto mb-3" style="width:52px;height:52px;">
-        <i class="fa fa-file-invoice text-secondary fs-5"></i>
+    <div v-if="!allFees.length" class="empty-state">
+      <div class="icon-tile icon-tile--lg icon-tile--muted">
+        <i class="fa fa-file-invoice fs-5"></i>
       </div>
-      <p class="fw-semibold mb-1 text-dark" style="font-size:14px;">No fee records found</p>
-      <p class="text-muted mb-0 small">Add fee entries to see them listed here</p>
+      <p class="empty-state__title">No fee records found</p>
+      <p class="empty-state__sub">Add fee entries to see them listed here</p>
     </div>
 
     <!-- Table -->
@@ -143,40 +131,42 @@
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
           <tr>
-            <th class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">#</th>
-            <th class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">Batch</th>
-            <th class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">Type</th>
-            <th class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">Amount</th>
-            <th class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">Due date</th>
-            <th class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">Status</th>
-            <th v-if="interactive" class="text-muted small fw-semibold text-uppercase px-4 py-3" style="letter-spacing:.4px;">Action</th>
+            <th class="px-4 py-3 d-none d-md-table-cell">#</th>
+            <th class="px-3 px-md-4 py-3">Batch</th>
+            <th class="px-4 py-3 d-none d-md-table-cell">Type</th>
+            <th class="px-3 px-md-4 py-3">Amount</th>
+            <th class="px-4 py-3 d-none d-md-table-cell">Due date</th>
+            <th class="px-4 py-3 d-none d-md-table-cell">Status</th>
+            <th v-if="interactive" class="px-3 px-md-4 py-3"><span class="d-none d-md-inline">Action</span></th>
           </tr>
         </thead>
         <tbody v-if="filteredFees.length > 0">
           <tr v-for="(fee, index) in filteredFees" :key="fee.id || index">
-            <td class="px-4 py-3 text-muted small fw-semibold">{{ index + 1 }}</td>
-            <td class="px-4 py-3 fw-semibold">{{ fee.batches?.name || 'N/A' }}</td>
-            <td class="px-4 py-3">
-              <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1">
+            <td class="px-4 py-3 text-muted small fw-semibold d-none d-md-table-cell">{{ index + 1 }}</td>
+            <td class="px-3 px-md-4 py-3 fw-semibold text-nowrap">
+              {{ fee.batches?.name || 'N/A' }}
+              <span class="cell-sub d-md-none">{{ fee.type }}</span>
+            </td>
+            <td class="px-4 py-3 d-none d-md-table-cell">
+              <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-1">
                 {{ fee.type }}
               </span>
             </td>
-            <td class="px-4 py-3 fw-bold text-success">{{ chosenCurrency }} {{ fee.amount }}</td>
-            <td class="px-4 py-3 text-secondary small">{{ fee.due ?? '—' }}</td>
-            <td class="px-4 py-3">
+            <td class="px-3 px-md-4 py-3 fw-bold text-success text-nowrap">{{ chosenCurrency }} {{ fee.amount }}</td>
+            <td class="px-4 py-3 text-secondary small text-nowrap d-none d-md-table-cell">{{ fee.due ?? '—' }}</td>
+            <td class="px-4 py-3 d-none d-md-table-cell">
               <span
                 class="badge rounded-pill px-3 py-1 fw-medium"
-                :class="fee.status === 'ACTIVE' ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'"
+                :class="fee.status === 'ACTIVE' ? 'bg-success-subtle text-success-emphasis' : 'bg-warning-subtle text-warning-emphasis'"
               >
                 <span
-                  class="rounded-circle d-inline-block me-1"
-                  style="width:6px;height:6px;vertical-align:middle;"
-                  :class="fee.status === 'ACTIVE' ? 'bg-success' : 'bg-warning'"
+                  class="status-dot me-1 align-middle"
+                  :class="fee.status === 'ACTIVE' ? 'status-dot--success' : 'status-dot--warning'"
                 ></span>
                 {{ fee.status }}
               </span>
             </td>
-            <td class="px-4 py-3" v-if="interactive">
+            <td class="px-3 px-md-4 py-3 text-end text-md-start" v-if="interactive">
               <button class="btn btn-outline-secondary btn-sm" @click.prevent="editFee(fee)">
                 Edit
               </button>
@@ -426,27 +416,4 @@ const clearFilters = () =>{
 }
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.css">
-</style>
-<style>
-  /* Use a wrapper class to ensure your styles win the specificity battle */
-  .custom-multiselect .multiselect__tag {
-    background: #284cee !important; /* Your color here */
-  }
-
-  .custom-multiselect .multiselect__option--highlight {
-    background: #284cee !important;
-  }
-
-  .custom-multiselect .multiselect__option--highlight:after {
-    background: #284cee !important;
-  }
-
-  .custom-multiselect .multiselect__tag-icon:focus,
-  .custom-multiselect .multiselect__tag-icon:hover {
-    background: #284cee !important; /* Darker shade for hover */
-  }
-
-  .multiselect__tag-icon{
-    color: white;
-  }
 </style>

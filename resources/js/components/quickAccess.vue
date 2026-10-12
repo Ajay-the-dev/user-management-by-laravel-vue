@@ -1,82 +1,70 @@
 <template>
-  <div class="p-4 content-scroll" style="background:#f4f6fb; height:100vh;">
+  <div class="dashboard">
 
     <!-- TOP SUMMARY CARD -->
     <div class="card border-0 rounded-4 shadow-sm" v-if="!isLoading">
-      <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between rounded-top-4 px-4 py-3">
-        <div class="d-flex align-items-center gap-3">
-          <div class="d-flex align-items-center justify-content-center rounded-3" style="width:36px;height:36px;background:linear-gradient(135deg,#e8f5ee,#d1fae5);color:#059669;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10 9 9 9 8 9"/>
-            </svg>
+      <div class="card-header bg-white d-flex flex-wrap align-items-center justify-content-between gap-2 rounded-top-4 px-3 px-md-4 py-3">
+        <div class="d-flex align-items-center gap-3 me-auto">
+          <div class="icon-tile icon-tile--primary">
+            <i class="fa fa-file-invoice-dollar"></i>
           </div>
           <div>
-            <h2 class="fw-bold mb-0" style="font-size:15px;color:#111827;letter-spacing:-0.2px;">Fee Collection</h2>
-            <span class="badge rounded-pill text-secondary border mt-1" style="font-size:11px;background:#f3f4f6;">{{ finYear }}</span>
+            <h2 class="card-heading">Fee Collection</h2>
+            <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis fs-xs mt-1">{{ finYear }}</span>
           </div>
         </div>
-        <button class="fw-bold btn btn-sm btn-outline-secondary" @click="refreshHelper">
-          <i class="fa fa-refresh slow-rotation" id="rotater"></i>
-           Refresh
+        <button class="btn btn-sm btn-outline-secondary" @click="refreshHelper">
+          <i class="fa fa-refresh slow-rotation me-1" id="rotater"></i>
+          Refresh
         </button>
-        <button class="fw-bold btn btn-sm btn-primary" @click="router.push('/home/fee/pay')">
-          <i class="fa fa-hand-holding-dollar"></i>
+        <button class="btn btn-sm btn-primary" @click="router.push('/home/fee/pay')">
+          <i class="fa fa-hand-holding-dollar me-1"></i>
           Pay fee
         </button>
       </div>
 
       <!-- Stats Row -->
-      <div class="d-flex align-items-stretch px-4 py-3 border-bottom">
-        <div class="flex-fill d-flex flex-column gap-1">
-          <span class="text-uppercase fw-500" style="font-size:11px;color:#9ca3af;letter-spacing:.5px;">Total Collected</span>
-          <span class="fw-bold" style="font-size:22px;color:#059669;letter-spacing:-.5px;">{{ chosenCurrency }} {{ totalCollected }}</span>
-          <!-- <span style="font-size:11px;color:#9ca3af;">↑ 12% this month</span> -->
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat__label">Total Collected</span>
+          <span class="stat__value stat__value--success">{{ chosenCurrency }} {{ totalCollected }}</span>
         </div>
-        <div class="vr mx-4 my-1"></div>
-        <div class="flex-fill d-flex flex-column gap-1">
-          <span class="text-uppercase fw-500" style="font-size:11px;color:#9ca3af;letter-spacing:.5px;">Pending Dues</span>
-          <span class="fw-bold" style="font-size:22px;color:#dc2626;letter-spacing:-.5px;">{{ chosenCurrency }} {{ totalPending }}</span>
-          <!-- <span style="font-size:11px;color:#9ca3af;">↓ 3 students</span> -->
+        <div class="vr"></div>
+        <div class="stat">
+          <span class="stat__label">Pending Dues</span>
+          <span class="stat__value stat__value--danger">{{ chosenCurrency }} {{ totalPending }}</span>
         </div>
-        <div class="vr mx-4 my-1"></div>
-        <div class="flex-fill d-flex flex-column gap-1">
-          <span class="text-uppercase fw-500" style="font-size:11px;color:#9ca3af;letter-spacing:.5px;">Fee forms active</span>
-          <span class="fw-bold" style="font-size:22px;color:#4f46e5;letter-spacing:-.5px;">{{ allFees.length || 48 }}</span>
-          <!-- <span style="font-size:11px;color:#9ca3af;">Enrolled this FY</span> -->
+        <div class="vr"></div>
+        <div class="stat">
+          <span class="stat__label">Fee forms active</span>
+          <span class="stat__value stat__value--primary">{{ allFees.length || 48 }}</span>
         </div>
       </div>
 
       <!-- Recent Transactions -->
       <div class="px-4 pt-3 pb-1">
-        <span class="text-uppercase fw-bold" style="font-size:12px;color:#6b7280;letter-spacing:.6px;">Recent Transactions</span>
+        <span class="eyebrow">Recent Transactions</span>
       </div>
       <div class="px-3 pb-3 d-flex flex-column gap-1">
         <div
           v-for="(tx, index) in transactions"
           :key="index"
-          class="d-flex align-items-center gap-3 px-3 py-2 rounded-3"
-          style="cursor:default;transition:background .15s;"
-          @mouseenter="e => e.currentTarget.style.background='#f8fafc'"
-          @mouseleave="e => e.currentTarget.style.background=''"
+          class="tx-row"
         >
-          <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold flex-shrink-0" style="width:34px;height:34px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#6d28d9;font-size:13px;">
-            <!-- {{ tx.studentName.charAt(0) }} -->{{ tx.student.name.charAt(0) }}
+          <div class="avatar">
+            {{ tx.student.name.charAt(0) }}
           </div>
-          <div class="flex-fill d-flex flex-column" style="gap:1px;">
-            <span class="fw-semibold" style="font-size:13px;color:#111827;">{{ tx.student.name }}</span>
-            <span style="font-size:11px;color:#9ca3af;">{{ JSON.parse(tx.payment).paymentReference }} · {{ JSON.parse(tx.payment).selectedPaymentMode }}</span>
+          <div class="tx-row__body">
+            <span class="tx-row__name">{{ tx.student.name }}</span>
+            <span class="tx-row__meta">{{ JSON.parse(tx.payment).paymentReference }} · {{ JSON.parse(tx.payment).selectedPaymentMode }}</span>
           </div>
-          <div class="d-flex flex-column align-items-end" style="gap:3px;">
-            <span class="fw-bold" style="font-size:13px;color:#111827;">+{{chosenCurrency}}{{ tx.paid_amount }}</span>
+          <div class="tx-row__end">
+            <span class="tx-row__amount">+{{chosenCurrency}}{{ tx.paid_amount }}</span>
             <span
-              class="badge rounded-pill"
-              :style="parseFloat(tx.fee.amount) === parseFloat(tx.paid_amount)
-                ? 'background:#d1fae5;color:#059669;font-size:10px;'
-                : 'background:#fef3c7;color:#d97706;font-size:10px;'"
+              class="badge rounded-pill fs-2xs"
+              :class="parseFloat(tx.fee.amount) === parseFloat(tx.paid_amount)
+                ? 'bg-success-subtle text-success-emphasis'
+                : 'bg-warning-subtle text-warning-emphasis'"
             >
               {{ parseFloat(tx.fee.amount) === parseFloat(tx.paid_amount)  ? 'Fully paid' : 'Partially paid'}}
             </span>
@@ -86,8 +74,8 @@
     </div>
     <div class="card border-0 rounded-4 shadow-sm" v-else>
         <div class="d-flex justify-content-center p-4">
-          <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
         </div>
     </div>
@@ -161,7 +149,7 @@ const getYearlyReportWithRecents = async () =>{
   }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

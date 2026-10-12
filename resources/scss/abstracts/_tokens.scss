@@ -1,0 +1,105 @@
+// =============================================================================
+// Design tokens — single source of truth for colour, type, radius and depth.
+// Every partial and every <style lang="scss"> block reads from here.
+// =============================================================================
+@use "sass:color";
+
+// --- Sky (brand) -------------------------------------------------------------
+$sky-50:  #f0f9ff;
+$sky-100: #e0f2fe;
+$sky-200: #bae6fd;
+$sky-300: #7dd3fc;
+$sky-400: #38bdf8;
+$sky-500: #0ea5e9;
+$sky-600: #0284c7;
+$sky-700: #0369a1;
+$sky-800: #075985;
+$sky-900: #0c4a6e;
+$sky-950: #082f49;
+
+// --- Neutrals (slate) --------------------------------------------------------
+$slate-50:  #f8fafc;
+$slate-100: #f1f5f9;
+$slate-200: #e2e8f0;
+$slate-300: #cbd5e1;
+$slate-400: #94a3b8;
+$slate-500: #64748b;
+$slate-600: #475569;
+$slate-700: #334155;
+$slate-800: #1e293b;
+$slate-900: #0f172a;
+
+// --- Status ------------------------------------------------------------------
+$emerald-100: #d1fae5;
+$emerald-500: #10b981;
+$emerald-600: #059669;
+$emerald-700: #047857;
+$amber-100:   #fef3c7;
+$amber-500:   #f59e0b;
+$amber-600:   #d97706;
+$red-100:     #fee2e2;
+$red-500:     #ef4444;
+$red-600:     #dc2626;
+$violet-100:  #ede9fe;
+$violet-600:  #7c3aed;
+$pink-500:    #ec4899;
+$rose-500:    #f43f5e;
+$teal-500:    #14b8a6;
+$cyan-500:    #06b6d4;
+
+// --- Semantic surfaces -------------------------------------------------------
+$app-bg:        #f3f8fc;
+$surface:       #fff;
+$surface-muted: #f5f9fc;
+$surface-hover: $sky-50;
+$border-soft:   #e3edf5;
+$text-strong:   $slate-900;
+$text-body:     $slate-800;
+$text-muted:    $slate-500;
+$text-faint:    $slate-400;
+
+// --- Gradients ---------------------------------------------------------------
+$gradient-brand: linear-gradient(135deg, $sky-400 0%, $sky-600 100%);
+$gradient-hero:  linear-gradient(135deg, $sky-950 0%, $sky-900 55%, $sky-700 100%);
+$gradient-glow:  radial-gradient(ellipse at top right, color.change($sky-400, $alpha: 0.28), transparent 70%);
+
+// --- Typography --------------------------------------------------------------
+$font-sans:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-display: "Outfit", $font-sans; // headings, brand, key figures
+$font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+$fs-2xs: 0.625rem;   // 10px
+$fs-xs:  0.6875rem;  // 11px
+$fs-sm:  0.8125rem;  // 13px
+$fs-lg:  1.375rem;   // 22px
+
+$tracking-tight: -0.02em;
+$tracking-wide:  0.05em;
+
+// --- Shape & depth -----------------------------------------------------------
+$radius-sm: 0.5rem;
+$radius:    0.75rem;
+$radius-lg: 1rem;
+$radius-xl: 1.25rem;
+
+$shadow-xs: 0 1px 2px color.change($sky-950, $alpha: 0.05);
+$shadow-sm: 0 1px 2px color.change($sky-950, $alpha: 0.06), 0 1px 3px color.change($sky-950, $alpha: 0.04);
+$shadow-md: 0 6px 24px color.change($sky-950, $alpha: 0.08);
+$shadow-lg: 0 18px 48px color.change($sky-950, $alpha: 0.16);
+
+$ring-color: color.change($sky-500, $alpha: 0.2);
+
+// --- Motion ------------------------------------------------------------------
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+
+// --- Layout ------------------------------------------------------------------
+$sidebar-width:           16.5rem;
+$sidebar-width-collapsed: 4.75rem;
+
+$breakpoints: (
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+);

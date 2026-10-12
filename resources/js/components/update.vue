@@ -44,7 +44,3 @@ watch(filteredValues,(newVal)=>{
 
         
 </script>
-
-<style scoped>
-
-</style>

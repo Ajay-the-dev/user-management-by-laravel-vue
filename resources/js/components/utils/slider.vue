@@ -7,10 +7,9 @@
 
     <!-- Offcanvas Element -->
     <div 
-      class="offcanvas offcanvas-end w-50" 
+      class="offcanvas offcanvas-end offcanvas-panel" 
       :class="{ show: showSidebar }" 
       tabindex="-1"
-      :style="{ visibility: showSidebar ? 'visible' : 'hidden' }"
     >
       <div class="offcanvas-header border-bottom">
         <!-- <h5 class="offcanvas-title">{{ heading }}</h5> -->

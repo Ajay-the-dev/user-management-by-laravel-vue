@@ -1,46 +1,46 @@
 <template>
-<div class="row my-5 mx-2">
+<div class="row">
     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="extraLargeModalLabel" aria-hidden="true" ref="myModalRef">
-        <div class="modal-dialog modal-xl"> <!-- Extra-large size -->
+        <div class="modal-dialog modal-xl modal-fullscreen-sm-down"> <!-- Extra-large size -->
             <div class="modal-content">
             
-            <div class="modal-header">
+            <div class="modal-header bg-dark text-white border-0">
                 <h5 class="modal-title" v-if="showBatch" id="extraLargeModalLabel">Batch Details</h5>
                 <h5 class="modal-title" v-else id="extraLargeModalLabel">{{isEditMode ? 'Edit Batch' : 'Create New Batch'}}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12" v-if="selectedBatch!==null">
-                        <div class="row mx-5">
-                            <div class="px-3 col-3">Batch Name <required/></div>
-                            <div class="col-9 px-3">
+                        <div class="row mx-0 mx-md-5">
+                            <div class="px-3 col-12 col-md-3 col-form-label fw-semibold">Batch Name <required/></div>
+                            <div class="col-12 col-md-9 px-3">
                                 <input type="text" v-model="name" class="form-control my-1" :disabled="showBatch">
                             </div>
 
-                            <div class="px-3 col-3">Description</div>
-                            <div class="col-9 px-3">
+                            <div class="px-3 col-12 col-md-3 col-form-label fw-semibold">Description</div>
+                            <div class="col-12 col-md-9 px-3">
                                 <textarea v-model="description" class="form-control my-1" rows="3" :disabled="showBatch"></textarea>
                             </div>
 
-                            <div class="px-3 col-3" v-show="selectedBatch.is_passout===0">Current Semester <required/></div>
-                            <div class="col-9 px-3" v-show="selectedBatch.is_passout===0">
+                            <div class="px-3 col-12 col-md-3 col-form-label fw-semibold" v-show="selectedBatch.is_passout===0">Current Semester <required/></div>
+                            <div class="col-12 col-md-9 px-3" v-show="selectedBatch.is_passout===0">
                                 <input type="number" v-model="semester" min="1" max="10" class="form-control my-1" :disabled="showBatch">
                             </div>
 
-                            <div class="px-3 col-3">Start Date </div>
-                            <div class="col-9 px-3">
+                            <div class="px-3 col-12 col-md-3 col-form-label fw-semibold">Start Date </div>
+                            <div class="col-12 col-md-9 px-3">
                                 <flat-pickr  v-model="startDate" :config="config" class="form-control my-1" :disabled="showBatch"/>
                             </div>
                             
-                            <div class="px-3 col-3">End Date </div>
-                            <div class="col-9 px-3">
+                            <div class="px-3 col-12 col-md-3 col-form-label fw-semibold">End Date </div>
+                            <div class="col-12 col-md-9 px-3">
                                 <flat-pickr  v-model="endDate" :config="config" class="form-control my-1" :disabled="showBatch"/>
                             </div>
-                            <div class="px-3 col-3">Status <required/></div>
-                            <div class="col-9 px-3">
+                            <div class="px-3 col-12 col-md-3 col-form-label fw-semibold">Status <required/></div>
+                            <div class="col-12 col-md-9 px-3">
                                 <select v-model="status" class="form-select my-1" :disabled="showBatch">
                                     <option value="">Select Status</option>
                                     <option value="active">Active</option>
@@ -53,21 +53,21 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button"  v-if="!showBatch" class="btn btn-success" @click="saveData" >Save</button>
-                <button type="button"  v-if="!showBatch" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button"  v-if="!showBatch" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button"  v-if="!showBatch" class="btn btn-primary px-md-4" @click="saveData" >Save</button>
             </div>
             
             </div>
         </div>
     </div>
 
-    <div class="col-12 w-75">
-        <div class="card shadow-sm">
-            <div class="card-header bg-gradient p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold text-dark">Batches</h5>
-                    <div class="d-flex">
-                        <input type="text" class="form-control w-auto mx-3" placeholder="Search batch here ..." v-model="searchQuery"
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white px-4 py-3">
+                <div class="list-header">
+                    <h2 class="card-heading">Batches</h2>
+                    <div class="list-header__tools">
+                        <input type="search" class="form-control w-auto" placeholder="Search batch here ..." v-model="searchQuery"
                         @change="handleSearch">
                         <button class="btn btn-primary btn-sm" @click="showAddModal">
                             <i class="fas fa-plus me-2"></i>New Batch
@@ -80,9 +80,9 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" width="5%" class="fw-bold text-muted text-center">#</th>
+                                <th scope="col" width="5%" class="fw-bold text-muted text-center d-none d-md-table-cell">#</th>
                                 <th scope="col" width="40%" class="fw-bold text-muted">Batch Name</th>
-                                <th scope="col" width="25%" class="fw-bold text-muted">Current Semester</th>
+                                <th scope="col" width="25%" class="fw-bold text-muted d-none d-md-table-cell">Current Semester</th>
                                 <th scope="col" width="30%" class="fw-bold text-muted text-center">Actions</th>
                             </tr>
                         </thead>
@@ -96,9 +96,12 @@
                         </tbody>
                         <tbody v-else>
                             <tr v-for="(batche, index) in batches?.data" :key="batche.id" class="align-middle border-bottom">
-                                <td class="fw-bold text-center">{{ batches.per_page * (batches.current_page - 1) + index + 1 }}</td>
-                                <td class="fw-500">{{ batche.name }}</td>
-                                <td>
+                                <td class="fw-bold text-center d-none d-md-table-cell">{{ batches.per_page * (batches.current_page - 1) + index + 1 }}</td>
+                                <td class="fw-medium">
+                                    {{ batche.name }}
+                                    <span class="cell-sub d-md-none">{{ batche.is_passout === 1 ? 'Passed out' : 'Semester ' + batche.semester }}</span>
+                                </td>
+                                <td class="d-none d-md-table-cell">
                                     <span v-if="batche.is_passout === 1" class="badge bg-success">
                                         <i class="fas fa-check-circle me-1"></i>PASSED OUT
                                     </span>
@@ -126,7 +129,7 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer bg-light p-3" v-if="batches?.links">
+            <div class="card-footer p-3" v-if="batches?.links">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end mb-0">
                         <li class="page-item" v-for="link in batches.links" :key="link.label+'_batch'" :class="link.active ? 'active' : ''"
@@ -465,13 +468,5 @@
 <style scoped>
 .modal:not(.show) {
     display: none !important;
-}
-
-.font-sm{
-    font-size: small;
-}
-
-.border{
-    border: 1px solid #cccccc86;
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
   <div class="main-wrapper">
-    <div class="content-scroll">
+    <div>
 
       <div class="container-fluid form-container">
 
         <!-- HEADER -->
         <div class="mb-4" v-if="!isEditing">
-          <h4 class="fw-semibold">
+          <h4 class="page-title">
             {{ isStaff ? 'Add Staff' : 'Add Student' }}
           </h4>
           <p class="text-muted small">
@@ -16,7 +16,7 @@
           </p>
         </div>
         <div class="mb-4" v-else>
-          <h4 class="fw-semibold">
+          <h4 class="page-title">
             {{ isStaff ? 'Edit Staff' : 'Edit Student' }}
           </h4>
           <p class="text-muted small">
@@ -85,7 +85,7 @@
             </div>
              <div class="col-md-6">
               <label class="form-label">Location</label>
-              <select name="location" class="form-control" id="location" v-model="location">
+              <select name="location" class="form-select" id="location" v-model="location">
                 <option value="">Choose Location</option>
                 <option value="HA">Hostel A</option>
                 <option value="HB">Hostel B</option>
@@ -107,7 +107,7 @@
             <div class="col-md-12" v-else>
                 <label class="form-label">Profile Picture Preview</label>
                 <div class="profile-preview-container card p-2 d-flex align-items-center w-50" >
-                    <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1" style="width: 10rem;">
+                    <img :src="uploadedImage" alt="Profile Picture" class="profile-preview-image p-1">
                     <button class="btn btn-sm btn-outline-danger remove-image-btn" @click="removeImage" :disabled="deleteToken.length===0">
                         <i class="fa fa-times"></i> Remove
                     </button>
@@ -321,18 +321,18 @@
 
       <!-- VISA DETAILS -->
 
-      <div class="action-bar bg-body-secondary d-flex justify-content-end p-4 z-3">
-        <button class="btn btn-primary" @click="addOrUpdateUser" v-if="!isEditing">
-          <i class="fa fa-save mx-2"></i>Save 
+      <div class="action-bar z-3">
+        <button class="btn btn-outline-secondary me-auto" @click="goBack">
+          <i class="fa fa-arrow-left me-2"></i>Back 
         </button>
-        <button class="btn btn-primary" @click="addOrUpdateUser" v-else>
-          <i class="fa fa-save mx-2"></i>Update 
+        <button class="btn btn-outline-primary" @click="cancelStudent" v-if="!isEditing">
+          <i class="fa fa-rotate-left me-2"></i>Reset 
         </button>
-        <button class="btn btn-primary" @click="goBack">
-          Back 
+        <button class="btn btn-primary px-md-4" @click="addOrUpdateUser" v-if="!isEditing">
+          <i class="fa fa-save me-2"></i>Save 
         </button>
-        <button class="btn btn-primary" @click="cancelStudent" v-if="!isEditing">
-          Reset 
+        <button class="btn btn-primary px-md-4" @click="addOrUpdateUser" v-else>
+          <i class="fa fa-save me-2"></i>Update 
         </button>
       </div>
     </div>
@@ -975,83 +975,102 @@ const checkUsername = debounce(async() =>{
     }
 </script>
 
-<style scoped>
-.main-wrapper {
-  height: 100vh;
-  overflow: hidden;
-  background: #f8fafc;
-}
-
+<style scoped lang="scss">
+@use "sass:color";
+@use "abstracts" as *;
 
 .form-container {
   max-width: 1100px;
-  margin-left: 2rem;
-  padding: 20px;
+  padding: 0.25rem 0.25rem 1.25rem;
 }
 
-/* Sections */
+// Sections
 .form-section {
-  background: white;
-  padding: 24px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  margin-bottom: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  background: $surface;
+  border: 1px solid $border-soft;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-xs;
+  transition: border-color $transition-base, box-shadow $transition-base;
+
+  @include below(md) {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &:focus-within {
+    border-color: $sky-200;
+    box-shadow: $shadow-sm;
+  }
 }
 
-.section-header h6 {
-  font-weight: 600;
+.section-header {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed $border-soft;
+
+  h6 {
+    margin-bottom: 0.125rem;
+    font-weight: 700;
+
+    i {
+      @include square(1.75rem);
+      @include flex-center(inline-flex);
+      margin-right: 0.5rem;
+      border-radius: $radius-sm;
+      background: $sky-100;
+      color: $sky-700;
+      font-size: 0.75rem;
+    }
+  }
 }
 
 .section-sub {
-  font-size: 12px;
-  color: #94a3b8;
+  font-size: 0.75rem;
+  color: $text-faint;
 }
 
-/* Inputs */
+// Inputs
 .form-control,
 .form-select {
-  border-radius: 10px;
-  padding: 10px;
-  border: 1px solid #e5e7eb;
+  padding: 0.625rem 0.75rem;
+  border-radius: $radius-sm;
 }
 
-.form-control:focus,
-.form-select:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+// Image preview
+.profile-preview-image {
+  width: 10rem;
+  border-radius: $radius;
 }
 
-/* Upload */
-.upload-box {
-  border: 2px dashed #c7d2fe;
-  padding: 20px;
-  text-align: center;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.preview-box img {
-  width: 100px;
-  border-radius: 50%;
-}
-
-/* Address */
-.address-card {
-  background: #f1f5f9;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 14px;
-}
-
-/* Sticky Action Bar */
+// Sticky action bar
 .action-bar {
   position: sticky;
-  bottom: 2rem;
-  background: white;
-  padding: 16px;
+  bottom: 0;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid #e5e7eb;
+  gap: 0.625rem;
+  max-width: 1100px;
+  padding: 1rem 1.25rem;
+  background: color.change($surface, $alpha: 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid $border-soft;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+
+  @include below(md) {
+    padding: 0.75rem;
+    margin-inline: -0.25rem;
+  }
+}
+
+@include below(md) {
+  .form-container {
+    padding-inline: 0;
+  }
+
+  .profile-preview-container {
+    width: 100% !important;
+  }
 }
 </style>

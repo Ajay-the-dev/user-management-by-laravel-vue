@@ -1,0 +1,188 @@
+// Data display: stats, transaction rows, avatars, status dots, chips.
+@use "sass:color";
+@use "sass:list";
+@use "../abstracts" as *;
+
+// --- Stat --------------------------------------------------------------------
+.stat-row {
+  display: flex;
+  align-items: stretch;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid $border-soft;
+
+  > .vr {
+    margin: 0.25rem 1.5rem;
+  }
+}
+
+.stat {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__label {
+    @include eyebrow($color: $text-faint);
+  }
+
+  &__value {
+    font-family: $font-display;
+    font-variant-numeric: tabular-nums;
+    font-size: $fs-lg;
+    font-weight: 700;
+    letter-spacing: $tracking-tight;
+    color: $text-strong;
+
+    &--success { color: $emerald-600; }
+    &--danger  { color: $red-600; }
+    &--primary { color: $sky-600; }
+  }
+
+  &__hint {
+    font-size: $fs-xs;
+    font-weight: 500;
+    color: $text-faint;
+  }
+}
+
+// --- Transaction list --------------------------------------------------------
+.tx-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: $radius-sm;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $surface-hover;
+  }
+
+  &__body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  &__name,
+  &__amount {
+    font-size: $fs-sm;
+    color: $text-strong;
+  }
+
+  &__name   { font-weight: 600; }
+  &__amount { font-weight: 700; }
+
+  &__meta {
+    font-size: $fs-xs;
+    color: $text-faint;
+  }
+
+  &__end {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1875rem;
+  }
+}
+
+// --- Avatar ------------------------------------------------------------------
+$avatar-tones: (
+  ($sky-400, $sky-700),
+  ($amber-500, $red-500),
+  ($emerald-500, $cyan-500),
+  ($pink-500, $rose-500),
+  ($sky-500, #6366f1),
+  ($teal-500, $emerald-500),
+);
+
+.avatar {
+  @include square(2.125rem);
+  @include flex-center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $sky-100, $sky-200);
+  color: $sky-800;
+  font-size: $fs-sm;
+  font-weight: 700;
+
+  &--square {
+    border-radius: $radius-sm;
+  }
+
+  &--lg {
+    @include square(4.5rem);
+    font-size: 0.9375rem;
+    letter-spacing: 1px;
+  }
+
+  &--brand {
+    background: $gradient-brand;
+    color: #fff;
+  }
+
+  @for $i from 1 through list.length($avatar-tones) {
+    $pair: list.nth($avatar-tones, $i);
+
+    &--tone-#{$i - 1} {
+      background: linear-gradient(135deg, list.nth($pair, 1), list.nth($pair, 2));
+      color: #fff;
+    }
+  }
+}
+
+.thumb {
+  @include square(2.5rem);
+  display: inline-block;
+  margin-right: 0.625rem;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px $surface, 0 0 0 3px $sky-100;
+}
+
+// --- Status dot --------------------------------------------------------------
+.status-dot {
+  @include square(0.4375rem);
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 2px color.change($slate-400, $alpha: 0.2);
+
+  &--success { background: $emerald-500; box-shadow: 0 0 0 2px $emerald-100; }
+  &--warning { background: $amber-500;   box-shadow: 0 0 0 2px $amber-100; }
+}
+
+// --- Chip (filter pill) ------------------------------------------------------
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3125rem 0.75rem;
+  border: 1px solid $border-soft;
+  border-radius: 999px;
+  background: $surface-muted;
+  color: $text-muted;
+  font-size: $fs-xs;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $sky-300;
+    color: $sky-700;
+  }
+
+  &--active,
+  &--active:hover {
+    background: $sky-600;
+    border-color: $sky-600;
+    color: #fff;
+  }
+}
+
+// --- Accent bar (left stripe on list items) ----------------------------------
+.accent-bar {
+  flex-shrink: 0;
+  width: 5px;
+}

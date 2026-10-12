@@ -1,7 +1,6 @@
 import './bootstrap';
 
 import router from './router'
-import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
 
 import Swal from 'sweetalert2'; 

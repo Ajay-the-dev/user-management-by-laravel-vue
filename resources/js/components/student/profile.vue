@@ -115,33 +115,127 @@ const statusBadge = (status) => ({
 })
 </script>
 
-<style scoped>
-.sp-wrap { padding: 1rem 0; }
-.sp-header { display: flex; align-items: center; gap: 20px; margin-bottom: 1.5rem; }
-.sp-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 1px solid #e2e8f0; flex-shrink: 0; }
-.sp-name { font-size: 20px; font-weight: 500; margin: 0 0 4px; }
-.sp-meta { font-size: 13px; color: #718096; margin: 0; }
-.sp-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
-.badge-blue { background: #E6F1FB; color: #0C447C; }
-.badge-green { background: #EAF3DE; color: #3B6D11; }
-.badge-amber { background: #FAEEDA; color: #854F0B; }
-.badge-red { background: #FCEBEB; color: #A32D2D; }
-.sp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 12px; }
-.sp-card { background: #fff; border: 0.5px solid #e2e8f0; border-radius: 12px; padding: 1rem 1.25rem; }
-.sp-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px; }
-.sp-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 5px 0; border-bottom: 0.5px solid #f0f0f0; gap: 12px; }
-.sp-row:last-child { border-bottom: none; }
-.sp-label { font-size: 13px; color: #718096; white-space: nowrap; }
-.sp-value { font-size: 13px; text-align: right; word-break: break-word; }
-.sp-value.warn { color: #A32D2D; }
-.sp-parent { background: #f7fafc; border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
-.sp-parent:first-child { margin-top: 0; }
+<style scoped lang="scss">
+@use "abstracts" as *;
+
+.sp-wrap { padding: 0.25rem 0 1rem; }
+
+.sp-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  border-radius: $radius-lg;
+  background: $gradient-hero;
+  box-shadow: $shadow-md;
+  color: #fff;
+
+  @include below(sm) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.25rem;
+  }
+}
+
+.sp-avatar {
+  @include square(4.5rem);
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+}
+
 .student-avatar {
-  width: 72px;
-  height: 72px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  font-size: 15px;
+  background: $gradient-brand;
+  font-size: 0.9375rem;
   letter-spacing: 1px;
+}
+
+.sp-name {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.sp-meta {
+  margin: 0;
+  font-size: $fs-sm;
+  color: $sky-200;
+}
+
+.sp-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.badge {
+  padding: 0.1875rem 0.625rem;
+  border-radius: 999px;
+  font-size: $fs-xs;
+  font-weight: 600;
+}
+
+.badge-blue  { background: $sky-100;     color: $sky-800; }
+.badge-green { background: $emerald-100; color: $emerald-700; }
+.badge-amber { background: $amber-100;   color: #854f0b; }
+.badge-red   { background: $red-100;     color: #a32d2d; }
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+  gap: 1rem;
+}
+
+.sp-card {
+  padding: 1.125rem 1.25rem;
+  background: $surface;
+  border: 1px solid $border-soft;
+  border-radius: $radius;
+  box-shadow: $shadow-xs;
+  @include hover-lift($shadow-sm);
+}
+
+.sp-card-title {
+  @include eyebrow($color: $sky-700);
+  margin: 0 0 0.75rem;
+}
+
+.sp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid $slate-100;
+
+  &:last-child { border-bottom: none; }
+}
+
+.sp-label {
+  font-size: $fs-sm;
+  color: $text-muted;
+  white-space: nowrap;
+}
+
+.sp-value {
+  font-size: $fs-sm;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+
+  &.warn { color: $red-600; }
+}
+
+.sp-parent {
+  padding: 0.625rem 0.75rem;
+  margin-top: 0.5rem;
+  border-radius: $radius-sm;
+  background: $surface-muted;
+
+  &:first-child { margin-top: 0; }
 }
 </style>

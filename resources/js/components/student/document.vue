@@ -1,20 +1,19 @@
 <template>
-  <div class="doc-page container-fluid py-4 px-4 content-scroll vh-100">
+  <div class="doc-page container-fluid px-1">
     <!-- ─── STUDENT BAR ─── -->
-    <div class="student-bar rounded-4 p-4 mb-3 position-relative overflow-hidden">
-      <div class="bar-glow position-absolute top-0 end-0 h-100"></div>
+    <div class="hero-bar">
       <div class="d-flex align-items-center gap-3">
-        <div class="avatar-pill rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0" v-if="userData.profile_picture !== null">
-          <img class="rounded-3" :src="userData.profile_picture"/>
+        <div class="hero-bar__avatar" v-if="userData.profile_picture !== null">
+          <img :src="userData.profile_picture"/>
         </div>
-         <div class="avatar-pill rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0" v-else>
+         <div class="hero-bar__avatar" v-else>
           {{ initials }}
         </div>
         <div class="flex-grow-1">
           <h6 class="fw-bold mb-1 text-white text-capitalize">{{ userData.name }}</h6>
-          <code class="bar-meta">{{ userData.rollNo }} · {{ userData?.batches?.name }}</code>
+          <code class="hero-bar__meta">{{ userData.rollNo }} · {{ userData?.batches?.name }}</code>
         </div>
-        <span class="doc-count-pill badge rounded-pill px-3 py-2 fw-semibold">
+        <span class="hero-bar__pill badge rounded-pill px-3 py-2 fw-semibold">
           {{ documents?.length }} Document{{ documents?.length !== 1 ? 's' : '' }}
         </span>
       </div>
@@ -41,7 +40,7 @@
       </div>
       <p class="upload-title fw-bold mb-1">Drop files here or click to browse</p>
       <p class="upload-sub mb-3">PDF, DOCX, JPG, JPEG, PNG up to 10 MB each</p>
-      <button class="btn btn-upload fw-semibold px-4" @click="fileInput.click()">
+      <button class="btn btn-upload fw-semibold px-md-4" @click="fileInput.click()">
         <i class="fa fa-plus me-2"></i>Choose Files
       </button>
     </div>
@@ -52,7 +51,7 @@
     <!-- ─── UPLOADING PROGRESS ─── -->
     <div v-if="uploadQueue.length" class="card border-0 rounded-4 shadow-sm mb-3">
       <div class="card-body px-4 py-3">
-        <div class="section-label mb-3">Uploading</div> 
+        <div class="eyebrow mb-3">Uploading</div> 
         <div class="d-flex flex-column gap-2">
           <div v-for="(item, i) in uploadQueue" :key="i" class="upload-progress-row d-flex align-items-center gap-3 p-2">
             <div class="file-type-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" :class="fileIconClass(item.name)">
@@ -75,8 +74,8 @@
 
     <!-- ─── DOCUMENT LIST ─── -->
     <div class="card border-0 rounded-4 shadow-sm mb-5">
-      <div class="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between rounded-top-4">
-        <h2 class="card-title mb-0 fw-bold">My Documents</h2>
+      <div class="card-header bg-white border-bottom px-3 px-md-4 py-3 d-flex align-items-center justify-content-between rounded-top-4">
+        <h2 class="card-heading">My Documents</h2>
         <!-- <div class="d-flex gap-2">
           <span
             v-for="filter in filters"
@@ -91,20 +90,20 @@
       </div>
 
       <!-- Empty State -->
-      <div v-if="!filteredDocs?.length" class="text-center py-5 text-muted">
-        <div class="empty-icon rounded-3 d-inline-flex align-items-center justify-content-center mb-3">
+      <div v-if="!filteredDocs?.length" class="empty-state">
+        <div class="icon-tile icon-tile--lg icon-tile--muted">
           <i class="fa fa-folder-open fa-lg"></i>
         </div>
-        <p class="fw-bold mb-1 empty-title">No documents found</p>
-        <p class="mb-0 empty-sub">Upload your first document above</p>
+        <p class="empty-state__title">No documents found</p>
+        <p class="empty-state__sub">Upload your first document above</p>
       </div>
 
       <!-- Document Rows -->
-      <div v-else class="doc-list px-3 pb-3 pt-2">
+      <div v-else class="doc-list px-2 px-md-3 pb-3 pt-2">
         <div
           v-for="(doc, index) in filteredDocs"
           :key="doc.id || index"
-          class="doc-row d-flex align-items-center gap-3 px-3 py-3 rounded-3"
+          class="doc-row d-flex align-items-center gap-2 gap-md-3 px-2 px-md-3 py-3 rounded-3"
         >
         <!-- {{ doc }} -->
           <div class="file-type-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" :class="fileIconClass(doc.name)">
@@ -112,9 +111,9 @@
           </div>
           <div class="flex-grow-1 overflow-hidden">
             <p class="doc-name fw-semibold mb-0 text-truncate">{{ doc.title }}</p>
-            <span class="doc-meta">{{ doc.size }} · {{ formatDate(doc.created_at) }}</span>
+            <span class="doc-meta d-none d-sm-inline">{{ doc.size }} · {{ formatDate(doc.created_at) }}</span>
           </div>
-          <div class="d-flex align-items-center gap-1">
+          <div class="d-flex align-items-center gap-1 flex-shrink-0">
             <button class="doc-action-btn btn rounded-2" title="Preview" @click="openPreview(doc)">
               <i class="fa fa-eye"></i>
             </button>
@@ -152,7 +151,7 @@
               <i class="fa fa-file-alt fa-3x mb-3 d-block"></i>
               <p class="fw-semibold mb-1">Preview not available</p>
               <p class="mb-3 small">Download the file to view it</p>
-              <button class="btn btn-upload fw-semibold px-4" @click="downloadDoc(previewDoc)">
+              <button class="btn btn-upload fw-semibold px-md-4" @click="downloadDoc(previewDoc)">
                 <i class="fa fa-download me-2"></i>Download
               </button>
             </div>
@@ -397,306 +396,208 @@ const uploadSingleFile = (file) => {
 }
 </script>
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+<style scoped lang="scss">
+@use "sass:color";
+@use "abstracts" as *;
 
-.doc-page {
-  background: #f4f6fb;
-  min-height: 100vh;
-}
-
-/* ─── STUDENT BAR ─── */
-.student-bar {
-  background: #0f172a;
-  color: #fff;
-}
-
-.bar-glow {
-  width: 45%;
-  background: radial-gradient(ellipse at top right, rgba(99,102,241,0.22), transparent 70%);
-  pointer-events: none;
-}
-
-.avatar-pill {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
-  font-size: 15px;
-  letter-spacing: 1px;
-}
-
-.bar-meta {
-  font-size: 11px;
-  color: #94a3b8;
-}
-
-.doc-count-pill {
-  background: rgba(99,102,241,0.18);
-  color: #a5b4fc;
-  border: 1px solid rgba(99,102,241,0.28);
-  font-size: 12px;
-}
-
-/* ─── UPLOAD ZONE ─── */
+// ─── UPLOAD ZONE ───
 .upload-zone {
-  border: 2px dashed #d1d5db;
-  background: #fff;
-  padding: 40px 24px;
+  padding: 2.5rem 1.5rem;
+  border: 2px dashed $sky-200;
+  background: $surface;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-}
+  transition: border-color $transition-base, background $transition-base;
 
-.upload-zone--dragging,
-.upload-zone:hover {
-  border-color: #6366f1;
-  background: #f5f3ff;
+  @include below(md) {
+    padding: 1.75rem 1rem;
+  }
+
+  &--dragging,
+  &:hover {
+    border-color: $sky-500;
+    background: $sky-50;
+  }
 }
 
 .upload-icon {
-  width: 52px;
-  height: 52px;
-  background: #ede9fe;
-  color: #6366f1;
+  @include square(3.25rem);
+  background: $sky-100;
+  color: $sky-600;
 }
 
 .upload-title {
-  font-size: 14px;
-  color: #111827;
+  font-size: 0.875rem;
+  color: $text-strong;
 }
 
 .upload-sub {
-  font-size: 12px;
-  color: #9ca3af;
+  font-size: 0.75rem;
+  color: $text-faint;
 }
 
 .btn-upload {
-  background: #0f172a;
+  border-radius: $radius-sm;
+  background: $gradient-brand;
   color: #fff;
-  border-radius: 10px;
-  font-size: 13px;
-  transition: background 0.15s;
+  font-size: $fs-sm;
+  box-shadow: 0 6px 18px color.change($sky-500, $alpha: 0.3);
+  transition: filter $transition-fast;
+
+  &:hover {
+    filter: brightness(1.05);
+    color: #fff;
+  }
 }
 
-.btn-upload:hover {
-  background: #1e293b;
-  color: #fff;
-}
-
-/* ─── SECTION LABEL ─── */
-.section-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-/* ─── UPLOAD PROGRESS ─── */
+// ─── UPLOAD PROGRESS ───
 .upload-file-name {
-  font-size: 13px;
-  color: #111827;
+  font-size: $fs-sm;
+  color: $text-strong;
 }
 
 .upload-pct {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 0.75rem;
+  color: $text-muted;
 }
 
 .upload-bar {
   height: 5px;
-  background: #f1f5f9;
+
+  .progress-bar {
+    background: linear-gradient(90deg, $sky-500, $sky-300);
+  }
 }
 
-.upload-bar .progress-bar {
-  background: linear-gradient(90deg, #6366f1, #818cf8);
-}
-
-/* ─── CARD HEADER ─── */
-.card-title {
-  font-size: 15px;
-  color: #111827;
-  letter-spacing: -0.2px;
-}
-
-/* ─── CHIPS ─── */
-.chip {
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 5px 12px;
-  transition: all 0.15s;
-}
-
-.chip--active {
-  background: #111827;
-  color: #fff;
-  border: 1px solid #111827;
-}
-
-.chip--idle {
-  background: #f3f4f6;
-  color: #6b7280;
-  border: 1px solid #e5e7eb;
-}
-
-/* ─── EMPTY STATE ─── */
-.empty-icon {
-  width: 58px;
-  height: 58px;
-  background: #f3f4f6;
-  color: #d1d5db;
-}
-
-.empty-title {
-  font-size: 14px;
-  color: #374151;
-}
-
-.empty-sub {
-  font-size: 12px;
-}
-
-/* ─── DOCUMENT ROWS ─── */
+// ─── DOCUMENT ROWS ───
 .doc-row {
   cursor: default;
-  transition: background 0.15s;
-}
+  transition: background $transition-fast;
 
-.doc-row:hover {
-  background: #f8fafc;
+  &:hover {
+    background: $surface-hover;
+  }
 }
 
 .doc-name {
-  font-size: 13px;
-  color: #111827;
+  font-size: $fs-sm;
+  color: $text-strong;
 }
 
 .doc-meta {
-  font-size: 11px;
-  color: #9ca3af;
+  font-size: $fs-xs;
   font-weight: 500;
+  color: $text-faint;
 }
 
-.doc-type-badge {
-  background: #f3f4f6;
-  color: #374151;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  border: 1px solid #e5e7eb;
-}
-
-/* ─── FILE TYPE ICONS ─── */
+// ─── FILE TYPE ICONS ───
 .file-type-icon {
-  width: 34px;
-  height: 34px;
-  font-size: 13px;
+  @include square(2.125rem);
+  font-size: $fs-sm;
 }
 
-.icon--pdf    { background: #fee2e2; color: #dc2626; }
-.icon--image  { background: #dbeafe; color: #2563eb; }
-.icon--word   { background: #dbeafe; color: #1d4ed8; }
-.icon--default{ background: #f3f4f6; color: #6b7280; }
+.icon--pdf     { background: $red-100;   color: $red-600; }
+.icon--image   { background: $sky-100;   color: $sky-600; }
+.icon--word    { background: $sky-100;   color: $sky-800; }
+.icon--default { background: $slate-100; color: $slate-500; }
 
-/* ─── ACTION BUTTONS ─── */
-.doc-action-btn {
-  width: 30px;
-  height: 30px;
+// ─── ACTION BUTTONS ───
+%square-action {
+  @include flex-center;
   padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f4f6;
-  color: #6b7280;
-  border: 1px solid #e5e7eb;
-  font-size: 12px;
-  transition: all 0.15s;
+  background: $slate-100;
+  color: $slate-500;
+  border: 1px solid $border-soft;
+  transition: all $transition-fast;
 }
 
-.doc-action-btn:hover {
-  background: #e5e7eb;
-  color: #111827;
+.doc-action-btn {
+  @extend %square-action;
+  @include square(1.875rem);
+  font-size: 0.75rem;
+
+  &:hover {
+    background: $sky-100;
+    border-color: $sky-200;
+    color: $sky-700;
+  }
+
+  &--danger:hover {
+    background: $red-100;
+    border-color: #fecaca;
+    color: $red-600;
+  }
 }
 
-.doc-action-btn--danger:hover {
-  background: #fee2e2;
-  color: #dc2626;
-  border-color: #fecaca;
-}
-
-/* ─── PREVIEW MODAL ─── */
+// ─── PREVIEW MODAL ───
 .preview-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
   z-index: 1055;
+  background: color.change($sky-950, $alpha: 0.65);
+  backdrop-filter: blur(4px);
 }
 
 .preview-modal {
-  background: #fff;
+  display: flex;
+  flex-direction: column;
   width: 90vw;
   max-width: 860px;
   max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-}
+  background: $surface;
 
-.preview-modal__header {
-  border-bottom: 1px solid #f0f2f5;
-  background: #fff;
+  @include below(md) {
+    width: 100vw;
+    max-height: 100dvh;
+    border-radius: 0 !important;
+  }
+
+  &__header {
+    border-bottom: 1px solid $border-soft;
+    background: $surface;
+  }
 }
 
 .preview-doc-name {
-  font-size: 14px;
-  color: #111827;
+  font-size: 0.875rem;
+  color: $text-strong;
 }
 
 .preview-close-btn {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-  font-size: 13px;
-  transition: all 0.15s;
-}
+  @extend %square-action;
+  @include square(2rem);
+  font-size: $fs-sm;
 
-.preview-close-btn:hover {
-  background: #fee2e2;
-  color: #dc2626;
-  border-color: #fecaca;
+  &:hover {
+    background: $red-100;
+    border-color: #fecaca;
+    color: $red-600;
+  }
 }
 
 .preview-body {
   flex: 1;
-  overflow: auto;
-  background: #f8fafc;
   min-height: 400px;
+  overflow: auto;
+  background: $surface-muted;
 }
 
 .preview-img {
+  display: block;
   max-width: 100%;
   max-height: 75vh;
-  object-fit: contain;
-  display: block;
   margin: auto;
+  object-fit: contain;
 }
 
 .preview-frame {
+  display: block;
   width: 100%;
   height: 75vh;
   border: none;
-  display: block;
 }
 
 .preview-unsupported {
   width: 100%;
-  color: #6b7280;
+  color: $text-muted;
 }
 </style>

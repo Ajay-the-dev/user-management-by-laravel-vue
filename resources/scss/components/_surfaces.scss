@@ -1,0 +1,147 @@
+// Page chrome and reusable surfaces: headers, icon tiles, empty states, hero bar.
+@use "sass:color";
+@use "sass:list";
+@use "../abstracts" as *;
+
+// --- Page header -------------------------------------------------------------
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  margin-bottom: 0.25rem;
+  font-family: $font-display;
+  font-weight: 700;
+  color: $text-strong;
+}
+
+.page-subtitle {
+  margin-bottom: 0;
+  font-size: $fs-sm;
+  color: $text-muted;
+}
+
+.card-heading {
+  margin-bottom: 0;
+  font-family: $font-display;
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text-strong;
+  letter-spacing: $tracking-tight;
+}
+
+.eyebrow {
+  @include eyebrow;
+}
+
+// --- Icon tile ---------------------------------------------------------------
+$icon-tile-tones: (
+  "primary": ($sky-100, $sky-700),
+  "success": ($emerald-100, $emerald-600),
+  "warning": ($amber-100, $amber-600),
+  "danger":  ($red-100, $red-600),
+  "violet":  ($violet-100, $violet-600),
+  "muted":   ($slate-100, $slate-400),
+);
+
+.icon-tile {
+  @include square(2.25rem);
+  @include flex-center(inline-flex);
+  flex-shrink: 0;
+  border-radius: $radius-sm;
+  background: $sky-100;
+  color: $sky-700;
+
+  &--sm { @include square(2rem); }
+  &--lg { @include square(3.5rem); border-radius: $radius; }
+
+  @each $name, $pair in $icon-tile-tones {
+    &--#{$name} {
+      background: linear-gradient(135deg, list.nth($pair, 1), color.adjust(list.nth($pair, 1), $lightness: -4%));
+      color: list.nth($pair, 2);
+    }
+  }
+}
+
+// --- Empty state -------------------------------------------------------------
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: $text-muted;
+
+  .icon-tile {
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $slate-700;
+  }
+
+  &__sub {
+    margin-bottom: 0;
+    font-size: 0.75rem;
+  }
+}
+
+// --- Hero bar (student summary banner) ---------------------------------------
+.hero-bar {
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: $radius-lg;
+  color: #fff;
+  background: $gradient-hero;
+  box-shadow: $shadow-md;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 50%;
+    background: $gradient-glow;
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__avatar {
+    @include square(3rem);
+    @include flex-center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: $radius-sm;
+    background: $gradient-brand;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+
+    img {
+      @include square(100%);
+      object-fit: cover;
+    }
+  }
+
+  &__meta {
+    font-size: $fs-xs;
+    color: $sky-200;
+  }
+
+  &__pill {
+    font-size: 0.75rem;
+    background: color.change($sky-400, $alpha: 0.18);
+    color: $sky-100;
+    border: 1px solid color.change($sky-300, $alpha: 0.3);
+  }
+}

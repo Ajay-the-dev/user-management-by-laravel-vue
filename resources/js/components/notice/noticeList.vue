@@ -1,15 +1,15 @@
 <template>
-<div class="row my-5 mx-2">
+<div class="row">
     <!-- View Modal -->
     <div class="modal fade" id="noticeViewModal" tabindex="-1" aria-labelledby="noticeViewModalLabel" aria-hidden="true" ref="noticeViewModalRef">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-sm-down">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-dark text-white border-0">
                     <h5 class="modal-title" id="noticeViewModalLabel">Notice Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" v-if="selectedNotice">
-                    <div class="row mx-3">
+                    <div class="row mx-0 mx-md-3">
                         <div class="col-12 mb-3">
                             <div class="d-flex align-items-center gap-2 mb-2">
                                 <span :class="typeBadgeClass(selectedNotice.type)" class="badge text-capitalize">
@@ -39,15 +39,15 @@
         </div>
     </div>
 
-    <div class="col-12 w-75">
-        <div class="card shadow-sm">
-            <div class="card-header bg-gradient p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold text-dark">Notices</h5>
-                    <div class="d-flex">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white px-4 py-3">
+                <div class="list-header">
+                    <h2 class="card-heading">Notices</h2>
+                    <div class="list-header__tools">
                         <input
-                            type="text"
-                            class="form-control w-auto mx-3"
+                            type="search"
+                            class="form-control w-auto"
                             placeholder="Search notices here ..."
                             v-model="searchQuery"
                         >
@@ -60,12 +60,12 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" width="5%" class="fw-bold text-muted text-center">#</th>
+                                <th scope="col" width="5%" class="fw-bold text-muted text-center d-none d-md-table-cell">#</th>
                                 <th scope="col" width="20%" class="fw-bold text-muted">Title</th>
-                                <th scope="col" width="10%" class="fw-bold text-muted">Visbility</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted">Type</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted">Audience</th>
-                                <th scope="col" width="25%" class="fw-bold text-muted">Date</th>
+                                <th scope="col" width="10%" class="fw-bold text-muted d-none d-md-table-cell">Visbility</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted d-none d-md-table-cell">Type</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted d-none d-md-table-cell">Audience</th>
+                                <th scope="col" width="25%" class="fw-bold text-muted d-none d-md-table-cell">Date</th>
                                 <th scope="col" width="10%" class="fw-bold text-muted text-center">Actions</th>
                             </tr>
                         </thead>
@@ -79,21 +79,24 @@
                         </tbody>
                         <tbody v-else>
                             <tr v-for="(notice, index) in notices?.data" :key="notice.id" class="align-middle border-bottom">
-                                <td class="fw-bold text-center">
+                                <td class="fw-bold text-center d-none d-md-table-cell">
                                     {{ notices.per_page * (notices.current_page - 1) + index + 1 }}
                                 </td>
-                                <td class="fw-500">{{ notice.title }}</td>
-                                <td class="fw-500">
-                                    <span class="badge px py-1 bg-secondary text-capitalize">
+                                <td class="fw-medium">
+                                    {{ notice.title }}
+                                    <span class="cell-sub d-md-none">{{ formatDate(notice.created_at) }}</span>
+                                </td>
+                                <td class="fw-medium d-none d-md-table-cell">
+                                    <span class="badge py-1 text-capitalize" :class="notice.show === 1 ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-secondary-emphasis'">
                                         <i class="fa" :class="notice.show === 1 ? ' fa-eye':'fa-eye-slash'"></i> {{ notice.show === 1 ? 'Visible':'Hidden' }}
                                     </span>
                                 </td>
-                                <td>
+                                <td class="d-none d-md-table-cell">
                                     <span :class="typeBadgeClass(notice.type)" class="badge px-2 py-1 text-capitalize">
                                         <i :class="typeIcon(notice.type)" class="me-1"></i>{{ notice.type }}
                                     </span>
                                 </td>
-                                <td>
+                                <td class="d-none d-md-table-cell">
                                     <span class="badge bg-secondary text-capitalize">
                                         <i class="fas fa-users me-1"></i>{{ notice.audience }}
                                     </span>
@@ -101,7 +104,7 @@
                                         <i class="fas fa-graduation-cap me-1"></i>Batch
                                     </span>
                                 </td>
-                                <td class="text-muted small">{{ formatDate(notice.created_at) }}</td>
+                                <td class="text-muted small d-none d-md-table-cell">{{ formatDate(notice.created_at) }}</td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button
@@ -126,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="card-footer bg-light p-3" v-if="notices?.links">
+            <div class="card-footer p-3" v-if="notices?.links">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end mb-0">
                         <li

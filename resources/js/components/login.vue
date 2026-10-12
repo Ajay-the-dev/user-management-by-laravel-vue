@@ -123,25 +123,23 @@ const validateLogin = () => {
 }
 </script>
 
-<style scoped>
-.login-root {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-}
+<style scoped lang="scss">
+@use "sass:color";
+@use "abstracts" as *;
 
 .login-brand {
-  background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
-  background-image: url('image.webp'), linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
+  position: relative;
+  background-image: url('/image.webp'), $gradient-hero;
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
-  position: relative;
-}
 
-.login-brand::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(10, 15, 40, 0.85) 0%, rgba(10, 15, 40, 0.3) 100%);
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, color.change($sky-950, $alpha: 0.9) 0%, color.change($sky-800, $alpha: 0.35) 100%);
+  }
 }
 
 .brand-content {
@@ -149,27 +147,46 @@ const validateLogin = () => {
   z-index: 1;
 }
 
+.brand-logo {
+  @include square(3.5rem);
+  @include flex-center;
+  border-radius: $radius;
+  background: $gradient-brand;
+  box-shadow: 0 8px 24px color.change($sky-400, $alpha: 0.4);
+}
+
 .login-form-wrap {
   max-width: 400px;
 }
 
-.input-group-text {
-  border-radius: 0.5rem 0 0 0.5rem;
-}
+.input-group {
+  border-radius: $radius-sm;
+  transition: box-shadow $transition-base;
 
-.form-control {
-  border-radius: 0 0.5rem 0.5rem 0;
-}
+  &:focus-within {
+    @include focus-ring;
 
-.input-group .form-control:focus {
-  box-shadow: none;
-  border-color: #dee2e6;
+    .input-group-text,
+    .form-control {
+      border-color: $sky-400;
+    }
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+  }
 }
 
 .btn-primary {
-  border-radius: 0.5rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding-block: 0.75rem;
+
+  @include below(md) {
+    padding-block: 0.625rem;
+  }
+
   letter-spacing: 0.3px;
+  background-image: $gradient-brand;
+  border: 0;
+  box-shadow: 0 6px 18px color.change($sky-500, $alpha: 0.35);
 }
 </style>

@@ -1,0 +1,80 @@
+@use "sass:color";
+@use "../abstracts" as *;
+
+html {
+  @include thin-scrollbar;
+}
+
+body {
+  background-color: $app-bg;
+  font-feature-settings: "cv11", "ss01"; // Inter: single-storey a, open digits
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: $sky-200;
+  color: $sky-950;
+}
+
+h1, h2, h3, h4, h5, h6,
+.display-5 {
+  letter-spacing: $tracking-tight;
+}
+
+// Figures line up in columns
+.table,
+.badge {
+  font-variant-numeric: tabular-nums;
+}
+
+code {
+  color: $sky-700;
+}
+
+// Freeze the page behind the open mobile drawer
+body.drawer-open {
+  overflow: hidden;
+}
+
+// --- Bootstrap refinements ---------------------------------------------------
+.form-control,
+.form-select {
+  &:hover:not(:focus, :disabled) {
+    border-color: $slate-300;
+  }
+}
+
+.table {
+  > thead > tr > th {
+    @include eyebrow;
+    background: $sky-50;
+    border-bottom-color: $border-soft;
+    white-space: nowrap;
+  }
+
+  > tbody > tr:last-child > td {
+    border-bottom: 0;
+  }
+}
+
+.card-header {
+  border-bottom-color: $border-soft;
+}
+
+.card-footer {
+  background: $surface-muted;
+}
+
+.modal-header.bg-dark {
+  background: $gradient-hero !important;
+}
+
+.btn-outline-primary:not(:hover, :active, .active) {
+  border-color: $sky-200;
+}
+
+.page-link {
+  border-radius: $radius-sm;
+  margin-inline: 0.125rem;
+}

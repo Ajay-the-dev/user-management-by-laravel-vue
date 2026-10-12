@@ -10,9 +10,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://user-management-by-laravel-vue-production.up.railway.app',
-    ],
+    'allowed_origins' => explode(',', env(
+        'CORS_ALLOWED_ORIGINS',
+        'https://user-management-by-laravel-vue-production.up.railway.app'
+    )),
 
     'allowed_origins_patterns' => [],
 

@@ -192,7 +192,9 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  // Window is the scroller: start new pages at the top, restore on back/forward
+  scrollBehavior: (to, from, savedPosition) => savedPosition ?? { top: 0 }
 })
 
 export default router;

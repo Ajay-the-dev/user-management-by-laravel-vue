@@ -1,0 +1,3 @@
+// Import with `@use "abstracts" as *;` — emits no CSS, only tokens and mixins.
+@forward "tokens";
+@forward "mixins";

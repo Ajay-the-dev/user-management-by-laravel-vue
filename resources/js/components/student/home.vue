@@ -1,5 +1,5 @@
 <template>
-  <div class="card border-0 shadow-sm rounded-4 mb-4 vh-100 content-scroll">
+  <div class="card border-0 shadow-sm rounded-4 mb-4">
 
     <!-- Preview Modal -->
     <div class="modal fade" id="noticePreviewModal" tabindex="-1" aria-hidden="true" ref="previewModalRef">
@@ -36,13 +36,13 @@
     </div>
 
     <!-- Card Header -->
-    <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div class="card-header bg-white px-4 py-3 rounded-top-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
       <div class="d-flex align-items-center gap-2">
-        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;">
+        <div class="icon-tile icon-tile--primary">
           <i class="fa fa-bullhorn"></i>
         </div>
-        <h5 class="fw-bold m-0">Important Notices</h5>
-        <span class="badge bg-secondary rounded-pill ms-1">{{ filteredNotices.length }}</span>
+        <h2 class="card-heading">Important Notices</h2>
+        <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill ms-1">{{ filteredNotices.length }}</span>
       </div>
 
       <!-- Filter Pills -->
@@ -69,9 +69,11 @@
       </div>
 
       <!-- Empty -->
-      <div v-else-if="filteredNotices.length === 0" class="text-center py-5 text-muted">
-        <i class="fa fa-bell-slash fa-2x mb-3 d-block"></i>
-        No notices available.
+      <div v-else-if="filteredNotices.length === 0" class="empty-state">
+        <div class="icon-tile icon-tile--lg icon-tile--muted">
+          <i class="fa fa-bell-slash fa-lg"></i>
+        </div>
+        <p class="empty-state__title">No notices available.</p>
       </div>
 
       <!-- Notice List -->
@@ -79,7 +81,7 @@
         <div
           v-for="notice in filteredNotices"
           :key="notice.id"
-          class="d-flex align-items-stretch rounded-3 border overflow-hidden cursor-pointer"
+          class="notice-item d-flex align-items-stretch rounded-3 border overflow-hidden"
           :class="notice.type === 'urgent' ? 'border-danger' : 'border'"
           role="button"
           @click="openPreview(notice)"
@@ -87,7 +89,7 @@
           data-bs-target="#noticePreviewModal"
         >
           <!-- Accent Bar -->
-          <div class="flex-shrink-0" :class="typeAccentClass(notice.type)" style="width:5px;"></div>
+          <div class="accent-bar" :class="typeAccentClass(notice.type)"></div>
 
           <!-- Content -->
           <div class="flex-grow-1 px-3 py-2">
@@ -97,7 +99,7 @@
                 {{ notice.type }}
               </span>
             </div>
-            <div class="d-flex gap-3 text-muted" style="font-size:0.75rem;">
+            <div class="d-flex gap-3 text-muted fs-xs">
               <span><i class="fa fa-calendar-alt me-1"></i>{{ formatDate(notice.created_at) }}</span>
               <!-- <span><i class="fa fa-hourglass-end me-1"></i>Expires {{ formatDate(notice.expiry) }}</span> -->
               <span class="ms-auto text-primary"><i class="fa fa-eye me-1"></i>Read more</span>
@@ -210,3 +212,17 @@ const filteredNotices = computed(() => {
 
 
 </script>
+
+<style scoped lang="scss">
+@use "abstracts" as *;
+
+.notice-item {
+  background: $surface;
+  @include hover-lift($shadow-sm);
+
+  &:hover {
+    border-color: $sky-200 !important;
+    background: $surface-hover;
+  }
+}
+</style>

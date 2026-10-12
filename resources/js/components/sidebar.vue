@@ -1,25 +1,40 @@
 <template>
-  <div class="row g-0">
-    
-    <div class="col-3 sidebar d-flex flex-column">
-      
-      <div class="sidebar-header px-4 py-4">
-        <h5 class="fw-bold m-0">FeeMo</h5>
-        <small class="text-white-50 text-capitalize">Welcome {{userStore.name}}!</small>
+  <div class="app-shell" :class="{ 'is-drawer-open': isDrawerOpen }">
+
+    <!-- Mobile drawer backdrop -->
+    <div class="app-backdrop" @click="isDrawerOpen = false"></div>
+
+    <aside class="app-sidebar">
+
+      <div class="app-sidebar__header px-4 py-4">
+        <div class="app-sidebar__brand">
+          <span class="app-sidebar__logo">
+            <i class="fa fa-graduation-cap"></i>
+          </span>
+          <h5 class="app-sidebar__title fw-bold m-0 text-white">FeeMo</h5>
+          <button type="button" class="btn-close btn-close-white ms-auto d-md-none" aria-label="Close menu" @click="isDrawerOpen = false"></button>
+        </div>
+        <small class="app-sidebar__tagline mt-2 text-white-50 text-capitalize">Welcome {{userStore.name}}!</small>
       </div>
 
-      <div class="flex-grow-1 px-3 overflow-y-auto" v-if="!isLoading">
+      <nav class="app-sidebar__nav flex-grow-1 px-3 py-2 overflow-y-auto" v-if="!isLoading">
 
-        <div v-for="item in menuForSelectedRole" :key="item.name" class="menu-wrapper">
+        <div
+          v-for="item in menuForSelectedRole"
+          :key="item.name"
+          class="menu-wrapper"
+          :class="{ 'is-open': item.children && (isActive(item) || expandedItem === item.name) }"
+        >
 
           <div
-            class="menu-item d-flex align-items-center justify-content-between"
+            class="menu-item justify-content-between"
             :class="{ active: isActive(item) }"
+            :title="item.name"
             @click="handleMenuClick(item)"
           >
             <div class="d-flex align-items-center">
               <i :class="item.icon + ' me-3'"></i>
-              <span>{{ item.name }}</span>
+              <span class="menu-label">{{ item.name }}</span>
             </div>
           </div>
 
@@ -28,46 +43,62 @@
               v-for="child in item.children"
               :key="child?.name"
               :to="child.route"
-              class="menu-item submenu-item d-flex align-items-center text-decoration-none"
+              class="menu-item submenu-item text-decoration-none"
               :class="{ 'child-active': route.path === child.route }"
+              :title="child?.name"
             >
               <i :class="child.icon + ' me-3'"></i>
-              <span>{{ child?.name }}</span>
+              <span class="menu-label">{{ child?.name }}</span>
             </router-link>
           </div>
 
         </div>
 
-      </div>
-      <div class="flex-grow-1 px-3 overflow-y-auto" v-else>
-        <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
+      </nav>
+      <div class="flex-grow-1 px-3 py-4 text-center" v-else>
+        <div class="spinner-border text-info" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
+
       <div class="px-3 pb-4">
-        <div class="menu-item danger d-flex align-items-center" @click="logout">
+        <div class="menu-item danger" title="Logout" @click="logout">
           <i class="fa fa-sign-out me-3"></i>
-          Logout
+          <span class="menu-label">Logout</span>
         </div>
       </div>
 
-    </div>
+    </aside>
 
-    <div class="col-9 main-content p-4">
+    <main class="app-main">
+      <!-- Mobile top bar -->
+      <header class="app-topbar d-md-none">
+        <button type="button" class="app-topbar__toggle btn" aria-label="Open menu" @click="isDrawerOpen = true">
+          <i class="fa fa-bars"></i>
+        </button>
+        <span class="app-sidebar__logo">
+          <i class="fa fa-graduation-cap"></i>
+        </span>
+        <span class="fw-bold">FeeMo</span>
+        <span class="avatar avatar--brand ms-auto">{{ userStore.name?.charAt(0)?.toUpperCase() }}</span>
+      </header>
+
       <router-view />
-    </div>
+    </main>
 
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted, computed, watch} from 'vue';
+import {ref, onMounted, onBeforeUnmount, computed, watch} from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import Swal from 'sweetalert2'
 import { useUserStore } from '@/stores/userStore'
 
 const isLoading = ref(false)
 const role = ref('')
+const isDrawerOpen = ref(false)
+const expandedItem = ref(null)
 
 const router = useRouter()
 const route = useRoute()
@@ -139,7 +170,7 @@ const staffMenuItems = [
       },
       {
         name: 'Fee Header',
-        icon: 'fa fa-money-check-dollar me-3',
+        icon: 'fa fa-money-check-dollar',
         route:  '/home/fee/manage'
       }
     ]
@@ -192,8 +223,24 @@ const studentMenuItems = [
 const handleMenuClick = (item) => {
   if (!item.children) {
     router.push(item.route)
+    return
   }
+  // Touch screens have no hover, so a tap toggles the submenu
+  expandedItem.value = expandedItem.value === item.name ? null : item.name
 }
+
+// Close the mobile drawer after navigating
+watch(() => route.fullPath, () => {
+  isDrawerOpen.value = false
+})
+
+watch(isDrawerOpen, (open) => {
+  document.body.classList.toggle('drawer-open', open)
+})
+
+onBeforeUnmount(() => {
+  document.body.classList.remove('drawer-open')
+})
 
 const isActive = (item) => {
   if (item.route === '/home') return route.path === '/home'
@@ -209,7 +256,6 @@ const logout = async () => {
     text: 'Do you want to logout?',
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: '#6366f1',
     confirmButtonText: 'Logout',
     cancelButtonText: "No, I'm Staying",
   })
@@ -234,95 +280,3 @@ const setMenuRules = ()=>{
   isLoading.value = false
 }
 </script>
-
-<style scoped>
-.sidebar {
-  height: 100vh;
-  background: #0f172a;
-  color: #cbd5f5;
-  position: sticky;
-  top: 0;
-}
-
-.sidebar-header {
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.menu-item {
-  padding: 12px 16px;
-  margin: 4px 0;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  color: #cbd5f5;
-}
-
-.menu-item i {
-  width: 20px;
-  text-align: center;
-}
-
-.menu-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-}
-
-/* Parent Active State */
-.menu-item.active {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
-}
-
-/* Submenu Dropdown Logic */
-.menu-wrapper {
-  margin-bottom: 4px;
-}
-
-.submenu {
-  display: none; /* Hidden by default */
-  flex-direction: column;
-  padding-left: 1.5rem; /* Indent sub-items */
-  margin-bottom: 10px;
-}
-
-/* Show submenu when hovering the wrapper */
-.menu-wrapper:hover .submenu {
-  display: flex;
-}
-
-.submenu-item {
-  font-size: 0.8rem;
-  padding: 8px 16px;
-  color: #94a3b8;
-}
-
-.submenu-item:hover {
-  color: #fff;
-}
-
-/* Highlight specific child route */
-.child-active {
-  color: #fff !important;
-  font-weight: 600;
-}
-
-.menu-item.danger:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-.main-content {
-  background: #f8fafc;
-  min-height: 100vh;
-}
-
-/* For better scrolling on small screens */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 4px;
-}
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-}
-</style>

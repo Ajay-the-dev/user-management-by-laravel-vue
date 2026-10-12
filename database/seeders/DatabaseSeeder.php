@@ -33,8 +33,8 @@ class DatabaseSeeder extends Seeder
             'role' => 'ADMIN',
         ]);
 
-        // $this->call(UserSeeder::class);
         $this->call(BatchSeeder::class);
+        $this->call(UserSeeder::class); // needs batches for student batchId
         $this->call(feeSeeder::class);
 
     }

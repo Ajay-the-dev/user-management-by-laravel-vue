@@ -1,7 +1,7 @@
 <template>
-<div class="row my-5 mx-2">
+<div class="row">
     <div class="modal fade" id="myModal" tabindex="-1" aria-hidden="true" ref="myModalRef">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
     <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
       <div class="modal-header bg-dark text-white border-0">
@@ -13,7 +13,7 @@
         <button type="button" class="btn-close btn-close-white px-4" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body bg-light" style="max-height:70vh; overflow-y:auto;">
+      <div class="modal-body bg-light">
         <div class="row">
           <div class="col-12" v-if="selectedUser!==null">
 
@@ -124,7 +124,7 @@
               </div>
               <div class="card-body" v-else>
                     <h6 class="text-uppercase text-primary fw-bold small mb-3">Uploads</h6>
-                    <button class="btn btn-sm btn-outline-dark m-2" v-for="file in fileUploads" @click="openInNewTab(file.url)">
+                    <button class="btn btn-sm btn-outline-primary m-2" v-for="file in fileUploads" @click="openInNewTab(file.url)">
                         <i class="fa fa-arrow-circle-down mx-2"></i> {{ file.title }}
                     </button>
                 </div>    
@@ -135,20 +135,20 @@
       </div>
 
       <div class="modal-footer bg-white border-0">
-        <button type="button" class="btn btn-dark rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary rounded-3 px-md-4" data-bs-dismiss="modal">Close</button>
       </div>
 
     </div>
   </div>
 </div>
 
-    <div class="col-12 w-75">
-        <div class="card shadow-sm">
-            <div class="card-header bg-gradient p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold text-dark">{{isStaff ? 'Staffs' : 'Students'}}</h5>
-                    <div class="d-flex">
-                        <input type="text" class="form-control w-auto mx-3" placeholder="Search " v-model="searchQuery"
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white px-4 py-3">
+                    <div class="list-header">
+                    <h2 class="card-heading">{{isStaff ? 'Staffs' : 'Students'}}</h2>
+                    <div class="list-header__tools">
+                        <input type="search" class="form-control w-auto" placeholder="Search " v-model="searchQuery"
                         @change="handleSearch">
                          <button class="btn btn-primary btn-sm" v-if="isStaff" @click="navigateTo('/home/staff/add')">
                             <i class="fas fa-plus me-2"></i>Add New
@@ -164,13 +164,13 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" width="5%" class="fw-bold text-muted text-center">#</th>
+                                <th scope="col" width="5%" class="fw-bold text-muted text-center d-none d-md-table-cell">#</th>
                                 <th scope="col" width="25%" class="fw-bold text-muted">Name</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted" v-if="isStaff">Designation</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted" v-else>Batch</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted" v-if="!isStaff">Dept.</th>
-                                <th scope="col" width="15%" class="fw-bold text-muted" v-if="isStaff">Phone</th>
-                                <th scope="col" width="10%" class="fw-bold text-muted" v-else>Roll No</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted d-none d-md-table-cell" v-if="isStaff">Designation</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted d-none d-md-table-cell" v-else>Batch</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted d-none d-md-table-cell" v-if="!isStaff">Dept.</th>
+                                <th scope="col" width="15%" class="fw-bold text-muted d-none d-md-table-cell" v-if="isStaff">Phone</th>
+                                <th scope="col" width="10%" class="fw-bold text-muted d-none d-md-table-cell" v-else>Roll No</th>
                                 <th scope="col" width="20%" class="fw-bold text-muted text-center">Actions</th>
                             </tr>
                         </thead>
@@ -184,17 +184,24 @@
                         </tbody>
                         <tbody v-else>
                             <tr v-for="user,index in users.data" :key="user.id" class="align-middle border-bottom">
-                                <td class="fw-bold text-center">{{ users.per_page * (users.current_page-1)+index+1 }}</td>
-                                <td class="fw-500">
-                                  <img :src="user.profile_picture" alt="Profile Picture" class="round-thumb" v-if="user.profile_picture">
-                                  <img src="http://localhost:8000/storage/images/profile.svg" alt="Profile Picture" class="round-thumb" v-else> {{ user.name }}
+                                <td class="fw-bold text-center d-none d-md-table-cell">{{ users.per_page * (users.current_page-1)+index+1 }}</td>
+                                <td class="fw-medium">
+                                  <div class="d-flex align-items-center">
+                                    <img :src="user.profile_picture" alt="Profile Picture" class="thumb" v-if="user.profile_picture">
+                                    <img src="http://localhost:8000/storage/images/profile.svg" alt="Profile Picture" class="thumb" v-else>
+                                    <div>
+                                      {{ user.name }}
+                                      <span class="cell-sub d-md-none" v-if="isStaff">{{ user.designation }}</span>
+                                      <span class="cell-sub d-md-none" v-else>{{ user.rollNo }}</span>
+                                    </div>
+                                  </div>
                                 </td>
-                                <td v-if="isStaff">{{ user.designation }}</td>
-                                <td v-else>{{ user.batches?.name ?? 'NIL' }}</td>
-                                <td v-if="!isStaff">{{ user.department }}</td>
+                                <td class="d-none d-md-table-cell" v-if="isStaff">{{ user.designation }}</td>
+                                <td class="d-none d-md-table-cell" v-else>{{ user.batches?.name ?? 'NIL' }}</td>
+                                <td class="d-none d-md-table-cell" v-if="!isStaff">{{ user.department }}</td>
                                 <!-- <td>{{ user.dob ? new Date(user.dob).toISOString().split('T')[0].split('-').reverse().join('-') : '' }}</td> -->
-                                <td  v-if="isStaff">{{ user.mobile }}</td>
-                                <td  v-else>{{ user.rollNo }}</td>
+                                <td class="d-none d-md-table-cell" v-if="isStaff">{{ user.mobile }}</td>
+                                <td class="d-none d-md-table-cell" v-else>{{ user.rollNo }}</td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#myModal" @click="editUser(user)" title="View">
@@ -216,12 +223,12 @@
                     </table>
                 </div>
                 <div v-else class="d-flex justify-content-center p-3">
-                     <div class="spinner-border" role="status">
-                        <span class="sr-only">Loading...</span>
+                     <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </div>
-            <div class="card-footer bg-light p-3" v-if="users?.links">
+            <div class="card-footer p-3" v-if="users?.links">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end mb-0">
                         <li class="page-item" v-for="link in users.links" :key="link.label+'_filtered'" :class="link.active ? 'active' : ''"
@@ -599,58 +606,5 @@
 <style scoped>
 .modal:not(.show) {
     display: none !important;
-}
-
-.font-sm{
-    font-size: small;
-}
-
-.border{
-    border: 1px solid #cccccc86;
-}
-
-.profile-view {
-    padding: 20px;
-}
-
-.section-title {
-    color: #007bff;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-.profile-section p {
-    margin-bottom: 8px;
-    line-height: 1.5;
-}
-
-.address-card {
-    background-color: #f8f9fa;
-    border-radius: 5px;
-}
-
-.address-card h6 {
-    margin-bottom: 10px;
-    color: #495057;
-}
-
-.round-thumb {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 10px;
-    display: inline-block;
-}
-
-.round-thumb-pw {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 10px;
-    display: inline-block;
 }
 </style>

@@ -1,20 +1,19 @@
 <template>
-  <div class="fee-page container-fluid py-4 px-4">
+  <div class="fee-page container-fluid px-1">
 
     <!-- STUDENT BAR -->
-    <div class="student-bar rounded-4 p-4 mb-3 text-white position-relative overflow-hidden">
-      <div class="student-bar__glow position-absolute top-0 end-0 w-50 h-100"></div>
+    <div class="hero-bar">
       <div class="d-flex align-items-center gap-3">
 
-        <div class="student-avatar rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0 text-white" v-if="userData.profile_picture !== null">
-          <img class="rounded-3" :src="userData.profile_picture" alt="">
+        <div class="hero-bar__avatar" v-if="userData.profile_picture !== null">
+          <img :src="userData.profile_picture" alt="">
         </div>
-        <div class="student-avatar rounded-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0 text-white" v-else>
+        <div class="hero-bar__avatar" v-else>
           {{ initials }}
         </div>
         <div class="flex-grow-1">
           <h6 class="fw-bold mb-1 text-white text-capitalize">{{ userData.name }}</h6>
-          <code class="student-meta">{{ userData.rollNo }} · {{ userData?.batches?.name }}</code>
+          <code class="hero-bar__meta">{{ userData.rollNo }} · {{ userData?.batches?.name }}</code>
         </div>
 
         <span class="balance-pill badge rounded-pill px-3 py-2 fw-semibold" :class="totalDue > 0 ? 'balance-pill--due' : 'balance-pill--paid'">
@@ -25,7 +24,7 @@
     </div>
 
     <!-- PROGRESS BAND -->
-    <div class="card border rounded-4 mb-3 progress-card">
+    <div class="card border-0 shadow-sm rounded-4 mb-3">
       <div class="card-body px-4 py-3">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="progress-label d-flex align-items-center gap-2">
@@ -94,18 +93,18 @@
     </div>
 
     <!-- EMPTY STATE -->
-    <div v-if="!assignedFees.length" class="card border rounded-4 text-center py-5 empty-card">
-      <div class="card-body">
-        <div class="empty-icon rounded-3 d-inline-flex align-items-center justify-content-center mb-3 text-secondary">
+    <div v-if="!assignedFees.length" class="card rounded-4 empty-card">
+      <div class="empty-state">
+        <div class="icon-tile icon-tile--lg icon-tile--muted">
           <i class="fa fa-question-circle fa-lg"></i>
         </div>
-        <p class="fw-bold text-dark mb-1 empty-title">No fees assigned</p>
-        <p class="text-muted mb-0 empty-sub">This student has no fee records yet</p>
+        <p class="empty-state__title">No fees assigned</p>
+        <p class="empty-state__sub">This student has no fee records yet</p>
       </div>
     </div>
 
     <!-- FOOTER SUMMARY -->
-    <div v-if="assignedFees.length" class="card border rounded-4 mt-3 footer-summary">
+    <div v-if="assignedFees.length" class="card rounded-4 mt-3 footer-summary">
       <div class="card-body py-3">
         <div class="row text-center g-0">
 
@@ -239,179 +238,135 @@ watch(assignedFees, (feeData) => {
 })
 </script>
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+<style scoped lang="scss">
+@use "sass:color";
+@use "abstracts" as *;
 
-.fee-page {
-  font-family: 'DM Sans', sans-serif;
-  background: #f4f6fb;
-  min-height: 100vh;
-}
-
-/* ── STUDENT BAR ── */
-.student-bar {
-  background: #111827;
-}
-
-.student-bar__glow {
-  background: radial-gradient(ellipse at top right, rgba(99, 102, 241, 0.25), transparent 70%);
-  pointer-events: none;
-}
-
-.student-avatar {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  font-size: 15px;
-  letter-spacing: 1px;
-}
-
-.student-meta {
-  font-size: 11px;
-  color: #9ca3af;
-}
-
+// ── BALANCE PILL (inside .hero-bar) ──
 .balance-pill--due {
-  background: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: color.change($red-500, $alpha: 0.18);
+  color: #fecaca;
+  border: 1px solid color.change($red-500, $alpha: 0.3);
 }
 
 .balance-pill--paid {
-  background: rgba(16, 185, 129, 0.15);
-  color: #6ee7b7;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: color.change($emerald-500, $alpha: 0.18);
+  color: #a7f3d0;
+  border: 1px solid color.change($emerald-500, $alpha: 0.3);
 }
 
-/* ── PROGRESS BAND ── */
-.progress-card {
-  border-color: #eaecf0 !important;
-}
-
+// ── PROGRESS BAND ──
 .progress-label {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 0.75rem;
+  color: $text-muted;
 }
 
 .progress-percent {
-  font-size: 13px;
-  font-family: monospace;
+  font-family: $font-display;
+  font-variant-numeric: tabular-nums;
+  font-size: $fs-sm;
+  color: $sky-700;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  @include square(0.5rem);
   display: inline-block;
   flex-shrink: 0;
+  border-radius: 50%;
+
+  &--green { background: $emerald-500; }
 }
 
-.dot--green { background: #10b981; }
-
 .progress-track {
-  height: 7px;
-  background: #f1f5f9;
+  height: 0.5rem;
 }
 
 .progress-fill {
-  background: linear-gradient(90deg, #10b981, #34d399) !important;
+  background: linear-gradient(90deg, $sky-500, $emerald-500) !important;
 }
 
-/* ── FEE CARD ── */
+// ── FEE CARD ──
 .fee-card {
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  @include hover-lift;
+
+  &--default {
+    border-color: $border-soft !important;
+  }
+
+  &--overdue {
+    border-color: #fecaca !important;
+    background: #fff9f9;
+  }
+
+  &__strip {
+    height: 3px;
+    border-radius: $radius-lg $radius-lg 0 0;
+
+    &--paid    { background: linear-gradient(90deg, $emerald-500, #34d399); }
+    &--pending { background: linear-gradient(90deg, $red-500, #f87171); }
+    &--warning { background: linear-gradient(90deg, $amber-500, #fbbf24); }
+  }
 }
 
-.fee-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.07) !important;
-}
-
-.fee-card--default {
-  border-color: #eaecf0 !important;
-}
-
-.fee-card--overdue {
-  border-color: #fecaca !important;
-  background: #fff9f9;
-}
-
-.fee-card__strip {
-  height: 3px;
-  border-radius: 16px 16px 0 0;
-}
-
-.fee-card__strip--paid    { background: linear-gradient(90deg, #10b981, #34d399); }
-.fee-card__strip--pending { background: linear-gradient(90deg, #ef4444, #f87171); }
-.fee-card__strip--warning { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-
-/* ── FEE ICON ── */
+// ── FEE ICON ──
 .fee-icon {
-  width: 32px;
-  height: 32px;
+  @include square(2rem);
 }
 
-.icon-bg--purple { background: #ede9fe; color: #7c3aed; }
-.icon-bg--blue   { background: #dbeafe; color: #2563eb; }
-.icon-bg--amber  { background: #fef3c7; color: #d97706; }
-.icon-bg--green  { background: #dcfce7; color: #16a34a; }
-.icon-bg--default{ background: #f3f4f6; color: #6b7280; }
+.icon-bg--purple  { background: $violet-100;  color: $violet-600; }
+.icon-bg--blue    { background: $sky-100;     color: $sky-600; }
+.icon-bg--amber   { background: $amber-100;   color: $amber-600; }
+.icon-bg--green   { background: #dcfce7;      color: #16a34a; }
+.icon-bg--default { background: $slate-100;   color: $slate-500; }
 
-.fee-type-label { font-size: 13px; }
+.fee-type-label { font-size: $fs-sm; }
 
 .fee-amount {
-  font-size: 22px;
-  font-family: monospace;
+  font-family: $font-display;
+  font-variant-numeric: tabular-nums;
+  font-size: $fs-lg;
   letter-spacing: -0.5px;
 }
 
-.fee-meta { font-size: 11px; }
-.fee-meta__icon { font-size: 10px; }
+.fee-meta { font-size: $fs-xs; }
+.fee-meta__icon { font-size: $fs-2xs; }
 
-/* ── PAID STAMP ── */
+// ── PAID STAMP ──
 .paid-stamp {
-  font-size: 9px;
-  letter-spacing: 2px;
-  background: #059669;
-  color: #d1fae5;
-  transform: rotate(-2deg);
-  padding: 3px 8px;
+  padding: 0.1875rem 0.5rem;
   border-radius: 4px;
+  background: $emerald-600;
+  color: $emerald-100;
+  font-size: 9px;
   font-weight: 700;
+  letter-spacing: 2px;
+  transform: rotate(-2deg);
 }
 
-/* ── EMPTY STATE ── */
+// ── EMPTY STATE ──
 .empty-card {
   border-style: dashed !important;
-  border-color: #e5e7eb !important;
+  border-color: $sky-200 !important;
 }
 
-.empty-icon {
-  width: 58px;
-  height: 58px;
-  background: #f3f4f6;
-}
-
-.empty-title { font-size: 14px; }
-.empty-sub   { font-size: 12px; }
-
-/* ── FOOTER SUMMARY ── */
+// ── FOOTER SUMMARY ──
 .footer-summary {
-  border-color: #eaecf0 !important;
-  background: #f8fafc;
+  background: $sky-50;
+  border-color: $border-soft !important;
 }
 
 .summary-count {
-  font-size: 20px;
-  font-family: monospace;
-  color: #0f172a;
+  font-family: $font-display;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.25rem;
+  color: $sky-900;
+
+  &--pending { color: $amber-600; }
+  &--overdue { color: $red-600; }
 }
 
-.summary-count--pending { color: #d97706; }
-.summary-count--overdue { color: #dc2626; }
-
 .summary-label {
-  font-size: 10px;
-  letter-spacing: 0.5px;
+  font-size: $fs-2xs;
+  letter-spacing: $tracking-wide;
 }
 </style>

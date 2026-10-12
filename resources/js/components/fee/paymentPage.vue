@@ -1,26 +1,29 @@
 <template>
-  <div class="container mt-4">
-    <div class="card mb-4">
-      <div class="card-body d-flex justify-content-between align-items-center">
-        <div>
-          <h4 class="mb-0 text-capitalize">{{ student.name }}</h4>
-          <p class="text-muted mb-0">{{ student.rollNo }} | {{ student?.batches?.name }}</p>
+  <div class="container-fluid">
+    <div class="hero-bar d-flex flex-wrap gap-3 justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <div class="hero-bar__avatar">{{ student.name?.charAt(0)?.toUpperCase() }}</div>
+          <div>
+            <h4 class="mb-1 text-white text-capitalize">{{ student.name }}</h4>
+            <code class="hero-bar__meta">{{ student.rollNo }} · {{ student?.batches?.name }}</code>
+          </div>
         </div>
         <div class="text-end">
-          <p class="mb-0 text-muted">Total Balance</p>
-          <h3 :class="totalDue > 0 ? 'text-danger' : 'text-success'">
+          <p class="mb-0 eyebrow text-white-50">Total Balance</p>
+          <h3 class="mb-0" :class="totalDue > 0 ? 'text-danger-emphasis bg-danger-subtle rounded-3 px-3 py-1' : 'text-success-emphasis bg-success-subtle rounded-3 px-3 py-1'">
              {{ chosenCurrency }} {{ totalDue.toLocaleString() }}
           </h3>
         </div>
-      </div>
     </div>
 
-    <div class="card mb-4 border-primary">
-      <div class="card-header bg-primary text-white">Record New Payment</div>
-      <div class="card-body px-5 py-4">
+    <div class="card mb-4 border-0 shadow-sm rounded-4">
+      <div class="card-header bg-white px-4 py-3 rounded-top-4">
+        <h2 class="card-heading"><i class="fa fa-receipt text-primary me-2"></i>Record New Payment</h2>
+      </div>
+      <div class="card-body px-3 px-md-5 py-4">
         <form @submit.prevent="submitPayment">
           <div class="row g-3">
-            <div class="col-3">
+            <div class="col-md-3">
               <label class="form-label">Fee Type</label>
               <select v-model="entry.type" class="form-select" required>
                 <option value="" disabled>Select Fee Type</option>
@@ -52,34 +55,36 @@
               </div>
             </div>
             <div class="align-items-end col-md-3 d-flex justify-content-center mt-4 w-100">
-              <button type="submit" class="btn btn-primary p-2 mt-2" :disabled="entry.amount === '' || entry.amount===null">Submit Payment</button>
+              <button type="submit" class="btn btn-primary px-md-4 mt-2" :disabled="entry.amount === '' || entry.amount===null">Submit Payment</button>
             </div>
           </div>
         </form>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">Fee Status</div>
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="card-header bg-white px-4 py-3">
+        <h2 class="card-heading">Fee Status</h2>
+      </div>
       <div class="table-responsive">
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
               <th>Fee Type</th>
-              <th>Total Amount</th>
-              <th>Paid</th>
+              <th class="d-none d-md-table-cell">Total Amount</th>
+              <th class="d-none d-md-table-cell">Paid</th>
               <th>Balance</th>
-              <th>Due Date</th>
+              <th class="d-none d-md-table-cell">Due Date</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody v-if="feeData.length > 0">
             <tr v-for="fee in feeData" :key="fee.id">
-              <td>{{ fee.type }}</td>
-              <td>{{chosenCurrency}} {{ fee.amount.toLocaleString() }}</td>
-              <td>{{chosenCurrency}} {{ paidAmounts[fee.id]?.paid.toLocaleString() }}</td>
-              <td>{{chosenCurrency}} {{ paidAmounts[fee.id]?.balance.toLocaleString() }}</td>
-              <td>{{ fee.due ? fee.due : '-' }}</td>
+              <td class="fw-medium">{{ fee.type }}</td>
+              <td class="d-none d-md-table-cell">{{chosenCurrency}} {{ fee.amount.toLocaleString() }}</td>
+              <td class="d-none d-md-table-cell">{{chosenCurrency}} {{ paidAmounts[fee.id]?.paid.toLocaleString() }}</td>
+              <td class="text-nowrap">{{chosenCurrency}} {{ paidAmounts[fee.id]?.balance.toLocaleString() }}</td>
+              <td class="d-none d-md-table-cell">{{ fee.due ? fee.due : '-' }}</td>
               <td>
                 <span v-if="parseFloat(paidAmounts[fee.id]?.balance) === 0" class="badge bg-success">
                   PAID
@@ -197,7 +202,6 @@ const submitPayment = async() => {
             text: 'You\'re currently submitting a partial payment',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#6366f1',
             confirmButtonText: 'Contiue',
             cancelButtonText: "No",
         })
@@ -212,7 +216,6 @@ const submitPayment = async() => {
             text: 'You\'re submitting a payment, Which cannot be undone !',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#6366f1',
             confirmButtonText: 'Contiue',
             cancelButtonText: "No",
         })

@@ -1,0 +1,19 @@
+// =============================================================================
+// FeeMo — application stylesheet (Dart Sass module system).
+//
+//   abstracts/   tokens + mixins (no CSS output)
+//   vendor/      Bootstrap built from source, third-party widget theming
+//   base/        element defaults and Bootstrap refinements
+//   layout/      app shell (sidebar + main)
+//   components/  shared, reusable UI pieces
+//
+// Component-specific rules live in each .vue file as
+// <style scoped lang="scss"> and pull tokens with `@use "abstracts" as *;`.
+// =============================================================================
+@use "vendor/bootstrap";
+@use "vendor/plugins";
+@use "base/base";
+@use "layout/shell";
+@use "components/surfaces";
+@use "components/data-display";
+@use "components/responsive";

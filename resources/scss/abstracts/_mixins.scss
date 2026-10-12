@@ -1,0 +1,64 @@
+@use "sass:map";
+@use "tokens" as *;
+
+/// Media query below a named breakpoint (exclusive).
+@mixin below($name) {
+  @media (max-width: map.get($breakpoints, $name) - 0.02px) {
+    @content;
+  }
+}
+
+/// Media query between two named breakpoints (min inclusive, max exclusive).
+@mixin between($min, $max) {
+  @media (min-width: map.get($breakpoints, $min)) and (max-width: map.get($breakpoints, $max) - 0.02px) {
+    @content;
+  }
+}
+
+@mixin square($size) {
+  width: $size;
+  height: $size;
+}
+
+@mixin flex-center($display: flex) {
+  display: $display;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin focus-ring($color: $ring-color) {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem $color;
+}
+
+@mixin hover-lift($shadow: $shadow-md) {
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow;
+  }
+}
+
+@mixin eyebrow($size: $fs-xs, $color: $text-muted) {
+  font-size: $size;
+  font-weight: 700;
+  color: $color;
+  text-transform: uppercase;
+  letter-spacing: $tracking-wide;
+}
+
+@mixin thin-scrollbar($thumb: $slate-300, $width: 6px) {
+  scrollbar-width: thin;
+  scrollbar-color: $thumb transparent;
+
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: 999px;
+  }
+}

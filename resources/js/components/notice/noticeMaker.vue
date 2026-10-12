@@ -1,11 +1,11 @@
 <template>
-  <div class="container-fluid py-4 content-scroll vh-100">
+  <div class="container-fluid py-1">
 
     <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="page-header">
       <div>
-        <h4 class="mb-0">Notice Board</h4>
-        <small class="text-muted">{{isEditMode?'Update published announcements':'Create and publish announcements'}}</small>
+        <h4 class="page-title">Notice Board</h4>
+        <p class="page-subtitle">{{isEditMode?'Update published announcements':'Create and publish announcements'}}</p>
       </div>
 
       <div class="d-flex align-items-center gap-2">
@@ -29,15 +29,15 @@
     <!-- ================= EDIT MODE ================= -->
     <div v-if="!isPreview">
 
-      <div class="card shadow-sm border-0" v-if="editor">
-        <div class="card-body">
+      <div class="card shadow-sm border-0 rounded-4" v-if="editor">
+        <div class="card-body p-4">
 
           <!-- TOOLBAR -->
 
           <!-- TITLE -->
           <input
             v-model="title"
-            class="form-control mb-3"
+            class="form-control form-control-lg fw-semibold mb-3"
             placeholder="Enter notice title..."
           />
 
@@ -50,7 +50,7 @@
               <button
                 v-for="t in noticeTypes"
                 :key="t.value"
-                class="btn btn-outline-secondary btn-sm"
+                class="btn btn-outline-primary btn-sm"
                 :class="{ active: noticeType === t.value }"
                 @click="noticeType = t.value"
               >
@@ -70,12 +70,12 @@
                 v-for="a in audienceOptions"
                 :key="a.value"
                 class="btn btn-sm"
-                :class="selectedAudience.includes(a.value) ? 'btn-dark' : 'btn-outline-secondary'"
+                :class="selectedAudience.includes(a.value) ? 'btn-primary' : 'btn-outline-secondary'"
                 @click="toggleAudience(a.value)"
               >
                 {{ a.name }}
               </button>
-              <select name="selectedBatch" id="" v-if="selectedAudience==='STUDENT'" class="form-control w-auto border-secondary" v-model="selectedBatch">
+              <select name="selectedBatch" id="" v-if="selectedAudience==='STUDENT'" class="form-select form-select-sm w-auto" v-model="selectedBatch">
                 <option value="">All Batch</option>
                 <option v-for="value in batches" :value="value.id">{{ value.name }}</option>
               </select>
@@ -91,7 +91,7 @@
                 v-for="a in expiryOptions"
                 :key="a.value"
                 class="btn btn-sm"
-                :class="selectedExpiry===a.value ? 'btn-dark' : 'btn-outline-secondary'"
+                :class="selectedExpiry===a.value ? 'btn-primary' : 'btn-outline-secondary'"
                 @click="toggleExpiry(a.value)"
               >
                 {{ a.name }}
@@ -100,7 +100,7 @@
           </div>
 
           <!-- EDITOR -->
-          <div class="card px-3 py-2">
+          <div class="card notice-editor px-3 py-2">
              <div class="btn-group flex-wrap w-100 mb-3 border-bottom pb-2">
 
             <button class="btn btn-light btn-sm"
@@ -200,8 +200,8 @@
     <!-- ================= PREVIEW MODE ================= -->
     <div v-else>
 
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
 
           <h3 class="mb-2">{{ title || 'Untitled Notice' }}</h3>
 
@@ -358,7 +358,6 @@ const initPublish = async()=>{
   text: msgString,
   icon: 'info',
   showCancelButton: true,
-  confirmButtonColor: '#6366f1',
   confirmButtonText: 'Publish',
   cancelButtonText: "Cancel",
 })
@@ -450,3 +449,20 @@ const expiryCalculated = computed(()=>{
   return selectedExpiry;
 })
 </script>
+
+<style scoped lang="scss">
+@use "abstracts" as *;
+
+.notice-editor {
+  .btn-light.active {
+    background: $sky-100;
+    border-color: $sky-200;
+    color: $sky-800;
+  }
+
+  :deep(.ProseMirror) {
+    min-height: 14rem;
+    outline: none;
+  }
+}
+</style>
