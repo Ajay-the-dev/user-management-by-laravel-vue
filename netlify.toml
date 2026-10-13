@@ -1,0 +1,13 @@
+# Static demo of the Vue front end with an in-browser mock API (see demo/).
+[build]
+  command = "npm run build:demo"
+  publish = "dist-demo"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Single-page app: let Vue Router handle every path
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

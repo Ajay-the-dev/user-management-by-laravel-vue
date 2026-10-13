@@ -68,6 +68,12 @@ body.drawer-open {
 
 .modal-header.bg-dark {
   background: $gradient-hero !important;
+
+  // $headings-color would otherwise paint titles dark on the blue gradient
+  .modal-title,
+  h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+  }
 }
 
 .btn-outline-primary:not(:hover, :active, .active) {

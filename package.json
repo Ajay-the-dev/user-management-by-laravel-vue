@@ -4,7 +4,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "dev:demo": "vite --config vite.demo.config.js --mode demo",
+        "build:demo": "vite build --config vite.demo.config.js --mode demo",
+        "preview:demo": "vite preview --config vite.demo.config.js --mode demo"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^6.0.0",

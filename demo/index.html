@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="theme-color" content="#0284c7">
+
+        <title>User management system (Demo)</title>
+        <link rel="icon" href="/favicon.ico">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Outfit:wght@500..700&display=swap" rel="stylesheet">
+
+        <style>
+            #demo-banner {
+                position: fixed; right: 12px; bottom: 12px; z-index: 2000;
+                display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+                max-width: calc(100vw - 24px);
+                padding: 8px 12px; border-radius: 10px;
+                background: #0f172a; color: #e2e8f0;
+                font: 12.5px/1.4 Inter, system-ui, sans-serif;
+                box-shadow: 0 6px 20px rgba(15, 23, 42, .25);
+            }
+            #demo-banner b { color: #fff; }
+            #demo-banner code { color: #7dd3fc; font-size: 12px; }
+            #demo-banner button {
+                border: 0; border-radius: 6px; padding: 3px 8px; cursor: pointer;
+                font: inherit; background: #1e293b; color: #e2e8f0;
+            }
+            #demo-banner button:hover { background: #334155; }
+        </style>
+    </head>
+    <body>
+        <div id="app"></div>
+
+        <div id="demo-banner" role="note">
+            <span><b>Demo mode</b> · data stays in your browser</span>
+            <span>Admin: <code>admin / admin</code></span>
+            <span>Student: <code>student / student</code></span>
+            <button type="button" id="demo-reset" title="Restore the sample data and log out">Reset data</button>
+            <button type="button" id="demo-close" aria-label="Hide demo banner">✕</button>
+        </div>
+
+        <script type="module" src="./main.js"></script>
+    </body>
+</html>
